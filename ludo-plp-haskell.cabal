@@ -20,8 +20,10 @@ common warnings
 executable ludo-plp-haskell
     import:           warnings
     main-is:          Main.hs
-    -- other-modules:
+    other-modules: GameTypes
     -- other-extensions:
-    build-depends:    base ^>=4.17.2.1
-    hs-source-dirs:   app
+    build-depends:
+        base ^>=4.17.2.1,
+        ansi-terminal
+    hs-source-dirs:   app models
     default-language: Haskell2010
