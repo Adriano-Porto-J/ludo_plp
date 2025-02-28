@@ -46,7 +46,7 @@ data GameState = GameState
   { players :: [Player], -- Lista de jogadores
     specialTiles :: [SpecialTile], -- Tabuleiro do jogo
     currentPlayer :: Color, -- Cor do jogador atual
-    rollDice :: Int, -- Valor do último lançamento do dado
+    diceRolled :: Int, -- Valor do último lançamento do dado
     end :: Bool, -- Indica se o jogo acabou
     sixesInRow :: Int -- Contador de seis seguidos}
   }

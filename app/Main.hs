@@ -2,7 +2,10 @@ module Main where
 
 import InterfaceDebug
 
+debug = True
+
 main :: IO ()
 main = do
-  putStrLn "Interface Terminal"
-  initGameTerminal
+  if debug
+    then initGameTerminal
+    else putStrLn "Not implemented..."

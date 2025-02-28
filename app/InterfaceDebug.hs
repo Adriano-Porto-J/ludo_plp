@@ -3,6 +3,7 @@ module InterfaceDebug where
 import Game
 import GameTypes
 import qualified System.Console.ANSI as ANSI
+import System.Random (randomRIO)
 
 initGameTerminal :: IO ()
 initGameTerminal = do
@@ -17,7 +18,33 @@ initGameTerminal = do
   let botsInt = read bots :: Int
 
   let game = createGameState jogadoresInt botsInt
-  printGameState (game)
+  putStrLn "-------------- Início do Jogo -------------------"
+  gameLoop game
+
+getDiceRoll :: IO Int
+getDiceRoll = randomRIO (1, 6)
+
+gameLoop :: GameState -> IO ()
+gameLoop gameState = do
+  printGameState gameState
+  putStrLn "Digite 'r' para rolar o dado"
+  putStrLn "Digite 'q' para sair"
+  command <- getLine
+  case command of
+    "r" -> do
+      diceRoll <- getDiceRoll
+      putStrLn $ "Valor do dado: " ++ show diceRoll
+      -- to be implemented
+      -- let availableMoves = getAvailableMoves gameState diceRoll
+
+      -- showAvailableMoves availableMoves
+
+      -- gameLoop newGameState
+      gameLoop gameState
+    "q" -> return ()
+    _ -> do
+      putStrLn "Comando inválido"
+      gameLoop gameState
 
 -- Função para imprimir o estado atual do jogo
 printGameState :: GameState -> IO ()
@@ -27,9 +54,10 @@ printGameState gameState = do
   mapM_ printPlayer (players gameState)
   putStrLn $ "Casas especiais: " ++ show (specialTiles gameState)
   putStrLn $ "Jogador atual: " ++ show (currentPlayer gameState)
-  putStrLn $ "Valor do dado: " ++ show (rollDice gameState)
+  putStrLn $ "Valor do dado: " ++ show (diceRolled gameState)
   putStrLn $ "Fim do jogo: " ++ show (end gameState)
   putStrLn $ "Seis seguidos: " ++ show (sixesInRow gameState)
+  putStrLn $ "\n"
 
 printPlayer :: Player -> IO ()
 printPlayer player = do

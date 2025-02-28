@@ -15,7 +15,7 @@ createGameState players bots = do
         { players = players,
           specialTiles = specialTiles,
           currentPlayer = Red,
-          rollDice = 0,
+          diceRolled = 0,
           end = False,
           sixesInRow = 0
         }
@@ -30,7 +30,7 @@ createGameState players bots = do
         { players = players,
           specialTiles = specialTiles,
           currentPlayer = Red,
-          rollDice = 0,
+          diceRolled = 0,
           end = False,
           sixesInRow = 0
         }
