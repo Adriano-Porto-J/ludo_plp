@@ -99,7 +99,7 @@ nextPlayer gs = do
   let nextIndex = (currentIndex + 1) mod length cores
   let nextCor = cores !! nextIndex
   return nextCor
-'vidaal — Hoje às 10:23
+
 getAvailableMoves :: GameState -> Color -> Int -> [Piece]
 getAvailableMoves gs color diceRoll = do
   let currentPlayerState = head (filter (\p -> playerColor p == color) (players gs))
@@ -109,6 +109,9 @@ canMovePiece :: Int -> Piece -> Bool
 canMovePiece diceRoll piece
   | inStartingArea piece = diceRoll == 6 
   | otherwise = True 
+
+
+  
 checkWin :: GameState -> Color -> Bool
 checkWin gs color = do
   let currentPlayerState = head (filter (\p -> playerColor p == color) (players gs))
