@@ -20,7 +20,10 @@ common warnings
 executable ludo-plp-haskell
     import:           warnings
     main-is:          Main.hs
-    other-modules: GameTypes
+    other-modules: 
+        Interface.Rendering,
+        GameTypes
+
     -- other-extensions:
     build-depends:
         base ^>=4.17.2.1,

@@ -53,9 +53,9 @@ createPlayer (color, isB) = Player {playerColor = color, isBot = isB, startingPo
 
 startingPosbyColor :: Color -> Int
 startingPosbyColor Red = 1
-startingPosbyColor Green = 14
-startingPosbyColor Blue = 27
-startingPosbyColor Yellow = 40
+startingPosbyColor Green = 13
+startingPosbyColor Blue = 25
+startingPosbyColor Yellow = 37
 
 createPieces :: Color -> [Piece]
 createPieces color =
@@ -75,7 +75,7 @@ createSpecialTiles =
     SpecialTile {tileType = Lucky, tilePosition = 23},
     SpecialTile {tileType = Safe, tilePosition = 27},
     SpecialTile {tileType = Safe, tilePosition = 32},
-    SpecialTile {tileType = Boost, tilePosition = 36},
+    SpecialTile {tileType = Boost, tilePosition = 39},
     SpecialTile {tileType = Safe, tilePosition = 40},
     SpecialTile {tileType = Safe, tilePosition = 45},
     SpecialTile {tileType = Death, tilePosition = 49}
