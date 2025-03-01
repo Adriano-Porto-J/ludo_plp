@@ -35,7 +35,6 @@ data Piece = Piece
 -- Representação de um jogador
 data Player = Player
   { playerColor :: Color, -- Cor do jogador
-    pieces :: [Piece], -- Lista de peças do jogador
     isBot :: Bool, -- Indica se o jogador é um bot
     startingPos :: Int -- Posição inicial do jogador
   }
@@ -45,6 +44,8 @@ data Player = Player
 data GameState = GameState
   { players :: [Player], -- Lista de jogadores
     specialTiles :: [SpecialTile], -- Tabuleiro do jogo
+    pieces :: [Piece], -- Lista de peças
+    blockades :: [(Color, Int)], -- Lista de bloqueios
     currentPlayer :: Color, -- Cor do jogador atual
     diceRolled :: Int, -- Valor do último lançamento do dado
     end :: Bool, -- Indica se o jogo acabou

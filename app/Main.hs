@@ -1,6 +1,6 @@
 module Main where
 
-import InterfaceDebug
+import Interface.InterfaceDebug
 
 debug = True
 
