@@ -97,6 +97,7 @@ drawSpecialTiles= pictures
     , translate (-1 * cellSize) (6 * cellSize) $ color black boostTile
     , translate (-1 * cellSize) (-3 * cellSize) $ color black declineTile
     , translate (-1 * cellSize) (5 * cellSize) $ color black deathTile
+    , translate (4 * cellSize) (-1 * cellSize) $ color black luckyTile
     ]
 
 
@@ -118,6 +119,12 @@ deathTile = pictures [ rotate 45.0 $ rectangleSolid side 7.0
                     , rotate (-45.0) $ rectangleSolid side 7.0]
     where side = min cellSize cellSize * 0.75
 
+luckyTile::Picture
+luckyTile = pictures 
+    [ translate (0.125 * cellSize) 0 $ rotate (-60.0) $ rectangleSolid side 5.0
+    , translate 0 (0.3 * cellSize) $ rectangleSolid side 5.0
+    , translate 0.4 0 $ scale 0.8 0.8 $ rectangleSolid side 5]
+    where side = min cellSize cellSize * 0.75
 
 -- Desenhar a grade do tabuleiro
 drawGrid :: Picture
