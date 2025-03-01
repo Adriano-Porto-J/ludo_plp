@@ -68,15 +68,15 @@ createPieces color =
 createSpecialTiles :: [SpecialTile]
 createSpecialTiles =
   [ SpecialTile {tileType = Safe, tilePosition = 1},
-    SpecialTile {tileType = Safe, tilePosition = 6},
-    SpecialTile {tileType = Decline, tilePosition = 10},
-    SpecialTile {tileType = Safe, tilePosition = 14},
-    SpecialTile {tileType = Safe, tilePosition = 19},
-    SpecialTile {tileType = Lucky, tilePosition = 23},
-    SpecialTile {tileType = Safe, tilePosition = 27},
-    SpecialTile {tileType = Safe, tilePosition = 32},
-    SpecialTile {tileType = Boost, tilePosition = 39},
-    SpecialTile {tileType = Safe, tilePosition = 40},
-    SpecialTile {tileType = Safe, tilePosition = 45},
-    SpecialTile {tileType = Death, tilePosition = 49}
+    SpecialTile {tileType = Safe, tilePosition = 7},
+    SpecialTile {tileType = Decline, tilePosition = 11},
+    SpecialTile {tileType = Safe, tilePosition = 13},
+    SpecialTile {tileType = Safe, tilePosition = 20},
+    SpecialTile {tileType = Lucky, tilePosition = 24},
+    SpecialTile {tileType = Safe, tilePosition = 25},
+    SpecialTile {tileType = Safe, tilePosition = 33},
+    SpecialTile {tileType = Safe, tilePosition = 37},
+    SpecialTile {tileType = Boost, tilePosition = 40},
+    SpecialTile {tileType = Death, tilePosition = 41},
+    SpecialTile {tileType = Safe, tilePosition = 46}
   ]

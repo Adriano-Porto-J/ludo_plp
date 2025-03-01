@@ -87,9 +87,18 @@ drawPaths = pictures
 
 drawSpecialTiles::Picture
 drawSpecialTiles= pictures 
-    [ translate (-1 * cellSize) (6 * cellSize) $ color black boostTile
-    , translate (-3 * cellSize) (-1 * cellSize) $ color black declineTile
+    [ translate (-5 * cellSize) (1 * cellSize) $ color black safeTile
+    , translate (-3 * cellSize) (-1 * cellSize) $ color black safeTile
+    , translate (-1 * cellSize) (-5 * cellSize) $ color black safeTile
+    , translate (1 * cellSize) (-2 * cellSize) $ color black safeTile
+    , translate (5 * cellSize) (-1 * cellSize) $ color black safeTile
+    , translate (1 * cellSize) (1 * cellSize) $ color black safeTile
+    , translate (1 * cellSize) (5 * cellSize) $ color black safeTile
+    , translate (-1 * cellSize) (6 * cellSize) $ color black boostTile
+    , translate (-1 * cellSize) (-3 * cellSize) $ color black declineTile
+    , translate (-1 * cellSize) (5 * cellSize) $ color black deathTile
     ]
+
 
 boostTile::Picture
 boostTile = pictures [ rotate 0.0 $ rectangleSolid side 7.0
@@ -98,6 +107,15 @@ boostTile = pictures [ rotate 0.0 $ rectangleSolid side 7.0
 
 declineTile::Picture
 declineTile = pictures [ rotate 0.0 $ rectangleSolid side 7.0]
+    where side = min cellSize cellSize * 0.75
+
+safeTile::Picture
+safeTile = thickCircle radius 6.0
+    where radius = min cellSize cellSize * 0.3
+
+deathTile::Picture 
+deathTile = pictures [ rotate 45.0 $ rectangleSolid side 7.0
+                    , rotate (-45.0) $ rectangleSolid side 7.0]
     where side = min cellSize cellSize * 0.75
 
 
