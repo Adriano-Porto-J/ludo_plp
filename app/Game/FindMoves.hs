@@ -1,39 +1,46 @@
 module Game.FindMoves where
 
 import Game.Auxiliary
+import Game.Auxiliary (startingPosByColor)
+
 import GameTypes
 
--- getAvailableMoves :: GameState -> Int -> [(Int, Int)]
--- getAvailableMoves gameState diceRoll = do
---   let currentColor = currentPlayer gameState
 
 getAvailableMoves :: GameState -> [(Int, Int)]
 getAvailableMoves gameState = do
   let diceRoll = diceRolled gameState
   let playerPieces = getPlayerPieces gameState
-  let piecesInStartingArea = filter (\piece -> inStartingArea piece == True) playerPieces
-
-  if length piecesInStartingArea > 0 && diceRoll == 5
-    then (-1, 0) : getMovesInBoard gameState playerPieces diceRoll
-    else getMovesInBoard gameState playerPieces diceRoll
-
-getMovesInBoard :: GameState -> [Piece] -> Int -> [(Int, Int)]
-getMovesInBoard gameState playerPieces diceRoll = do
-  let playerPieces = filter (\piece -> inStartingArea piece == False && finished piece == False && inFinishArea piece == False) playerPieces
-  let piecePositions = map (\piece -> (piecePosition piece, (piecePosition piece + diceRoll) `mod` 52)) playerPieces
-
+  let piecesInStartingArea = filter inStartingArea playerPieces
+  let piecesOnBoard = filter (\p -> not (inStartingArea p || finished p)) playerPieces
+  let specialTilesInGame = specialTiles gameState
   let gameBlockades = blockades gameState
 
-  checkBlockades gameBlockades piecePositions
+  -- Se há peças na base e o jogador tirou 5, ele pode sair
+  let movesFromStart =
+        if diceRoll == 5 && not (null piecesInStartingArea)
+          then [(piecePosition p, startingPosByColor (pieceColor p)) | p <- piecesInStartingArea]
+          else []
 
-checkBlockades :: [(Color, Int)] -> [(Int, Int)] -> [(Int, Int)]
-checkBlockades blockades moves = do
-  let isBetweenBlockades (startPos, endPos) =
-        any
-          ( \(_, blockade) ->
-              (startPos < blockade && endPos > blockade)
-                || (startPos > blockade && endPos < blockade)
-          )
-          blockades
+  -- Movimentos no tabuleiro
+  let movesOnBoard = getMovesOnBoard piecesOnBoard diceRoll specialTilesInGame gameBlockades
 
-  filter (not . isBetweenBlockades) moves
+  movesFromStart ++ movesOnBoard
+
+getMovesOnBoard :: [Piece] -> Int -> [SpecialTile] -> [(Color, Int)] -> [(Int, Int)]
+getMovesOnBoard pieces diceRoll specialTiles blockades = do
+  let piecePositions =
+        map (\piece -> (piecePosition piece, (piecePosition piece + diceRoll) `mod` 52)) pieces
+  let movesWithoutBlockades = filter (not . isBlocked blockades) piecePositions
+  map (applySpecialTile specialTiles) movesWithoutBlockades
+
+isBlocked :: [(Color, Int)] -> (Int, Int) -> Bool
+isBlocked blockades (startPos, endPos) =
+  any (\(_, blockade) -> (startPos < blockade && endPos > blockade) || (startPos > blockade && endPos < blockade)) blockades
+
+applySpecialTile :: [SpecialTile] -> (Int, Int) -> (Int, Int)
+applySpecialTile specialTiles (start, end) =
+  case lookup end (map (\t -> (tilePosition t, tileType t)) specialTiles) of
+    Just Boost   -> (start, (end + 3) `mod` 52) -- Pula 3 casas
+    Just Decline -> (start, max 0 (end - 3))    -- Volta 3 casas
+    Just Death   -> (start, -1)                 -- Volta para o início
+    _            -> (start, end)

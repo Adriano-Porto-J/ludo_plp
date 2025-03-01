@@ -3,80 +3,46 @@ module Game.CreateGame where
 import GameTypes
 
 createGameState :: Int -> Int -> GameState
-createGameState players bots = do
-  if players == 2
-    then do
-      let colors = [Red, Blue]
-      let playerOrBot = definePlayers colors (players - bots) bots
-      let players = map createPlayer playerOrBot
-      let pieces = concatMap createPieces colors
-      let specialTiles = createSpecialTiles
-
-      GameState
-        { players = players,
-          pieces = pieces,
-          blockades = [],
-          specialTiles = specialTiles,
-          currentPlayer = Red,
-          diceRolled = 0,
-          end = False,
-          sixesInRow = 0
-        }
-    else do
-      let colors = [Red, Green, Blue, Yellow]
-      let playerOrBot = definePlayers colors (players - bots) bots
-      let players = map createPlayer playerOrBot
-      let pieces = concatMap createPieces colors
-      let specialTiles = createSpecialTiles
-
-      GameState
-        { players = players,
-          pieces = pieces,
-          blockades = [],
-          specialTiles = specialTiles,
-          currentPlayer = Red,
-          diceRolled = 0,
-          end = False,
-          sixesInRow = 0
-        }
+createGameState players bots = 
+  let colors = if players == 2 then [Red, Blue] else [Red, Green, Blue, Yellow]
+      playerOrBot = definePlayers colors (players - bots) bots
+      allPlayers = map createPlayer playerOrBot
+      allPieces = concatMap createPieces colors
+      specialTiles = createSpecialTiles
+  in GameState
+       { players = allPlayers,
+         pieces = allPieces,
+         blockades = [],
+         specialTiles = specialTiles,
+         currentPlayer = Red,
+         diceRolled = 0,
+         end = False,
+         sixesInRow = 0
+       }
 
 definePlayers :: [Color] -> Int -> Int -> [(Color, Bool)]
-definePlayers colors numPlayers bots = do
-  let playerColors = take numPlayers colors
-  let botColors = take bots (drop numPlayers colors)
-  let playerTuples = map (\color -> (color, False)) playerColors
-  let botTuples = map (\color -> (color, True)) botColors
-  playerTuples ++ botTuples
+definePlayers colors numPlayers bots
+  | numPlayers + bots > length colors = error "Número de jogadores e bots excede o número de cores disponíveis"
+  | otherwise =
+      let (playerColors, botColors) = splitAt numPlayers colors
+          playerTuples = map (\color -> (color, False)) playerColors
+          botTuples = map (\color -> (color, True)) botColors
+      in playerTuples ++ botTuples
 
 createPlayer :: (Color, Bool) -> Player
-createPlayer (color, isB) = Player {playerColor = color, isBot = isB, startingPos = (startingPosbyColor color)}
+createPlayer (color, isB) = Player {playerColor = color, isBot = isB, startingPos = startingPosByColor color}
 
-startingPosbyColor :: Color -> Int
-startingPosbyColor Red = 1
-startingPosbyColor Green = 13
-startingPosbyColor Blue = 25
-startingPosbyColor Yellow = 37
+startingPosByColor :: Color -> Int
+startingPosByColor Red = 1
+startingPosByColor Green = 13
+startingPosByColor Blue = 25
+startingPosByColor Yellow = 37
 
 createPieces :: Color -> [Piece]
-createPieces color =
-  [ Piece {pieceColor = color, piecePosition = -1, tilesWalked = 0, inStartingArea = True, inFinishArea = False, finished = False},
-    Piece {pieceColor = color, piecePosition = -1, tilesWalked = 0, inStartingArea = True, inFinishArea = False, finished = False},
-    Piece {pieceColor = color, piecePosition = -1, tilesWalked = 0, inStartingArea = True, inFinishArea = False, finished = False},
-    Piece {pieceColor = color, piecePosition = -1, tilesWalked = 0, inStartingArea = True, inFinishArea = False, finished = False}
-  ]
+createPieces color = replicate 4 (Piece {pieceColor = color, piecePosition = -1, tilesWalked = 0, inStartingArea = True, inFinishArea = False, finished = False})
 
 createSpecialTiles :: [SpecialTile]
 createSpecialTiles =
-  [ SpecialTile {tileType = Safe, tilePosition = 1},
-    SpecialTile {tileType = Safe, tilePosition = 7},
-    SpecialTile {tileType = Decline, tilePosition = 11},
-    SpecialTile {tileType = Safe, tilePosition = 13},
-    SpecialTile {tileType = Safe, tilePosition = 20},
-    SpecialTile {tileType = Lucky, tilePosition = 24},
-    SpecialTile {tileType = Safe, tilePosition = 25},
-    SpecialTile {tileType = Safe, tilePosition = 33},
-    SpecialTile {tileType = Safe, tilePosition = 37},
-    SpecialTile {tileType = Boost, tilePosition = 40},
-    SpecialTile {tileType = Death, tilePosition = 41},
-    SpecialTile {tileType = Safe, tilePosition = 46}
-  ]
+  [ SpecialTile Safe 1, SpecialTile Safe 7, SpecialTile Decline 11, SpecialTile Safe 13,
+    SpecialTile Safe 20, SpecialTile Lucky 24, SpecialTile Safe 25, SpecialTile Safe 33,
+    SpecialTile Safe 37, SpecialTile Boost 40, SpecialTile Death 41, SpecialTile Safe 46 ]
