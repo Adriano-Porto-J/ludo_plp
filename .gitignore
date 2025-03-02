@@ -1,2 +1,28 @@
+# Ignore Stack's build artifacts
+.stack-work/
+
+# Ignore build directories and artifacts
 dist/
 dist-newstyle/
+.cabal-sandbox/
+.cabal-configuration
+
+# Ignore compiled files
+*.o
+*.hi
+*.cmo
+*.cma
+*.cmx
+*.o.d
+*.hs-i
+
+# Ignore IDE/editor specific files
+.vscode/
+.idea/
+*.swp
+
+# Ignore Mac system files
+.DS_Store
+
+# Ignore other environment-specific files
+*.log
