@@ -2,9 +2,7 @@ module Game.FindMoves where
 
 import Game.Auxiliary
 import Game.Auxiliary (startingPosByColor)
-
 import GameTypes
-
 
 getAvailableMoves :: GameState -> [(Int, Int)]
 getAvailableMoves gameState = do
@@ -40,7 +38,7 @@ isBlocked blockades (startPos, endPos) =
 applySpecialTile :: [SpecialTile] -> (Int, Int) -> (Int, Int)
 applySpecialTile specialTiles (start, end) =
   case lookup end (map (\t -> (tilePosition t, tileType t)) specialTiles) of
-    Just Boost   -> (start, (end + 3) `mod` 52) -- Pula 3 casas
-    Just Decline -> (start, max 0 (end - 3))    -- Volta 3 casas
-    Just Death   -> (start, -1)                 -- Volta para o início
-    _            -> (start, end)
+    Just Boost -> (start, (end + 3) `mod` 52) -- Pula 3 casas
+    Just Decline -> (start, max 0 (end - 3)) -- Volta 3 casas
+    Just Death -> (start, -1) -- Volta para o início
+    _ -> (start, end)

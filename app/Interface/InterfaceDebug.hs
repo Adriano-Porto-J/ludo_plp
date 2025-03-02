@@ -29,6 +29,10 @@ getValidNumber prompt validValues = do
 getDiceRoll :: IO Int
 getDiceRoll = randomRIO (1, 6)
 
+-- apenas para testes
+-- getDiceRoll :: IO Int
+-- getDiceRoll = randomRIO (5, 5)
+
 gameLoop :: GameState -> IO ()
 gameLoop gameState = do
   putStrLn "\n----------------------------------"
@@ -55,10 +59,13 @@ gameLoop gameState = do
           chosenIndex <- getMoveChoice (length availableMoves)
           let (from, to) = availableMoves !! chosenIndex
           putStrLn $ "Você escolheu mover de " ++ show from ++ " para " ++ show to
+          let gameStateMoveProcessed = processMove gameStateSixHandled (from, to)
+          putStrLn $ "Movimento processado para jogador: " ++ show (currentPlayer gameStateMoveProcessed)
+          let gameStateUpdated = nextPlayer gameStateMoveProcessed --
+          gameLoop gameStateUpdated
 
-      let gameStateUpdated = nextPlayer gameStateSixHandled
-      gameLoop gameStateUpdated  -- Próximo jogador!
-
+    -- let gameStateUpdated = nextPlayer gameStateMoveProcessed
+    -- gameLoop gameStateUpdated -- Próximo jogador!
     "q" -> putStrLn "Jogo encerrado. Obrigado por jogar!"
     _ -> do
       putStrLn "Comando inválido, tente novamente."

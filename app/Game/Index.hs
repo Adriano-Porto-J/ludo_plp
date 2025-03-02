@@ -3,6 +3,7 @@ module Game.Index where
 import Game.Auxiliary
 import qualified Game.CreateGame as CreateGame (createGameState)
 import qualified Game.FindMoves as FindMoves (getAvailableMoves)
+import qualified Game.ProcessMove as ProcessMove (processMove)
 import GameTypes
 
 createGameState :: Int -> Int -> GameState
@@ -12,28 +13,33 @@ getAvailableMoves :: GameState -> [(Int, Int)]
 getAvailableMoves gameState = FindMoves.getAvailableMoves gameState
 
 handleSixesInRow :: GameState -> GameState
-handleSixesInRow gameState 
-  | diceRoll == 6 = 
+handleSixesInRow gameState
+  | diceRoll == 6 =
       if sixesInRow gameState == 2
         then case getPieceWithMostTilesWalked (getPlayerPieces gameState) of
-               Just pieceWithMostTiles -> 
-                 let newPiece = pieceWithMostTiles {tilesWalked = 0, inStartingArea = True, piecePosition = -1}
-                     newPieces = map (\piece -> if piece == pieceWithMostTiles then newPiece else piece) (pieces gameState)
-                 in gameState {pieces = newPieces, sixesInRow = 0}
-               Nothing -> gameState {sixesInRow = 0}  -- Nenhuma peça para remover, apenas reseta
+          Just pieceWithMostTiles ->
+            let newPiece = pieceWithMostTiles {tilesWalked = 0, inStartingArea = True, piecePosition = -1}
+                newPieces = map (\piece -> if piece == pieceWithMostTiles then newPiece else piece) (pieces gameState)
+             in gameState {pieces = newPieces, sixesInRow = 0}
+          Nothing -> gameState {sixesInRow = 0} -- Nenhuma peça para remover, apenas reseta
         else gameState {sixesInRow = sixesInRow gameState + 1}
   | otherwise = gameState {sixesInRow = 0}
-  where diceRoll = diceRolled gameState
+  where
+    diceRoll = diceRolled gameState
 
 nextPlayer :: GameState -> GameState
-nextPlayer gameState = 
+nextPlayer gameState =
   let colors = map playerColor (players gameState)
       current = currentPlayer gameState
       next = getNextPlayer colors current
-  in gameState {currentPlayer = next, sixesInRow = 0} -- Reseta contador de seis seguidos
+   in gameState {currentPlayer = next, sixesInRow = 0} -- Reseta contador de seis seguidos
 
 getNextPlayer :: [Color] -> Color -> Color
-getNextPlayer colors current = 
+getNextPlayer colors current =
   case lookup current (zip colors (tail colors ++ [head colors])) of
     Just next -> next
-    Nothing -> head colors  -- Caso inesperado 
+    Nothing -> head colors -- Caso inesperado
+
+processMove :: GameState -> (Int, Int) -> GameState
+processMove gameState jogada =
+  ProcessMove.processMove gameState jogada
