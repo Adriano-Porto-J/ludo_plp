@@ -26,16 +26,19 @@ getValidNumber prompt validValues = do
       putStrLn "entrada inválida. Tente novamente."
       getValidNumber prompt validValues
 
-getDiceRoll :: IO Int
-getDiceRoll = randomRIO (1, 6)
+-- getDiceRoll :: IO Int
+-- getDiceRoll = randomRIO (1, 6)
 
 -- apenas para testes
--- getDiceRoll :: IO Int
--- getDiceRoll = randomRIO (5, 5)
+getDiceRoll :: IO Int
+getDiceRoll = do
+  putStrLn "Digite o valor do dado (1 a 6):"
+  input <- getLine
+  return (read input)
 
 gameLoop :: GameState -> IO ()
 gameLoop gameState = do
-  putStrLn "\n----------------------------------"
+  printGameState gameState
   putStrLn "Digite 'r' para rolar o dado"
   putStrLn "Digite 'q' para sair"
   command <- getLine
@@ -48,7 +51,6 @@ gameLoop gameState = do
       let gameStateSixHandled = handleSixesInRow gameStateWithDice
       let availableMoves = getAvailableMoves gameStateSixHandled
 
-      printGameState gameStateSixHandled
       if null availableMoves
         then do
           putStrLn "Nenhum movimento disponível! Passando o turno..."
