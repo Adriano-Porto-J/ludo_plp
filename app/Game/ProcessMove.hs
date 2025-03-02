@@ -1,5 +1,6 @@
 module Game.ProcessMove where
 
+import Data.Map (fromListWith, toList)
 import Game.Auxiliary
 import GameTypes
 
@@ -12,10 +13,12 @@ processMove gameState (pieceStart, pieceEnd) = do
   if pieceStart == -1
     then do
       let newPieces = movePieceToBoard (pieces gameState) piece (currentPlayer gameState)
-      gameState {pieces = newPieces}
+      let blockades = findBlockades newPieces
+      gameState {pieces = newPieces, blockades = blockades}
     else do
       let newPieces = movePieceInBoard (pieces gameState) piece pieceStart pieceEnd (currentPlayer gameState)
-      gameState {pieces = newPieces}
+      let blockades = findBlockades newPieces
+      gameState {pieces = newPieces, blockades = blockades}
 
 getPieceByPositionAndColor :: [Piece] -> Color -> Int -> Piece
 getPieceByPositionAndColor pieces color position = head $ filter (\piece -> piecePosition piece == position && pieceColor piece == color) pieces
@@ -56,3 +59,19 @@ movePieceInBoard pieces piece startPos endPos color = do
       let capturedPiece = head capturedPieces
       movePieceCaptured updatedPieces capturedPiece
     else updatedPieces
+
+findBlockades :: [Piece] -> [(Color, Int)]
+findBlockades pieces = do
+  -- Cria um mapa (dicionário) que conta quantas vezes cada posição aparece na lista de peças
+  let positionCounts = fromListWith (+) [(piecePosition p, 1) | p <- pieces]
+
+  -- Filtra o mapa para encontrar apenas as posições que aparecem duas ou mais vezes
+  let duplicatePositions = filter (\(pos, count) -> count >= 2 && pos /= -1) (toList positionCounts)
+
+  -- Cria uma lista de tuplas contendo a cor e a posição das peças que estão em posições duplicadas
+  map (\(pos, _) -> (getPieceColorInPosition pieces pos, pos)) duplicatePositions
+
+-- Retorna a lista de posições duplicadas com suas respectivas cores
+
+getPieceColorInPosition :: [Piece] -> Int -> Color
+getPieceColorInPosition pieces position = pieceColor $ head $ filter (\piece -> piecePosition piece == position) pieces

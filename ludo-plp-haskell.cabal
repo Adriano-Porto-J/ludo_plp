@@ -29,6 +29,7 @@ executable ludo-plp-haskell
         base ^>=4.17.2.1,
         ansi-terminal,
         random >=1.2 && <1.3,
-        gloss
+        gloss,
+        containers >= 0.6 && <0.7,
     hs-source-dirs:   app models
     default-language: Haskell2010
