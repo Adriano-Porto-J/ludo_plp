@@ -5,26 +5,27 @@ import GameTypes
 import qualified System.Console.ANSI as ANSI
 import System.Random (randomRIO)
 import Text.Read (readMaybe)
+import Data.Aeson (encode, decode)
+import GHC.Generics (Generic)
+import qualified Data.ByteString.Lazy as B
+import System.Directory (doesFileExist)
 
 initGameTerminal :: IO ()
 initGameTerminal = do
   putStrLn "-------------- Interface Terminal -------------------"
-  jogadoresInt <- getValidNumber "Quantos Jogadores? (2 ou 4)" [2, 4]
-  botsInt <- getValidNumber "Quantos Bots? (1, 2 ou 3)" [1, 2, 3]
-
-  let game = createGameState jogadoresInt botsInt
-  putStrLn "\nO jogo começou! Boa sorte!"
-  gameLoop game
-
-getValidNumber :: String -> [Int] -> IO Int
-getValidNumber prompt validValues = do
-  putStrLn prompt
-  input <- getLine
-  case readMaybe input of
-    Just n | n `elem` validValues -> return n
-    _ -> do
-      putStrLn "entrada inválida. Tente novamente."
-      getValidNumber prompt validValues
+  putStrLn "Deseja carregar um jogo salvo? (s/n)"
+  loadChoice <- getLine
+  case loadChoice of
+    "s" -> do
+      maybeGame <- loadGameState
+      case maybeGame of
+        Just game -> do
+          putStrLn "\nJogo salvo carregado com sucesso!"
+          gameLoop game
+        Nothing -> do
+          putStrLn "\nNenhum jogo salvo encontrado. Iniciando um novo jogo..."
+          startNewGame
+    _ -> startNewGame
 
 -- getDiceRoll :: IO Int
 -- getDiceRoll = randomRIO (1, 6)
@@ -40,6 +41,7 @@ gameLoop :: GameState -> IO ()
 gameLoop gameState = do
   printGameState gameState
   putStrLn "Digite 'r' para rolar o dado"
+  putStrLn "Digite 's' para salvar o jogo"
   putStrLn "Digite 'q' para sair"
   command <- getLine
   case command of
@@ -66,10 +68,38 @@ gameLoop gameState = do
           putStrLn $ "Movimento processado para jogador: " ++ show (currentPlayer gameStateMoveProcessed)
           let gameStateUpdated = nextPlayer gameStateMoveProcessed -- próximo jogador
           gameLoop gameStateUpdated
+
+    "s" -> do
+      saveGameState gameState
+      gameLoop gameState
+
     "q" -> putStrLn "Jogo encerrado. Obrigado por jogar!"
     _ -> do
       putStrLn "Comando inválido, tente novamente."
       gameLoop gameState
+
+
+startNewGame :: IO ()
+startNewGame = do
+  jogadoresInt <- getValidNumber "Quantos Jogadores? (2 ou 4)" [2, 4]
+  botsInt <- getValidNumber "Quantos Bots? (1, 2 ou 3)" [1, 2, 3]
+  let game = createGameState jogadoresInt botsInt
+  putStrLn "\nO jogo começou! Boa sorte!"
+  gameLoop game
+
+saveGameState :: GameState -> IO ()
+saveGameState gameState = do
+  B.writeFile "saved_game.json" (encode gameState)
+  putStrLn "Jogo salvo com sucesso!"
+
+loadGameState :: IO (Maybe GameState)
+loadGameState = do
+  exists <- doesFileExist "saved_game.json"
+  if exists
+    then do
+      contents <- B.readFile "saved_game.json"
+      return (decode contents)
+    else return Nothing
 
 getMoveChoice :: Int -> IO Int
 getMoveChoice numChoices = do
@@ -117,6 +147,16 @@ printPlayer player = do
 
 printMove :: Int -> (Int, Int) -> IO ()
 printMove index (from, to) = putStrLn $ show index ++ ". De " ++ show from ++ " para " ++ show to
+
+getValidNumber :: String -> [Int] -> IO Int
+getValidNumber prompt validValues = do
+  putStrLn prompt
+  input <- getLine
+  case readMaybe input of
+    Just n | n `elem` validValues -> return n
+    _ -> do
+      putStrLn "entrada inválida. Tente novamente."
+      getValidNumber prompt validValues
 
 playerColorToANSI :: Color -> ANSI.Color
 playerColorToANSI Red = ANSI.Red

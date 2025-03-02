@@ -51,3 +51,4 @@ createSpecialTiles =
     SpecialTile Death 41,
     SpecialTile Safe 46
   ]
+

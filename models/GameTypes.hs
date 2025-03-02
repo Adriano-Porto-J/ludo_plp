@@ -1,8 +1,14 @@
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE DerivingStrategies #-}
+
 module GameTypes where
+import GHC.Generics (Generic)
+import Data.Aeson (ToJSON, FromJSON)
 
 -- Representação das cores dos jogadores
 data Color = Red | Green | Blue | Yellow
-  deriving (Show, Eq, Read)
+  deriving (Show, Eq, Read, Generic, ToJSON, FromJSON)
 
 -- Tipos de casas no tabuleiro
 data TileType
@@ -12,14 +18,14 @@ data TileType
   | Decline -- Casa de declínio (recua X casas)
   | Death -- Casa da morte (peça volta para a base)
   | Lucky -- Casa da sorte (escolhe uma peça adversária para remover)
-  deriving (Show, Eq, Read)
+  deriving (Show, Eq, Read, Generic, ToJSON, FromJSON)
 
 -- Representação de uma casa no tabuleiro
 data SpecialTile = SpecialTile
   { tileType :: TileType, -- Tipo da casa
     tilePosition :: Int
   }
-  deriving (Show, Read)
+  deriving (Show, Read, Generic, ToJSON, FromJSON)
 
 -- Representação de uma peça
 data Piece = Piece
@@ -30,7 +36,7 @@ data Piece = Piece
     inFinishArea :: Bool, -- Indica se a peça está na área de fim
     finished :: Bool -- Indica se a peça já terminou o jogo
   }
-  deriving (Show, Eq, Read)
+  deriving (Show, Eq, Read, Generic, ToJSON, FromJSON)
 
 -- Representação de um jogador
 data Player = Player
@@ -38,7 +44,7 @@ data Player = Player
     isBot :: Bool, -- Indica se o jogador é um bot
     startingPos :: Int -- Posição inicial do jogador
   }
-  deriving (Show, Read)
+  deriving (Show, Read, Generic, ToJSON, FromJSON)
 
 -- Estado atual do jogo
 data GameState = GameState
@@ -51,4 +57,4 @@ data GameState = GameState
     end :: Bool, -- Indica se o jogo acabou
     sixesInRow :: Int -- Contador de seis seguidos}
   }
-  deriving (Show, Read)
+  deriving (Show, Read, Generic, ToJSON, FromJSON)

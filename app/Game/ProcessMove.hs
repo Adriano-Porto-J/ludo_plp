@@ -20,6 +20,20 @@ processMove gameState (pieceStart, pieceEnd) = do
       let blockades = findBlockades newPieces
       gameState {pieces = newPieces, blockades = blockades}
 
+ 
+
+isLuckyTile :: Int -> Bool
+isLuckyTile pos = pos == 41 
+
+getOpponentPieces :: [Piece] -> Color -> [(Color, Int)]
+getOpponentPieces pieces currentColor = [(pieceColor p, piecePosition p) | p <- pieces, pieceColor p /= currentColor, piecePosition p /= -1]
+
+chooseOpponentPieceToEliminate :: [(Color, Int)] -> Int
+chooseOpponentPieceToEliminate opponentPieces = snd (head opponentPieces) 
+
+applyDeath :: [Piece] -> Int -> [Piece]
+applyDeath pieces pos = [p | p <- pieces, piecePosition p /= pos]
+
 getPieceByPositionAndColor :: [Piece] -> Color -> Int -> Piece
 getPieceByPositionAndColor pieces color position = head $ filter (\piece -> piecePosition piece == position && pieceColor piece == color) pieces
 
