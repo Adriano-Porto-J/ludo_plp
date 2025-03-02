@@ -1,3 +1,4 @@
+{-# LANGUAGE BlockArguments #-}
 module Interface.InterfaceDebug where
 
 import Game.Index
@@ -27,57 +28,37 @@ initGameTerminal = do
           startNewGame
     _ -> startNewGame
 
--- getDiceRoll :: IO Int
--- getDiceRoll = randomRIO (1, 6)
-
--- apenas para testes
+--getDiceRoll :: IO Int
+--getDiceRoll = randomRIO (1, 6)
 getDiceRoll :: IO Int
 getDiceRoll = do
   putStrLn "Digite o valor do dado (1 a 6):"
   input <- getLine
   return (read input)
 
+
+
 gameLoop :: GameState -> IO ()
 gameLoop gameState = do
   printGameState gameState
-  putStrLn "Digite 'r' para rolar o dado"
-  putStrLn "Digite 's' para salvar o jogo"
-  putStrLn "Digite 'q' para sair"
-  command <- getLine
-  case command of
-    "r" -> do
-      diceRoll <- getDiceRoll
-      putStrLn $ "\nVocê rolou: " ++ show diceRoll ++ "!"
-
-      let gameStateWithDice = gameState {diceRolled = diceRoll}
-      let gameStateSixHandled = handleSixesInRow gameStateWithDice
-      let availableMoves = getAvailableMoves gameStateSixHandled
-
-      if null availableMoves
-        then do
-          putStrLn "Nenhum movimento disponível! Passando o turno..."
-          let gameStateUpdated = nextPlayer gameStateSixHandled -- próximo jogador
-          gameLoop gameStateUpdated
-        else do
-          putStrLn "Escolha um movimento:"
-          mapM_ (uncurry printMove) (zip [1 ..] availableMoves)
-          chosenIndex <- getMoveChoice (length availableMoves)
-          let (from, to) = availableMoves !! chosenIndex
-          putStrLn $ "Você escolheu mover de " ++ show from ++ " para " ++ show to
-          let gameStateMoveProcessed = processMove gameStateSixHandled (from, to)
-          putStrLn $ "Movimento processado para jogador: " ++ show (currentPlayer gameStateMoveProcessed)
-          let gameStateUpdated = nextPlayer gameStateMoveProcessed -- próximo jogador
-          gameLoop gameStateUpdated
-
-    "s" -> do
-      saveGameState gameState
-      gameLoop gameState
-
-    "q" -> putStrLn "Jogo encerrado. Obrigado por jogar!"
-    _ -> do
-      putStrLn "Comando inválido, tente novamente."
-      gameLoop gameState
-
+  if isBotTurn gameState
+    then do
+      putStrLn "Vez do bot!"
+      botTurn gameState
+    else do
+      putStrLn "Digite 'r' para rolar o dado"
+      putStrLn "Digite 's' para salvar o jogo"
+      putStrLn "Digite 'q' para sair"
+      command <- getLine
+      case command of
+        "r" -> playerTurn gameState
+        "s" -> do
+          saveGameState gameState
+          gameLoop gameState
+        "q" -> putStrLn "Jogo encerrado. Obrigado por jogar!"
+        _ -> do
+          putStrLn "Comando inválido, tente novamente."
+          gameLoop gameState
 
 startNewGame :: IO ()
 startNewGame = do
@@ -100,6 +81,49 @@ loadGameState = do
       contents <- B.readFile "saved_game.json"
       return (decode contents)
     else return Nothing
+
+playerTurn :: GameState -> IO ()
+playerTurn gameState = do
+  diceRoll <- getDiceRoll
+  putStrLn $ "\nVocê rolou: " ++ show diceRoll ++ "!"
+  let gameStateWithDice = gameState {diceRolled = diceRoll}
+  let gameStateSixHandled = handleSixesInRow gameStateWithDice
+  let availableMoves = getAvailableMoves gameStateSixHandled
+  
+  if null availableMoves
+    then do
+      putStrLn "Nenhum movimento disponível! Passando o turno..."
+      gameLoop (nextPlayer gameStateSixHandled)
+    else do
+      putStrLn "Escolha um movimento:"
+      mapM_ (uncurry printMove) (zip [1 ..] availableMoves)
+      chosenIndex <- getMoveChoice (length availableMoves)
+      let (from, to) = availableMoves !! chosenIndex
+      putStrLn $ "Você escolheu mover de " ++ show from ++ " para " ++ show to
+      gameLoop (nextPlayer (processMove gameStateSixHandled (from, to)))
+
+botTurn :: GameState -> IO ()
+botTurn gameState = do
+  diceRoll <- getDiceRoll
+  putStrLn $ "O bot rolou: " ++ show diceRoll ++ "!"
+  let gameStateWithDice = gameState {diceRolled = diceRoll}
+  let gameStateSixHandled = handleSixesInRow gameStateWithDice
+  let availableMoves = getAvailableMoves gameStateSixHandled
+  
+  if null availableMoves
+    then do
+      putStrLn "O bot não pode se mover. Passando o turno..."
+      gameLoop (nextPlayer gameStateSixHandled)
+    else do
+      moveIndex <- randomRIO (0, length availableMoves - 1)
+      let (from, to) = availableMoves !! moveIndex
+      putStrLn $ "O bot moveu de " ++ show from ++ " para " ++ show to
+      gameLoop (nextPlayer (processMove gameStateSixHandled (from, to)))
+
+isBotTurn :: GameState -> Bool
+isBotTurn gameState =
+  let current = currentPlayer gameState
+  in any ((== current) . playerColor) (filter isBot (players gameState))
 
 getMoveChoice :: Int -> IO Int
 getMoveChoice numChoices = do
