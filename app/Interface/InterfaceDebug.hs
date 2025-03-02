@@ -52,7 +52,8 @@ gameLoop gameState = do
       if null availableMoves
         then do
           putStrLn "Nenhum movimento disponível! Passando o turno..."
-          ANSI.setSGR [ANSI.Reset]
+          let gameStateUpdated = nextPlayer gameStateSixHandled -- próximo jogador
+          gameLoop gameStateUpdated
         else do
           putStrLn "Escolha um movimento:"
           mapM_ (uncurry printMove) (zip [1 ..] availableMoves)
@@ -61,11 +62,8 @@ gameLoop gameState = do
           putStrLn $ "Você escolheu mover de " ++ show from ++ " para " ++ show to
           let gameStateMoveProcessed = processMove gameStateSixHandled (from, to)
           putStrLn $ "Movimento processado para jogador: " ++ show (currentPlayer gameStateMoveProcessed)
-          let gameStateUpdated = nextPlayer gameStateMoveProcessed --
+          let gameStateUpdated = nextPlayer gameStateMoveProcessed -- próximo jogador
           gameLoop gameStateUpdated
-
-    -- let gameStateUpdated = nextPlayer gameStateMoveProcessed
-    -- gameLoop gameStateUpdated -- Próximo jogador!
     "q" -> putStrLn "Jogo encerrado. Obrigado por jogar!"
     _ -> do
       putStrLn "Comando inválido, tente novamente."
