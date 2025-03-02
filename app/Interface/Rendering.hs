@@ -134,3 +134,13 @@ drawGrid = color black $ pictures
 -- Função principal
 render :: IO ()
 render = display window background drawBoard
+
+--Para um ambiente interativo, devemos utilizar a função play ao invés de render
+--Mais sobre em: https://hackage.haskell.org/package/gloss-1.13.2.2/docs/Graphics-Gloss.html#v:play
+
+--render = play background 30 gameState drawBoard inputHandling (const id)
+--gameState sendo um tipo de dado que representa o estado do jogo
+--drawBoard como sendo uma função que recebe esse tipo de dado e o transforma para Picture (gameState -> Picture)
+--inputHandling sendo a função (Event -> gameState -> gameState) que atualiza o estado do jogo de acordo c a entrada
+--(const id) sendo uma função que atualiza o gameState a cada segundo que se passa,
+--como não iremos necessitar de animações no nosso escopo, a função identidade (const id) não faz nada
