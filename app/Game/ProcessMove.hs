@@ -7,18 +7,25 @@ import GameTypes
 processMove :: GameState -> (Int, Int) -> GameState
 processMove gameState (pieceStart, pieceEnd) = do
   let currentPlayerColor = currentPlayer gameState
-
   let piece = getPieceByPositionAndColor (pieces gameState) currentPlayerColor pieceStart
 
-  if pieceStart == -1
+  if pieceStart == -1 -- Mover peça para o tabuleiro
     then do
       let newPieces = movePieceToBoard (pieces gameState) piece (currentPlayer gameState)
       let blockades = findBlockades newPieces
       gameState {pieces = newPieces, blockades = blockades}
-    else do
-      let newPieces = movePieceInBoard (pieces gameState) piece pieceStart pieceEnd (currentPlayer gameState)
-      let blockades = findBlockades newPieces
-      gameState {pieces = newPieces, blockades = blockades}
+    else
+      if pieceEnd == -1 -- Mover peça na casa Death
+        then do
+          let newPieces = movePieceCaptured (pieces gameState) piece
+
+          let blockades = findBlockades newPieces
+          gameState {pieces = newPieces, blockades = blockades}
+        else do
+          -- Mover Peça no tabuleiro
+          let newPieces = movePieceInBoard (pieces gameState) piece pieceStart pieceEnd (currentPlayer gameState)
+          let blockades = findBlockades newPieces
+          gameState {pieces = newPieces, blockades = blockades}
 
 getPieceByPositionAndColor :: [Piece] -> Color -> Int -> Piece
 getPieceByPositionAndColor pieces color position = head $ filter (\piece -> piecePosition piece == position && pieceColor piece == color) pieces
