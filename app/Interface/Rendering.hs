@@ -5,6 +5,9 @@ import Graphics.Gloss.Interface.Pure.Game
 import qualified GameTypes
 import Game.CreateGame
 import Game.ProcessMove
+import System.Random (randomRIO)
+import System.IO.Unsafe (unsafePerformIO)
+import Debug.Trace (trace)
 
 -- Tamanho do tabuleiro e das áreas
 boardSize :: Float
@@ -19,7 +22,7 @@ squareSize = 140
 
 -- Janela
 window :: Display
-window = InWindow "Ludo" (600, 600) (100, 100)
+window = InWindow "Ludo" (800, 800) (200, 200)
 
 -- Fundo branco
 background :: Color
@@ -105,6 +108,19 @@ drawSpecialTiles= pictures
     ]
 
 
+drawButton :: Picture
+drawButton = pictures 
+    [translate  0 (-8 * cellSize) $ color black (rectangleSolid (6 * cellSize) (2 * cellSize))-- Fundo do botão
+    , translate (-1.5 * cellSize) (-8 * cellSize) $ scale 0.15 0.15 $ color white (text "Rolar Dado")  -- Texto
+    ]
+
+
+rolarDado :: GameTypes.GameState -> GameTypes.GameState
+rolarDado gameState = do
+    let dado :: Int
+        dado = unsafePerformIO (randomRIO (1, 6))  -- Gera um número aleatório entre 1 e 6
+    trace ("Dado rolado: " ++ show dado) gameState  -- Apenas para debug (pode ser removido depois)
+
 boostTile::Picture
 boostTile = pictures [ rotate 0.0 $ rectangleSolid side 7.0
                     , rotate (90.0) $ rectangleSolid side 7.0]
@@ -140,7 +156,15 @@ drawGrid = color black $ pictures
 
 initialGameState = (createGameState 4 2)
 
-transformGame (EventKey (MouseButton LeftButton) Up _ mousePos) gameState = walkOneEachPiece gameState
+transformGame (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
+    | x > xMin && x < xMax && y > yMin && y < yMax = rolarDado gameState  -- Se clicar no botão, rola o dado
+    | otherwise = walkOneEachPiece gameState  -- Senão, segue a lógica normal
+  where
+    xMin = -8 * cellSize - (3 * cellSize) / 2
+    xMax = -8 * cellSize + (3 * cellSize) / 2
+    yMin = 0 - (2 * cellSize) / 2
+    yMax = 0 + (2 * cellSize) / 2
+
 transformGame _ gameState = gameState
 
 pieceSprite::GameTypes.Piece -> Picture
@@ -171,7 +195,7 @@ basePos piece | id <= 1 = translate ((x + id) * cellSize) (y * cellSize) $ (piec
           y = fromIntegral (snd quad)
 
 drawScreen::GameTypes.GameState -> Picture
-drawScreen gameState = pictures [drawBoard, drawAllPieces gameState]
+drawScreen gameState = pictures [drawBoard, drawAllPieces gameState, drawButton]
 
 drawAllPieces::GameTypes.GameState -> Picture
 drawAllPieces gameState = pictures (map drawPiece (GameTypes.pieces (gameState)))
