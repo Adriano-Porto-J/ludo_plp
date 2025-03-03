@@ -10,7 +10,6 @@ import GameTypes
 import qualified System.Console.ANSI as ANSI
 import System.Directory (doesFileExist)
 import System.Random (randomRIO)
-import Game.BotLogic (getBestMove)
 import Text.Read (readMaybe)
 
 initGameTerminal :: IO ()
@@ -51,7 +50,7 @@ gameLoop gameState = do
       putStrLn "Digite 'q' para sair"
       command <- getLine
       case command of
-        "r" -> playerTurn gameState
+        "r" -> playerTurn gameState 0
         "s" -> do
           saveGameState gameState
           gameLoop gameState
@@ -82,65 +81,62 @@ loadGameState = do
       return (decode contents)
     else return Nothing
 
-playerTurn :: GameState -> IO ()
-playerTurn gameState = do
+playerTurn :: GameState -> Int -> IO ()
+playerTurn gameState sixCount = do
   diceRoll <- getDiceRoll
   putStrLn $ "\nVocê rolou: " ++ show diceRoll ++ "!"
-  let gameStateWithDice = gameState {diceRolled = diceRoll}
-  let gameStateSixHandled = handleSixesInRow gameStateWithDice
-  let availableMoves = getAvailableMoves gameStateSixHandled
+  let newSixCount = if diceRoll == 6 then sixCount + 1 else 0
+  let gameStateWithDice = gameState {diceRolled = diceRoll, sixesInRow = newSixCount}
+  let availableMoves = getAvailableMoves gameStateWithDice
 
-  if null availableMoves
+  if newSixCount >= 3
     then do
-      putStrLn "Nenhum movimento disponível! Passando o turno..."
-      gameLoop (nextPlayer gameStateSixHandled)
-    else do
-      putStrLn "Escolha um movimento:"
-      mapM_ (uncurry printMove) (zip [1 ..] availableMoves)
-      chosenIndex <- getMoveChoice (length availableMoves)
-      let (from, to) = availableMoves !! chosenIndex
-      putStrLn $ "Você escolheu mover de " ++ show from ++ " para " ++ show to
-      let updatedGameState = processMove gameStateSixHandled (from, to)
-
-      if to `elem` map (\tile -> tilePosition tile) (filter (\tile -> tileType tile == Lucky) (specialTiles gameStateSixHandled))
-        then do
-          putStrLn "Você caiu em uma casa de sorte! Escolha um oponente para voltar para a base:"
-          let oponnents = getLuckyMoves updatedGameState
-          if length oponnents == 0
-            then do
-              putStrLn "Nenhum oponente disponível para voltar para a base. Continuando..."
-              gameLoop updatedGameState
-            else do
-              putStrLn "Oponentes disponíveis:"
-              mapM_ (uncurry printOponnent) (zip [1 ..] oponnents)
-
-              putStrLn "Qual oponente mandar de volta para a base?"
-              oponentIndex <- getMoveChoice (length oponnents)
-              let oponent = oponnents !! oponentIndex
-              let luckyProcessedGameState = processLuckyMove updatedGameState oponent
-              gameLoop $ nextPlayer luckyProcessedGameState
-        else gameLoop $ nextPlayer updatedGameState
+      putStrLn "Você tirou três 6 seguidos! Perde a vez."
+      gameLoop (nextPlayer gameStateWithDice {sixesInRow = 0})
+    else if null availableMoves
+      then do
+        putStrLn "Nenhum movimento disponível! Passando o turno..."
+        gameLoop (nextPlayer gameStateWithDice)
+      else do
+        putStrLn "Escolha um movimento:"
+        mapM_ (uncurry printMove) (zip [1 ..] availableMoves)
+        chosenIndex <- getMoveChoice (length availableMoves)
+        let (from, to) = availableMoves !! chosenIndex
+        putStrLn $ "Você escolheu mover de " ++ show from ++ " para " ++ show to
+        let updatedGameState = processMove gameStateWithDice (from, to)
+        
+        if diceRoll == 6
+          then playerTurn updatedGameState newSixCount
+          else gameLoop (nextPlayer updatedGameState)
 
 botTurn :: GameState -> IO ()
-botTurn gameState = do
+botTurn gameState = botTurnHelper gameState 0
+
+botTurnHelper :: GameState -> Int -> IO ()
+botTurnHelper gameState sixCount = do
   diceRoll <- getDiceRoll
   putStrLn $ "O bot rolou: " ++ show diceRoll ++ "!"
-  let gameStateWithDice = gameState {diceRolled = diceRoll}
-  let gameStateSixHandled = handleSixesInRow gameStateWithDice
-  let availableMoves = getAvailableMoves gameStateSixHandled
+  let newSixCount = if diceRoll == 6 then sixCount + 1 else 0
+  let gameStateWithDice = gameState {diceRolled = diceRoll, sixesInRow = newSixCount}
+  let availableMoves = getAvailableMoves gameStateWithDice
 
-  if null availableMoves
+  if newSixCount >= 3
     then do
-      putStrLn "O bot não pode se mover. Passando o turno..."
-      gameLoop (nextPlayer gameStateSixHandled)
-    else do
-      let bestMove = getBestMove gameStateSixHandled availableMoves
-      let (from, to) = bestMove
-      
-      putStrLn $ "O bot moveu de " ++ show from ++ " para " ++ show to
-      
-      let updatedGameState = processMove gameStateSixHandled bestMove
-      gameLoop (nextPlayer updatedGameState)
+      putStrLn "O bot tirou três 6 seguidos e perdeu a vez."
+      gameLoop (nextPlayer gameStateWithDice {sixesInRow = 0})
+    else if null availableMoves
+      then do
+        putStrLn "O bot não pode se mover. Passando o turno..."
+        gameLoop (nextPlayer gameStateWithDice)
+      else do
+        moveIndex <- randomRIO (0, length availableMoves - 1)
+        let (from, to) = availableMoves !! moveIndex
+        putStrLn $ "O bot moveu de " ++ show from ++ " para " ++ show to
+        let updatedGameState = processMove gameStateWithDice (from, to)
+        
+        if diceRoll == 6
+          then botTurnHelper updatedGameState newSixCount
+          else gameLoop (nextPlayer updatedGameState)
 
 isBotTurn :: GameState -> Bool
 isBotTurn gameState =
