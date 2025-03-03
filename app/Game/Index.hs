@@ -2,8 +2,8 @@ module Game.Index where
 
 import Game.Auxiliary
 import qualified Game.CreateGame as CreateGame (createGameState)
-import qualified Game.FindMoves as FindMoves (getAvailableMoves)
-import qualified Game.ProcessMove as ProcessMove (processMove)
+import qualified Game.FindMoves as FindMoves (findLuckyMoves, getAvailableMoves)
+import qualified Game.ProcessMove as ProcessMove (processLuckyMove, processMove)
 import GameTypes
 
 createGameState :: Int -> Int -> GameState
@@ -11,6 +11,9 @@ createGameState jogadores bots = CreateGame.createGameState jogadores bots
 
 getAvailableMoves :: GameState -> [(Int, Int)]
 getAvailableMoves gameState = FindMoves.getAvailableMoves gameState
+
+getLuckyMoves :: GameState -> [Int]
+getLuckyMoves gameState = FindMoves.findLuckyMoves gameState
 
 handleSixesInRow :: GameState -> GameState
 handleSixesInRow gameState
@@ -43,3 +46,7 @@ getNextPlayer colors current =
 processMove :: GameState -> (Int, Int) -> GameState
 processMove gameState jogada =
   ProcessMove.processMove gameState jogada
+
+processLuckyMove :: GameState -> Int -> GameState
+processLuckyMove gameState jogada =
+  ProcessMove.processLuckyMove gameState jogada

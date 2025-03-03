@@ -114,3 +114,10 @@ movePieceInFinishArea pieces piece startPos endPos = do
       updatedPieces
     else do
       movePieceInBoard pieces piece startPos endPos (pieceColor piece)
+
+processLuckyMove :: GameState -> Int -> GameState
+processLuckyMove gameState pieceToKill = do
+  let piece = head $ filter (\p -> (piecePosition p) == pieceToKill) (pieces gameState)
+  let newPiece = piece {piecePosition = -1, inStartingArea = True, tilesWalked = 0}
+  let updatedPieces = newPiece : (removePieceByColorAndPos (pieces gameState) (pieceColor piece) (piecePosition piece))
+  gameState {pieces = updatedPieces}

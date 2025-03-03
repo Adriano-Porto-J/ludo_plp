@@ -99,7 +99,26 @@ playerTurn gameState = do
       chosenIndex <- getMoveChoice (length availableMoves)
       let (from, to) = availableMoves !! chosenIndex
       putStrLn $ "Você escolheu mover de " ++ show from ++ " para " ++ show to
-      gameLoop (nextPlayer (processMove gameStateSixHandled (from, to)))
+      let updatedGameState = processMove gameStateSixHandled (from, to)
+
+      if to `elem` map (\tile -> tilePosition tile) (filter (\tile -> tileType tile == Lucky) (specialTiles gameStateSixHandled))
+        then do
+          putStrLn "Você caiu em uma casa de sorte! Escolha um oponente para voltar para a base:"
+          let oponnents = getLuckyMoves updatedGameState
+          if length oponnents == 0
+            then do
+              putStrLn "Nenhum oponente disponível para voltar para a base. Continuando..."
+              gameLoop updatedGameState
+            else do
+              putStrLn "Oponentes disponíveis:"
+              mapM_ (uncurry printOponnent) (zip [1 ..] oponnents)
+
+              putStrLn "Qual oponente mandar de volta para a base?"
+              oponentIndex <- getMoveChoice (length oponnents)
+              let oponent = oponnents !! oponentIndex
+              let luckyProcessedGameState = processLuckyMove updatedGameState oponent
+              gameLoop $ nextPlayer luckyProcessedGameState
+        else gameLoop $ nextPlayer updatedGameState
 
 botTurn :: GameState -> IO ()
 botTurn gameState = do
@@ -170,6 +189,9 @@ printPlayer player = do
 
 printMove :: Int -> (Int, Int) -> IO ()
 printMove index (from, to) = putStrLn $ show index ++ ". De " ++ show from ++ " para " ++ show to
+
+printOponnent :: Int -> Int -> IO ()
+printOponnent index oponent = putStrLn $ show index ++ ". Oponente: " ++ show oponent
 
 getValidNumber :: String -> [Int] -> IO Int
 getValidNumber prompt validValues = do

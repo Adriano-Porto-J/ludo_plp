@@ -65,3 +65,13 @@ applySpecialTile specialTiles (start, end) =
     Just Decline -> (start, max 0 (end - 3)) -- Volta 3 casas
     Just Death -> (start, -1) -- Volta para o início
     _ -> (start, end)
+
+findLuckyMoves :: GameState -> [Int]
+findLuckyMoves gameState = do
+  let gamePieces = pieces gameState
+  let currentPlayerColor = currentPlayer gameState
+
+  let availablePieces = filter (\p -> pieceColor p /= currentPlayerColor && not (inStartingArea p || inFinishArea p || finished p)) gamePieces
+  let safeTiles = map (\tile -> tilePosition tile) (filter (\tile -> (tileType tile) == Safe) (specialTiles gameState))
+  let unsafePieces = filter (\p -> not (piecePosition p `elem` safeTiles)) availablePieces
+  map piecePosition unsafePieces
