@@ -174,10 +174,27 @@ drawAllPieces::GameTypes.GameState -> Picture
 drawAllPieces gameState = pictures (map drawPiece (GameTypes.pieces (gameState)))
 
 drawPiece::GameTypes.Piece -> Picture
-drawPiece piece | position == -1 = basePos piece
-                | position >= 0 && position < 5 = translate (((fromIntegral position) - 5) * cellSize) (1 * cellSize) $ color (getPieceColor piece) safeTile
-                | otherwise = Blank
+drawPiece piece = if GameTypes.inFinishArea (piece) == True then (drawPieceFinalArea piece) else (drawPieceRegular piece)
+
+drawPieceRegular::GameTypes.Piece -> Picture
+drawPieceRegular piece | position == -1 = basePos piece
+                       | position >= 1 && position < 6 = translate (((fromIntegral position) - 6) * cellSize) (1 * cellSize) $ pieceSprite piece
+                       | position >= 6 && position < 10 = translate ((-1) * cellSize) (((fromIntegral position) - 5) * cellSize) $ pieceSprite piece
+                       | position >= 10 && position < 13 = translate (((fromIntegral position) - 11) * cellSize) (6 * cellSize) $ pieceSprite piece
+                       | position >= 13 && position < 17 = translate ((-1) * cellSize) (18 - (fromIntegral position) * cellSize) $ pieceSprite piece
+                       | position >= 17 && position < 22 = translate (((fromIntegral position) - 16) * cellSize) (1 * cellSize) $ pieceSprite piece
+                       | position >= 22 && position < 25 = translate (6 * cellSize) ((23 - (fromIntegral position)) * cellSize) $ pieceSprite piece
+                       | position >= 25 && position < 30 = translate ((30 - (fromIntegral position))* cellSize) ((-1) * cellSize) $ pieceSprite piece
+                       | position >= 30 && position < 34 = translate (1 * cellSize) ((29 - (fromIntegral position)) * cellSize) $ pieceSprite piece
+                       | position >= 34 && position < 37 = translate ((35 - (fromIntegral position)) * cellSize) ((-6) * cellSize) $ pieceSprite piece
+                       | position >= 37 && position < 41 = translate ((-1) * cellSize) ((42 - (fromIntegral position)) * cellSize) $ pieceSprite piece
+                       | position >= 41 && position < 46 = translate ((40 - (fromIntegral position)) * cellSize) ((-1) * cellSize) $ pieceSprite piece
+                       | position >= 46 && position <= 48 = translate ((-6) * cellSize) ((47 - (fromIntegral position)) * cellSize) $ pieceSprite piece
+                       | otherwise = Blank
     where position = (GameTypes.piecePosition piece)
+
+drawPieceFinalArea::GameTypes.Piece -> Picture
+drawPieceFinalArea piece = Blank
 
 render :: IO ()
 render = play window background 30 initialGameState drawScreen transformGame (const id)
