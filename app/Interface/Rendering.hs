@@ -135,15 +135,45 @@ drawGrid = color black $ pictures
     [line [(x, -boardSize/2), (x, boardSize/2)] | x <- [-boardSize/2, -boardSize/2 + cellSize .. boardSize/2]]
     <> pictures [line [(-boardSize/2, y), (boardSize/2, y)] | y <- [-boardSize/2, -boardSize/2 + cellSize .. boardSize/2]]
 
+-- Lógica
+
+initialGameState = (createGameState 4 2)
 
 transformGame (EventKey (MouseButton LeftButton) Up _ mousePos) gameState = gameState
 transformGame _ gameState = gameState
 
 drawScreen::GameTypes.GameState -> Picture
-drawScreen gameState = drawBoard
+drawScreen gameState = pictures [drawBoard, drawAllPieces gameState]
+
+drawAllPieces::GameTypes.GameState -> Picture
+drawAllPieces gameState = pictures [
+    --drawPiece GameTypes.Piece {GameTypes.Red,(-1),0,True,False,False}
+    --drawPiece (GameTypes.pieces ((GameTypes.players (initialGameState))!!0))!!0
+    --drawPiece (GameTypes.pieces (GameTypes.players (initialGameState))!!0)!!1,
+    --drawPiece (GameTypes.pieces (GameTypes.players (initialGameState))!!0)!!2,
+    --drawPiece (GameTypes.pieces (GameTypes.players (initialGameState))!!0)!!3,
+
+    --drawPiece (GameTypes.pieces (GameTypes.players (initialGameState))!!1)!!0,
+    --drawPiece (GameTypes.pieces (GameTypes.players (initialGameState))!!1)!!1,
+    --drawPiece (GameTypes.pieces (GameTypes.players (initialGameState))!!1)!!2,
+    --drawPiece (GameTypes.pieces (GameTypes.players (initialGameState))!!1)!!3,
+
+    --drawPiece (GameTypes.pieces (GameTypes.players (initialGameState))!!2)!!0,
+    --drawPiece (GameTypes.pieces (GameTypes.players (initialGameState))!!2)!!1,
+    --drawPiece (GameTypes.pieces (GameTypes.players (initialGameState))!!2)!!2,
+    --drawPiece (GameTypes.pieces (GameTypes.players (initialGameState))!!2)!!3,
+
+    --drawPiece (GameTypes.pieces (GameTypes.players (initialGameState))!!3)!!0,
+    --drawPiece (GameTypes.pieces (GameTypes.players (initialGameState))!!3)!!1,
+    --drawPiece (GameTypes.pieces (GameTypes.players (initialGameState))!!3)!!2,
+    --drawPiece (GameTypes.pieces (GameTypes.players (initialGameState))!!3)!!3
+    ]
+
+drawPiece::GameTypes.Piece -> Picture
+drawPiece _ = Blank
 
 render :: IO ()
-render = play window background 30 (createGameState 4 2) drawScreen transformGame (const id)
+render = play window background 30 initialGameState drawScreen transformGame (const id)
 -- Função principal
 
 --render = display window background drawBoard
