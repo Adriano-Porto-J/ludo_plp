@@ -41,7 +41,7 @@ createPieces color = [Piece {pieceId = 0, pieceColor = color, piecePosition = -1
 
 createSpecialTiles :: [SpecialTile]
 createSpecialTiles =
-  [ SpecialTile Safe 1,
+  [ SpecialTile Safe 0,
     SpecialTile Safe 7,
     SpecialTile Decline 11,
     SpecialTile Safe 12,

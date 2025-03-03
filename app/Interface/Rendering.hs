@@ -45,7 +45,6 @@ drawBaseAreas = pictures
     ]
 
 -- Desenhar caminhos das peças no estilo do tabuleiro original do Ludo
--- Desenhar caminhos das peças no estilo do tabuleiro original do Ludo
 drawPaths :: Picture
 drawPaths = pictures
     [ color white $ rectangleSolid (cellSize * 6) cellSize  -- Caminho horizontal
@@ -88,22 +87,7 @@ drawPaths = pictures
     , translate (-1 * cellSize) (-5 * cellSize) $ color green (rectangleSolid cellSize cellSize)
 
     ]
-{--
-drawSpecialTiles::Picture
-drawSpecialTiles= pictures 
-    [ translate (-5 * cellSize) (1 * cellSize) $ color black safeTile
-    , translate (-3 * cellSize) (-1 * cellSize) $ color black safeTile
-    , translate (-1 * cellSize) (-5 * cellSize) $ color black safeTile
-    , translate (1 * cellSize) (-2 * cellSize) $ color black safeTile
-    , translate (5 * cellSize) (-1 * cellSize) $ color black safeTile
-    , translate (1 * cellSize) (1 * cellSize) $ color black safeTile
-    , translate (1 * cellSize) (5 * cellSize) $ color black safeTile
-    , translate (-1 * cellSize) (6 * cellSize) $ color black boostTile
-    , translate (-1 * cellSize) (-3 * cellSize) $ color black declineTile
-    , translate (-1 * cellSize) (5 * cellSize) $ color black deathTile
-    , translate (4 * cellSize) (-1 * cellSize) $ color black luckyTile
-    ]
---}
+
 drawSpecialTiles::Picture
 drawSpecialTiles = pictures (map drawSpecialTile createSpecialTiles)
 
