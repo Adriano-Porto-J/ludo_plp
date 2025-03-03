@@ -88,7 +88,7 @@ drawPaths = pictures
     , translate (-1 * cellSize) (-5 * cellSize) $ color green (rectangleSolid cellSize cellSize)
 
     ]
-
+{--
 drawSpecialTiles::Picture
 drawSpecialTiles= pictures 
     [ translate (-5 * cellSize) (1 * cellSize) $ color black safeTile
@@ -103,7 +103,20 @@ drawSpecialTiles= pictures
     , translate (-1 * cellSize) (5 * cellSize) $ color black deathTile
     , translate (4 * cellSize) (-1 * cellSize) $ color black luckyTile
     ]
+--}
+drawSpecialTiles::Picture
+drawSpecialTiles = pictures (map drawSpecialTile createSpecialTiles)
 
+getSpecialTileSprite::GameTypes.SpecialTile->Picture
+getSpecialTileSprite special | GameTypes.tileType (special) == GameTypes.Safe = safeTile
+                             | GameTypes.tileType (special) == GameTypes.Boost = boostTile
+                             | GameTypes.tileType (special) == GameTypes.Decline = declineTile
+                             | GameTypes.tileType (special) == GameTypes.Death = deathTile
+                             | GameTypes.tileType (special) == GameTypes.Lucky = luckyTile
+                             | otherwise = Blank
+
+drawSpecialTile::GameTypes.SpecialTile->Picture
+drawSpecialTile special = drawOnRegular (getSpecialTileSprite special) (fromIntegral(GameTypes.tilePosition special))
 
 boostTile::Picture
 boostTile = pictures [ rotate 0.0 $ rectangleSolid side 7.0
@@ -177,32 +190,36 @@ drawAllPieces::GameTypes.GameState -> Picture
 drawAllPieces gameState = pictures (map drawPiece (GameTypes.pieces (gameState)))
 
 drawPiece::GameTypes.Piece -> Picture
-drawPiece piece = if GameTypes.inFinishArea (piece) == True then (drawPieceFinalArea piece) else (drawPieceRegular piece)
+drawPiece piece | position == -1 = basePos piece 
+                | otherwise = if GameTypes.inFinishArea (piece) == True then 
+                    (drawOnFinalArea sprite position) 
+                else 
+                    (drawOnRegular sprite position)
+    where position = (fromIntegral(GameTypes.piecePosition piece))
+          sprite = pieceSprite piece
 
-drawPieceRegular::GameTypes.Piece -> Picture
-drawPieceRegular piece | position == -1 = basePos piece
-                       | position >= 0 && position < 5 = translate ((position - 5) * cellSize) (1 * cellSize) $ pieceSprite piece
-                       | position >= 5 && position < 9 = translate ((-1) * cellSize) ((position - 3) * cellSize) $ pieceSprite piece
-                       | position >= 9 && position < 12 = translate ((position - 10) * cellSize) (6 * cellSize) $ pieceSprite piece
-                       | position >= 12 && position < 16 = translate (1 * cellSize) ((17 - position) * cellSize) $ pieceSprite piece
-                       | position >= 16 && position < 21 = translate ((position - 15) * cellSize) (1 * cellSize) $ pieceSprite piece
-                       | position >= 21 && position < 24 = translate (6 * cellSize) ((22 - position) * cellSize) $ pieceSprite piece
-                       | position >= 24 && position < 29 = translate ((29 - position)* cellSize) ((-1) * cellSize) $ pieceSprite piece
-                       | position >= 29 && position < 33 = translate (1 * cellSize) ((27 - position) * cellSize) $ pieceSprite piece
-                       | position >= 33 && position < 36 = translate ((34 - position) * cellSize) ((-6) * cellSize) $ pieceSprite piece
-                       | position >= 36 && position < 40 = translate ((-1) * cellSize) ((position - 41) * cellSize) $ pieceSprite piece
-                       | position >= 40 && position < 45 = translate ((39 - position) * cellSize) ((-1) * cellSize) $ pieceSprite piece
-                       | position >= 45 && position <= 47 = translate ((-6) * cellSize) ((position - 46) * cellSize) $ pieceSprite piece
-                       | otherwise = drawPieceFinalArea piece
-    where position = fromIntegral (GameTypes.piecePosition piece)
+drawOnRegular::Picture -> Float -> Picture
+drawOnRegular sprite position
+                       | position >= 0 && position < 5 = translate ((position - 5) * cellSize) (1 * cellSize) $ sprite
+                       | position >= 5 && position < 9 = translate ((-1) * cellSize) ((position - 3) * cellSize) $ sprite
+                       | position >= 9 && position < 12 = translate ((position - 10) * cellSize) (6 * cellSize) $ sprite
+                       | position >= 12 && position < 16 = translate (1 * cellSize) ((17 - position) * cellSize) $ sprite
+                       | position >= 16 && position < 21 = translate ((position - 15) * cellSize) (1 * cellSize) $ sprite
+                       | position >= 21 && position < 24 = translate (6 * cellSize) ((22 - position) * cellSize) $ sprite
+                       | position >= 24 && position < 29 = translate ((29 - position)* cellSize) ((-1) * cellSize) $ sprite
+                       | position >= 29 && position < 33 = translate (1 * cellSize) ((27 - position) * cellSize) $ sprite
+                       | position >= 33 && position < 36 = translate ((34 - position) * cellSize) ((-6) * cellSize) $ sprite
+                       | position >= 36 && position < 40 = translate ((-1) * cellSize) ((position - 41) * cellSize) $ sprite
+                       | position >= 40 && position < 45 = translate ((39 - position) * cellSize) ((-1) * cellSize) $ sprite
+                       | position >= 45 && position <= 47 = translate ((-6) * cellSize) ((position - 46) * cellSize) $ sprite
+                       | otherwise = drawOnFinalArea sprite position
 
-drawPieceFinalArea::GameTypes.Piece -> Picture
-drawPieceFinalArea piece | position >= 48 && position < 53 = translate ((position - 53) * cellSize) (0 * cellSize) $ pieceSprite piece
-                         | position >= 54 && position < 59 = translate (0 * cellSize) ((59 - position) * cellSize) $ pieceSprite piece
-                         | position >= 60 && position < 65 = translate ((65 - position) * cellSize) (0 * cellSize) $ pieceSprite piece
-                         | position >= 66 && position < 71 = translate (0 * cellSize) ((position - 71) * cellSize) $ pieceSprite piece
+drawOnFinalArea::Picture -> Float -> Picture
+drawOnFinalArea sprite position| position >= 48 && position < 53 = translate ((position - 53) * cellSize) (0 * cellSize) $ sprite
+                         | position >= 54 && position < 59 = translate (0 * cellSize) ((59 - position) * cellSize) $ sprite
+                         | position >= 60 && position < 65 = translate ((65 - position) * cellSize) (0 * cellSize) $ sprite
+                         | position >= 66 && position < 71 = translate (0 * cellSize) ((position - 71) * cellSize) $ sprite
                          | otherwise = Blank
-    where position = fromIntegral (GameTypes.piecePosition piece)
 
 walkOne::GameTypes.Piece->GameTypes.Piece
 walkOne piece = GameTypes.Piece { 
