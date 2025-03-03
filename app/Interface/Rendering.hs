@@ -1,6 +1,8 @@
 module Interface.Rendering where
 
 import Graphics.Gloss
+import Graphics.Gloss.Interface.Pure.Game
+import qualified GameTypes
 
 -- Tamanho do tabuleiro e das áreas
 boardSize :: Float
@@ -131,9 +133,53 @@ drawGrid :: Picture
 drawGrid = color black $ pictures 
     [line [(x, -boardSize/2), (x, boardSize/2)] | x <- [-boardSize/2, -boardSize/2 + cellSize .. boardSize/2]]
     <> pictures [line [(-boardSize/2, y), (boardSize/2, y)] | y <- [-boardSize/2, -boardSize/2 + cellSize .. boardSize/2]]
--- Função principal
+
+
+transformGame (EventKey (MouseButton LeftButton) Up _ mousePos) gameState = gameState
+transformGame _ gameState = gameState
+
+drawScreen::GameTypes.GameState -> Picture
+drawScreen gameState = drawBoard
+
+playerRed = GameTypes.Player {
+    GameTypes.playerColor = GameTypes.Red,
+    GameTypes.isBot = False,
+    GameTypes.startingPos = 1
+}
+
+playerGreen = GameTypes.Player {
+    GameTypes.playerColor = GameTypes.Green,
+    GameTypes.isBot = False,
+    GameTypes.startingPos = 13
+}
+
+playerBlue = GameTypes.Player {
+    GameTypes.playerColor = GameTypes.Blue,
+    GameTypes.isBot = False,
+    GameTypes.startingPos = 25
+}
+
+playerYellow = GameTypes.Player {
+    GameTypes.playerColor = GameTypes.Yellow,
+    GameTypes.isBot = False,
+    GameTypes.startingPos = 32
+}
+
+initialState = GameTypes.GameState {
+    GameTypes.players = [playerRed, playerGreen, playerBlue, playerYellow],
+    GameTypes.specialTiles = [],
+    GameTypes.pieces = [],
+    GameTypes.blockades = [],
+    GameTypes.currentPlayer = GameTypes.playerColor playerRed,
+    GameTypes.diceRolled = 1,
+    GameTypes.end = False,
+    GameTypes.sixesInRow = 0
+}
 render :: IO ()
-render = display window background drawBoard
+render = play window background 30 initialState drawScreen transformGame (const id)
+-- Função principal
+
+--render = display window background drawBoard
 
 --Para um ambiente interativo, devemos utilizar a função play ao invés de render
 --Mais sobre em: https://hackage.haskell.org/package/gloss-1.13.2.2/docs/Graphics-Gloss.html#v:play
