@@ -181,18 +181,18 @@ drawPiece piece = if GameTypes.inFinishArea (piece) == True then (drawPieceFinal
 
 drawPieceRegular::GameTypes.Piece -> Picture
 drawPieceRegular piece | position == -1 = basePos piece
-                       | position >= 1 && position < 6 = translate ((position - 6) * cellSize) (1 * cellSize) $ pieceSprite piece
-                       | position >= 6 && position < 10 = translate ((-1) * cellSize) ((position - 4) * cellSize) $ pieceSprite piece
-                       | position >= 10 && position < 13 = translate ((position - 11) * cellSize) (6 * cellSize) $ pieceSprite piece
-                       | position >= 13 && position < 17 = translate (1 * cellSize) ((18 - position) * cellSize) $ pieceSprite piece
-                       | position >= 17 && position < 22 = translate ((position - 16) * cellSize) (1 * cellSize) $ pieceSprite piece
-                       | position >= 22 && position < 25 = translate (6 * cellSize) ((23 - position) * cellSize) $ pieceSprite piece
-                       | position >= 25 && position < 30 = translate ((30 - position)* cellSize) ((-1) * cellSize) $ pieceSprite piece
-                       | position >= 30 && position < 34 = translate (1 * cellSize) ((28 - position) * cellSize) $ pieceSprite piece
-                       | position >= 34 && position < 37 = translate ((35 - position) * cellSize) ((-6) * cellSize) $ pieceSprite piece
-                       | position >= 37 && position < 41 = translate ((-1) * cellSize) ((position - 42) * cellSize) $ pieceSprite piece
-                       | position >= 41 && position < 46 = translate ((40 - position) * cellSize) ((-1) * cellSize) $ pieceSprite piece
-                       | position >= 46 && position <= 48 = translate ((-6) * cellSize) ((position - 47) * cellSize) $ pieceSprite piece
+                       | position >= 0 && position < 5 = translate ((position - 5) * cellSize) (1 * cellSize) $ pieceSprite piece
+                       | position >= 5 && position < 9 = translate ((-1) * cellSize) ((position - 3) * cellSize) $ pieceSprite piece
+                       | position >= 9 && position < 12 = translate ((position - 10) * cellSize) (6 * cellSize) $ pieceSprite piece
+                       | position >= 12 && position < 16 = translate (1 * cellSize) ((17 - position) * cellSize) $ pieceSprite piece
+                       | position >= 16 && position < 21 = translate ((position - 15) * cellSize) (1 * cellSize) $ pieceSprite piece
+                       | position >= 21 && position < 24 = translate (6 * cellSize) ((22 - position) * cellSize) $ pieceSprite piece
+                       | position >= 24 && position < 29 = translate ((29 - position)* cellSize) ((-1) * cellSize) $ pieceSprite piece
+                       | position >= 29 && position < 33 = translate (1 * cellSize) ((27 - position) * cellSize) $ pieceSprite piece
+                       | position >= 33 && position < 36 = translate ((34 - position) * cellSize) ((-6) * cellSize) $ pieceSprite piece
+                       | position >= 36 && position < 40 = translate ((-1) * cellSize) ((position - 41) * cellSize) $ pieceSprite piece
+                       | position >= 40 && position < 45 = translate ((39 - position) * cellSize) ((-1) * cellSize) $ pieceSprite piece
+                       | position >= 45 && position <= 47 = translate ((-6) * cellSize) ((position - 46) * cellSize) $ pieceSprite piece
                        | otherwise = Blank
     where position = fromIntegral (GameTypes.piecePosition piece)
 
@@ -203,7 +203,7 @@ walkOne::GameTypes.Piece->GameTypes.Piece
 walkOne piece = GameTypes.Piece { 
     GameTypes.pieceId = GameTypes.pieceId piece, 
     GameTypes.pieceColor = GameTypes.pieceColor piece, 
-    GameTypes.piecePosition = ((GameTypes.piecePosition piece) + 1) `mod` 49,
+    GameTypes.piecePosition = ((GameTypes.piecePosition piece) + 1) `mod` 48,
     GameTypes.tilesWalked = GameTypes.tilesWalked piece, 
     GameTypes.inStartingArea = GameTypes.inStartingArea piece,
     GameTypes.inFinishArea = GameTypes.inFinishArea piece,

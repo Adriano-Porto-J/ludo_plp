@@ -19,9 +19,10 @@ getPieceWithMostTilesWalked pieces =
 
 startingPosByColor :: Color -> Int
 startingPosByColor Red = 0
-startingPosByColor Green = 13
-startingPosByColor Blue = 26
-startingPosByColor Yellow = 39
+startingPosByColor Yellow = 12
+startingPosByColor Blue = 24
+startingPosByColor Green = 36
+
 
 getFinishAreaStart :: Color -> Int
 getFinishAreaStart Red = 52
