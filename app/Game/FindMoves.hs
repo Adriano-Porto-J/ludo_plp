@@ -40,7 +40,7 @@ getMovesInFinishArea pieces blockades diceRoll = do
 getMovesOnBoard :: [Piece] -> Int -> [SpecialTile] -> [(Color, Int)] -> [(Int, Int)]
 getMovesOnBoard pieces diceRoll specialTiles blockades = do
   let piecePositions =
-        map (\piece -> (piecePosition piece, (piecePosition piece + diceRoll) `mod` 52)) pieces
+        map (\piece -> (piecePosition piece, (piecePosition piece + diceRoll) `mod` 48)) pieces
 
   let movesWithoutBlockades = filter (not . isBlocked blockades) piecePositions
   let movesWithTilesApplied = map (applySpecialTile specialTiles) movesWithoutBlockades
@@ -50,8 +50,8 @@ getMovesOnBoard pieces diceRoll specialTiles blockades = do
 handleMovesToFinishArea :: (Int, Int) -> Int -> [Piece] -> (Int, Int)
 handleMovesToFinishArea (start, end) dice pieces = do
   let piece = head $ filter (\p -> piecePosition p == start) pieces
-  if (tilesWalked piece + dice) > 52
-    then (start, getFinishAreaStart (pieceColor piece) + (tilesWalked piece + dice - 1) - 52)
+  if (tilesWalked piece + dice) > 48
+    then (start, getFinishAreaStart (pieceColor piece) + (tilesWalked piece + dice - 1) - 48)
     else (start, end)
 
 isBlocked :: [(Color, Int)] -> (Int, Int) -> Bool
@@ -61,7 +61,7 @@ isBlocked blockades (startPos, endPos) =
 applySpecialTile :: [SpecialTile] -> (Int, Int) -> (Int, Int)
 applySpecialTile specialTiles (start, end) =
   case lookup end (map (\t -> (tilePosition t, tileType t)) specialTiles) of
-    Just Boost -> (start, (end + 3) `mod` 52) -- Pula 3 casas
+    Just Boost -> (start, (end + 3) `mod` 48) -- Pula 3 casas
     Just Decline -> (start, max 0 (end - 3)) -- Volta 3 casas
     Just Death -> (start, -1) -- Volta para o início
     _ -> (start, end)

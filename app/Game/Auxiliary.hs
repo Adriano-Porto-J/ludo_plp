@@ -25,13 +25,13 @@ startingPosByColor Green = 36
 
 
 getFinishAreaStart :: Color -> Int
-getFinishAreaStart Red = 52
-getFinishAreaStart Blue = 58
-getFinishAreaStart Green = 64
-getFinishAreaStart Yellow = 70
+getFinishAreaStart Red = 48
+getFinishAreaStart Blue = 54
+getFinishAreaStart Green = 60
+getFinishAreaStart Yellow = 66
 
 getFinishAreaEnd :: Color -> Int
-getFinishAreaEnd Red = 57
-getFinishAreaEnd Blue = 63
-getFinishAreaEnd Green = 69
-getFinishAreaEnd Yellow = 75
+getFinishAreaEnd Red = 53
+getFinishAreaEnd Blue = 59
+getFinishAreaEnd Green = 65
+getFinishAreaEnd Yellow = 71
