@@ -1,15 +1,16 @@
 {-# LANGUAGE BlockArguments #-}
+
 module Interface.InterfaceDebug where
 
+import Data.Aeson (decode, encode)
+import qualified Data.ByteString.Lazy as B
+import GHC.Generics (Generic)
 import Game.Index
 import GameTypes
 import qualified System.Console.ANSI as ANSI
+import System.Directory (doesFileExist)
 import System.Random (randomRIO)
 import Text.Read (readMaybe)
-import Data.Aeson (encode, decode)
-import GHC.Generics (Generic)
-import qualified Data.ByteString.Lazy as B
-import System.Directory (doesFileExist)
 
 initGameTerminal :: IO ()
 initGameTerminal = do
@@ -28,15 +29,13 @@ initGameTerminal = do
           startNewGame
     _ -> startNewGame
 
---getDiceRoll :: IO Int
---getDiceRoll = randomRIO (1, 6)
+-- getDiceRoll :: IO Int
+-- getDiceRoll = randomRIO (1, 6)
 getDiceRoll :: IO Int
 getDiceRoll = do
   putStrLn "Digite o valor do dado (1 a 6):"
   input <- getLine
   return (read input)
-
-
 
 gameLoop :: GameState -> IO ()
 gameLoop gameState = do
@@ -62,8 +61,8 @@ gameLoop gameState = do
 
 startNewGame :: IO ()
 startNewGame = do
-  jogadoresInt <- getValidNumber "Quantos Jogadores? (2 ou 4)" [2, 4]
-  botsInt <- getValidNumber "Quantos Bots? (1, 2 ou 3)" [1, 2, 3]
+  jogadoresInt <- getValidNumber "Quantos Jogadores? (2 ou 4)" [1, 2, 4]
+  botsInt <- getValidNumber "Quantos Bots? (1, 2 ou 3)" [0, 1, 2, 3]
   let game = createGameState jogadoresInt botsInt
   putStrLn "\nO jogo começou! Boa sorte!"
   gameLoop game
@@ -89,7 +88,7 @@ playerTurn gameState = do
   let gameStateWithDice = gameState {diceRolled = diceRoll}
   let gameStateSixHandled = handleSixesInRow gameStateWithDice
   let availableMoves = getAvailableMoves gameStateSixHandled
-  
+
   if null availableMoves
     then do
       putStrLn "Nenhum movimento disponível! Passando o turno..."
@@ -109,7 +108,7 @@ botTurn gameState = do
   let gameStateWithDice = gameState {diceRolled = diceRoll}
   let gameStateSixHandled = handleSixesInRow gameStateWithDice
   let availableMoves = getAvailableMoves gameStateSixHandled
-  
+
   if null availableMoves
     then do
       putStrLn "O bot não pode se mover. Passando o turno..."
@@ -123,7 +122,7 @@ botTurn gameState = do
 isBotTurn :: GameState -> Bool
 isBotTurn gameState =
   let current = currentPlayer gameState
-  in any ((== current) . playerColor) (filter isBot (players gameState))
+   in any ((== current) . playerColor) (filter isBot (players gameState))
 
 getMoveChoice :: Int -> IO Int
 getMoveChoice numChoices = do

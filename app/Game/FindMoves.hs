@@ -1,7 +1,6 @@
 module Game.FindMoves where
 
 import Game.Auxiliary
-import Game.Auxiliary (startingPosByColor)
 import GameTypes
 
 getAvailableMoves :: GameState -> [(Int, Int)]
@@ -9,7 +8,7 @@ getAvailableMoves gameState = do
   let diceRoll = diceRolled gameState
   let playerPieces = getPlayerPieces gameState
   let piecesInStartingArea = filter inStartingArea playerPieces
-  let piecesOnBoard = filter (\p -> not (inStartingArea p || finished p)) playerPieces
+  let piecesOnBoard = filter (\p -> not (inStartingArea p || finished p || inFinishArea p)) playerPieces
   let specialTilesInGame = specialTiles gameState
   let gameBlockades = blockades gameState
 
@@ -21,15 +20,24 @@ getAvailableMoves gameState = do
 
   -- Movimentos no tabuleiro
   let movesOnBoard = getMovesOnBoard piecesOnBoard diceRoll specialTilesInGame gameBlockades
-
   movesFromStart ++ movesOnBoard
 
 getMovesOnBoard :: [Piece] -> Int -> [SpecialTile] -> [(Color, Int)] -> [(Int, Int)]
 getMovesOnBoard pieces diceRoll specialTiles blockades = do
   let piecePositions =
-        map (\piece -> (piecePosition piece, (piecePosition piece + diceRoll) `mod` 52)) pieces
+        map (\piece -> (piecePosition piece, (piecePosition piece + diceRoll) `mod` 51)) pieces
+
   let movesWithoutBlockades = filter (not . isBlocked blockades) piecePositions
-  map (applySpecialTile specialTiles) movesWithoutBlockades
+  let movesWithTilesApplied = map (applySpecialTile specialTiles) movesWithoutBlockades
+
+  map (\(start, end) -> handleMovesToFinishArea (start, end) diceRoll pieces) movesWithTilesApplied
+
+handleMovesToFinishArea :: (Int, Int) -> Int -> [Piece] -> (Int, Int)
+handleMovesToFinishArea (start, end) dice pieces = do
+  let piece = head $ filter (\p -> piecePosition p == start) pieces
+  if (tilesWalked piece + dice) > 52
+    then (start, getFinishAreaStart (pieceColor piece) + (tilesWalked piece + dice - 1) - 52)
+    else (start, end)
 
 isBlocked :: [(Color, Int)] -> (Int, Int) -> Bool
 isBlocked blockades (startPos, endPos) =
