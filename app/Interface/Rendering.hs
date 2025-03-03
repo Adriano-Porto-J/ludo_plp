@@ -198,9 +198,9 @@ drawPieceRegular piece | position == -1 = basePos piece
 
 drawPieceFinalArea::GameTypes.Piece -> Picture
 drawPieceFinalArea piece | position >= 48 && position < 53 = translate ((position - 53) * cellSize) (0 * cellSize) $ pieceSprite piece
-                         | position >= 53 && position < 58 = translate (0 * cellSize) ((58 - position) * cellSize) $ pieceSprite piece
-                         | position >= 58 && position < 63 = translate ((63 - position) * cellSize) (0 * cellSize) $ pieceSprite piece
-                         | position >= 63 && position <= 67 = translate (0 * cellSize) ((position - 68) * cellSize) $ pieceSprite piece
+                         | position >= 54 && position < 59 = translate (0 * cellSize) ((59 - position) * cellSize) $ pieceSprite piece
+                         | position >= 60 && position < 65 = translate ((65 - position) * cellSize) (0 * cellSize) $ pieceSprite piece
+                         | position >= 66 && position < 71 = translate (0 * cellSize) ((position - 71) * cellSize) $ pieceSprite piece
                          | otherwise = Blank
     where position = fromIntegral (GameTypes.piecePosition piece)
 
