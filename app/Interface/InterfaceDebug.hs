@@ -10,6 +10,7 @@ import GameTypes
 import qualified System.Console.ANSI as ANSI
 import System.Directory (doesFileExist)
 import System.Random (randomRIO)
+import Game.BotLogic (getBestMove)
 import Text.Read (readMaybe)
 
 initGameTerminal :: IO ()
@@ -133,10 +134,13 @@ botTurn gameState = do
       putStrLn "O bot não pode se mover. Passando o turno..."
       gameLoop (nextPlayer gameStateSixHandled)
     else do
-      moveIndex <- randomRIO (0, length availableMoves - 1)
-      let (from, to) = availableMoves !! moveIndex
+      let bestMove = getBestMove gameStateSixHandled availableMoves
+      let (from, to) = bestMove
+      
       putStrLn $ "O bot moveu de " ++ show from ++ " para " ++ show to
-      gameLoop (nextPlayer (processMove gameStateSixHandled (from, to)))
+      
+      let updatedGameState = processMove gameStateSixHandled bestMove
+      gameLoop (nextPlayer updatedGameState)
 
 isBotTurn :: GameState -> Bool
 isBotTurn gameState =
