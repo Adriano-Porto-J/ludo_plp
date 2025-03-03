@@ -142,19 +142,42 @@ initialGameState = (createGameState 4 2)
 transformGame (EventKey (MouseButton LeftButton) Up _ mousePos) gameState = gameState
 transformGame _ gameState = gameState
 
+pieceSprite::GameTypes.Piece -> Picture
+pieceSprite piece = pictures [color black (rectangleSolid (side+5) (side+5)), color cor (rectangleSolid (side-1) (side-1))]
+    where cor = getPieceColor piece
+          side = min cellSize cellSize * 0.75
+
+getPieceColor::GameTypes.Piece -> Color
+getPieceColor piece | pieceColor == GameTypes.Red = red
+               | pieceColor == GameTypes.Blue = blue
+               | pieceColor == GameTypes.Yellow = yellow
+               | otherwise = green
+    where pieceColor = GameTypes.pieceColor (piece)
+
+baseQuadByColor::GameTypes.Piece -> (Int,Int)
+baseQuadByColor piece | pieceColor == GameTypes.Red = (-5,5)
+                     | pieceColor == GameTypes.Blue = (4,-4)
+                     | pieceColor == GameTypes.Yellow = (4,5)
+                     | otherwise = (-5,-4)
+    where pieceColor = GameTypes.pieceColor (piece)
+
+basePos::GameTypes.Piece -> Picture
+basePos piece | otherwise = translate (x * cellSize) (y * cellSize) $ (pieceSprite piece)
+    where quad = baseQuadByColor piece
+          x = fromIntegral (fst quad)
+          y = fromIntegral (snd quad)
+
 drawScreen::GameTypes.GameState -> Picture
 drawScreen gameState = pictures [drawBoard, drawAllPieces gameState]
 
 drawAllPieces::GameTypes.GameState -> Picture
-drawAllPieces gameState = pictures [
-    drawPiece ((GameTypes.pieces (initialGameState))!!0),
-    drawPiece ((GameTypes.pieces (initialGameState))!!1),
-    drawPiece ((GameTypes.pieces (initialGameState))!!2),
-    drawPiece ((GameTypes.pieces (initialGameState))!!3)
-    ]
+drawAllPieces gameState = pictures (map drawPiece (GameTypes.pieces (gameState)))
 
 drawPiece::GameTypes.Piece -> Picture
-drawPiece pawn = Blank
+drawPiece piece | position == -1 = basePos piece
+                | position >= 0 && position < 5 = translate (((fromIntegral position) - 5) * cellSize) (1 * cellSize) $ color (getPieceColor piece) safeTile
+                | otherwise = Blank
+    where position = (GameTypes.piecePosition piece)
 
 render :: IO ()
 render = play window background 30 initialGameState drawScreen transformGame (const id)
