@@ -193,20 +193,25 @@ drawPieceRegular piece | position == -1 = basePos piece
                        | position >= 36 && position < 40 = translate ((-1) * cellSize) ((position - 41) * cellSize) $ pieceSprite piece
                        | position >= 40 && position < 45 = translate ((39 - position) * cellSize) ((-1) * cellSize) $ pieceSprite piece
                        | position >= 45 && position <= 47 = translate ((-6) * cellSize) ((position - 46) * cellSize) $ pieceSprite piece
-                       | otherwise = Blank
+                       | otherwise = drawPieceFinalArea piece
     where position = fromIntegral (GameTypes.piecePosition piece)
 
 drawPieceFinalArea::GameTypes.Piece -> Picture
-drawPieceFinalArea piece = Blank
+drawPieceFinalArea piece | position >= 48 && position < 53 = translate ((position - 53) * cellSize) (0 * cellSize) $ pieceSprite piece
+                         | position >= 53 && position < 58 = translate (0 * cellSize) ((58 - position) * cellSize) $ pieceSprite piece
+                         | position >= 58 && position < 63 = translate ((63 - position) * cellSize) (0 * cellSize) $ pieceSprite piece
+                         | position >= 63 && position <= 67 = translate (0 * cellSize) ((position - 68) * cellSize) $ pieceSprite piece
+                         | otherwise = Blank
+    where position = fromIntegral (GameTypes.piecePosition piece)
 
 walkOne::GameTypes.Piece->GameTypes.Piece
 walkOne piece = GameTypes.Piece { 
     GameTypes.pieceId = GameTypes.pieceId piece, 
     GameTypes.pieceColor = GameTypes.pieceColor piece, 
-    GameTypes.piecePosition = ((GameTypes.piecePosition piece) + 1) `mod` 48,
+    GameTypes.piecePosition = ((GameTypes.piecePosition piece) + 1),
     GameTypes.tilesWalked = GameTypes.tilesWalked piece, 
     GameTypes.inStartingArea = GameTypes.inStartingArea piece,
-    GameTypes.inFinishArea = GameTypes.inFinishArea piece,
+    GameTypes.inFinishArea = False,
     GameTypes.finished = GameTypes.finished piece
   }
 
