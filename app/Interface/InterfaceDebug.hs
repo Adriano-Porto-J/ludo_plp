@@ -86,40 +86,56 @@ playerTurn :: GameState -> IO ()
 playerTurn gameState = do
   diceRoll <- getDiceRoll
   putStrLn $ "\nVocê rolou: " ++ show diceRoll ++ "!"
-  let gameStateWithDice = gameState {diceRolled = diceRoll}
-  let gameStateSixHandled = handleSixesInRow gameStateWithDice
-  let availableMoves = getAvailableMoves gameStateSixHandled
 
-  if null availableMoves
+  -- Atualizar o número de 6 seguidos corretamente
+  let newSixesInRow = if diceRoll == 6 then sixesInRow gameState + 1 else 0
+  let gameStateWithDice = gameState { diceRolled = diceRoll, sixesInRow = newSixesInRow }
+
+  -- Verificar se tirou 3 seis seguidos
+  if newSixesInRow >= 3
     then do
-      putStrLn "Nenhum movimento disponível! Passando o turno..."
-      gameLoop (nextPlayer gameStateSixHandled)
+      putStrLn "Você tirou três 6 seguidos! Perde a vez."
+      gameLoop (nextPlayer gameStateWithDice {sixesInRow = 0})  -- Resetando `sixesInRow`
     else do
-      putStrLn "Escolha um movimento:"
-      mapM_ (uncurry printMove) (zip [1 ..] availableMoves)
-      chosenIndex <- getMoveChoice (length availableMoves)
-      let (from, to) = availableMoves !! chosenIndex
-      putStrLn $ "Você escolheu mover de " ++ show from ++ " para " ++ show to
-      let updatedGameState = processMove gameStateSixHandled (from, to)
-
-      if to `elem` map (\tile -> tilePosition tile) (filter (\tile -> tileType tile == Lucky) (specialTiles gameStateSixHandled))
+      let availableMoves = getAvailableMoves gameStateWithDice
+      if null availableMoves
         then do
-          putStrLn "Você caiu em uma casa de sorte! Escolha um oponente para voltar para a base:"
-          let oponnents = getLuckyMoves updatedGameState
-          if length oponnents == 0
-            then do
-              putStrLn "Nenhum oponente disponível para voltar para a base. Continuando..."
-              gameLoop updatedGameState
-            else do
-              putStrLn "Oponentes disponíveis:"
-              mapM_ (uncurry printOponnent) (zip [1 ..] oponnents)
+          putStrLn "Nenhum movimento disponível! Passando o turno..."
+          gameLoop (nextPlayer gameStateWithDice)
+        else do
+          putStrLn "Escolha um movimento:"
+          mapM_ (uncurry printMove) (zip [1 ..] availableMoves)
+          chosenIndex <- getMoveChoice (length availableMoves)
+          let (from, to) = availableMoves !! chosenIndex
+          putStrLn $ "Você escolheu mover de " ++ show from ++ " para " ++ show to
+          let updatedGameState = processMove gameStateWithDice (from, to)
 
-              putStrLn "Qual oponente mandar de volta para a base?"
-              oponentIndex <- getMoveChoice (length oponnents)
-              let oponent = oponnents !! oponentIndex
-              let luckyProcessedGameState = processLuckyMove updatedGameState oponent
-              gameLoop $ nextPlayer luckyProcessedGameState
-        else gameLoop $ nextPlayer updatedGameState
+          -- Verificar se caiu na casa de sorte
+          if to `elem` map tilePosition (filter ((== Lucky) . tileType) (specialTiles gameStateWithDice))
+            then do
+              putStrLn "Você caiu em uma casa de sorte! Escolha um oponente para voltar para a base:"
+              let oponnents = getLuckyMoves updatedGameState
+              if null oponnents
+                then do
+                  putStrLn "Nenhum oponente disponível para voltar para a base. Continuando..."
+                  if diceRoll == 6 
+                    then playerTurn updatedGameState  -- Continua jogando se tirou 6
+                    else gameLoop (nextPlayer updatedGameState)
+                else do
+                  putStrLn "Oponentes disponíveis:"
+                  mapM_ (uncurry printOponnent) (zip [1 ..] oponnents)
+
+                  putStrLn "Qual oponente mandar de volta para a base?"
+                  oponentIndex <- getMoveChoice (length oponnents)
+                  let oponent = oponnents !! oponentIndex
+                  let luckyProcessedGameState = processLuckyMove updatedGameState oponent
+                  if diceRoll == 6
+                    then playerTurn luckyProcessedGameState  -- Continua jogando se tirou 6
+                    else gameLoop (nextPlayer luckyProcessedGameState)
+            else if diceRoll == 6
+              then playerTurn updatedGameState 
+              else gameLoop (nextPlayer updatedGameState)
+
 
 botTurn :: GameState -> IO ()
 botTurn gameState = do
@@ -127,20 +143,41 @@ botTurn gameState = do
   putStrLn $ "O bot rolou: " ++ show diceRoll ++ "!"
   let gameStateWithDice = gameState {diceRolled = diceRoll}
   let gameStateSixHandled = handleSixesInRow gameStateWithDice
-  let availableMoves = getAvailableMoves gameStateSixHandled
-
-  if null availableMoves
+  
+  if sixesInRow gameStateWithDice >= 2 && diceRoll == 6
     then do
-      putStrLn "O bot não pode se mover. Passando o turno..."
-      gameLoop (nextPlayer gameStateSixHandled)
+      putStrLn "O bot tirou três 6 seguidos e perdeu a vez."
+      gameLoop (nextPlayer gameStateSixHandled {sixesInRow = 0})
     else do
-      let bestMove = getBestMove gameStateSixHandled availableMoves
-      let (from, to) = bestMove
+      let availableMoves = getAvailableMoves gameStateSixHandled
+
+      if null availableMoves
+        then do
+          putStrLn "O bot não pode se mover. Passando o turno..."
+          gameLoop (nextPlayer gameStateSixHandled)
+        else do
+          let bestMove = getBestMove gameStateSixHandled availableMoves
+          let (from, to) = bestMove
       
-      putStrLn $ "O bot moveu de " ++ show from ++ " para " ++ show to
+          putStrLn $ "O bot moveu de " ++ show from ++ " para " ++ show to
       
-      let updatedGameState = processMove gameStateSixHandled bestMove
-      gameLoop (nextPlayer updatedGameState)
+          let updatedGameState = processMove gameStateSixHandled bestMove
+          if to `elem` map tilePosition (filter ((== Lucky) . tileType) (specialTiles gameStateSixHandled))
+            then do
+              putStrLn "O bot caiu em uma casa de sorte e escolheu um oponente para voltar para a base."
+              let oponnents = getLuckyMoves updatedGameState
+              if null oponnents
+                then gameLoop updatedGameState
+                else do
+                  let oponent = head oponnents
+                  let luckyProcessedGameState = processLuckyMove updatedGameState oponent
+                 
+                  if diceRoll == 6
+                    then botTurn luckyProcessedGameState 
+                    else gameLoop (nextPlayer luckyProcessedGameState)
+           else if diceRoll == 6
+             then botTurn updatedGameState 
+             else gameLoop (nextPlayer updatedGameState)
 
 isBotTurn :: GameState -> Bool
 isBotTurn gameState =
