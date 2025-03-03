@@ -3,6 +3,7 @@ module Interface.Rendering where
 import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game
 import qualified GameTypes
+import Game.CreateGame
 
 -- Tamanho do tabuleiro e das áreas
 boardSize :: Float
@@ -141,42 +142,8 @@ transformGame _ gameState = gameState
 drawScreen::GameTypes.GameState -> Picture
 drawScreen gameState = drawBoard
 
-playerRed = GameTypes.Player {
-    GameTypes.playerColor = GameTypes.Red,
-    GameTypes.isBot = False,
-    GameTypes.startingPos = 1
-}
-
-playerGreen = GameTypes.Player {
-    GameTypes.playerColor = GameTypes.Green,
-    GameTypes.isBot = False,
-    GameTypes.startingPos = 13
-}
-
-playerBlue = GameTypes.Player {
-    GameTypes.playerColor = GameTypes.Blue,
-    GameTypes.isBot = False,
-    GameTypes.startingPos = 25
-}
-
-playerYellow = GameTypes.Player {
-    GameTypes.playerColor = GameTypes.Yellow,
-    GameTypes.isBot = False,
-    GameTypes.startingPos = 32
-}
-
-initialState = GameTypes.GameState {
-    GameTypes.players = [playerRed, playerGreen, playerBlue, playerYellow],
-    GameTypes.specialTiles = [],
-    GameTypes.pieces = [],
-    GameTypes.blockades = [],
-    GameTypes.currentPlayer = GameTypes.playerColor playerRed,
-    GameTypes.diceRolled = 1,
-    GameTypes.end = False,
-    GameTypes.sixesInRow = 0
-}
 render :: IO ()
-render = play window background 30 initialState drawScreen transformGame (const id)
+render = play window background 30 (createGameState 4 2) drawScreen transformGame (const id)
 -- Função principal
 
 --render = display window background drawBoard
