@@ -162,8 +162,10 @@ baseQuadByColor piece | pieceColor == GameTypes.Red = (-5,5)
     where pieceColor = GameTypes.pieceColor (piece)
 
 basePos::GameTypes.Piece -> Picture
-basePos piece | otherwise = translate (x * cellSize) (y * cellSize) $ (pieceSprite piece)
-    where quad = baseQuadByColor piece
+basePos piece | id <= 1 = translate ((x + id) * cellSize) (y * cellSize) $ (pieceSprite piece)
+              | otherwise = translate ((x + (id - 2)) * cellSize) ((y - 1) * cellSize) $ (pieceSprite piece)
+    where id = fromIntegral (GameTypes.pieceId piece)
+          quad = baseQuadByColor piece
           x = fromIntegral (fst quad)
           y = fromIntegral (snd quad)
 
@@ -178,20 +180,20 @@ drawPiece piece = if GameTypes.inFinishArea (piece) == True then (drawPieceFinal
 
 drawPieceRegular::GameTypes.Piece -> Picture
 drawPieceRegular piece | position == -1 = basePos piece
-                       | position >= 1 && position < 6 = translate (((fromIntegral position) - 6) * cellSize) (1 * cellSize) $ pieceSprite piece
-                       | position >= 6 && position < 10 = translate ((-1) * cellSize) (((fromIntegral position) - 5) * cellSize) $ pieceSprite piece
-                       | position >= 10 && position < 13 = translate (((fromIntegral position) - 11) * cellSize) (6 * cellSize) $ pieceSprite piece
-                       | position >= 13 && position < 17 = translate ((-1) * cellSize) (18 - (fromIntegral position) * cellSize) $ pieceSprite piece
-                       | position >= 17 && position < 22 = translate (((fromIntegral position) - 16) * cellSize) (1 * cellSize) $ pieceSprite piece
-                       | position >= 22 && position < 25 = translate (6 * cellSize) ((23 - (fromIntegral position)) * cellSize) $ pieceSprite piece
-                       | position >= 25 && position < 30 = translate ((30 - (fromIntegral position))* cellSize) ((-1) * cellSize) $ pieceSprite piece
-                       | position >= 30 && position < 34 = translate (1 * cellSize) ((29 - (fromIntegral position)) * cellSize) $ pieceSprite piece
-                       | position >= 34 && position < 37 = translate ((35 - (fromIntegral position)) * cellSize) ((-6) * cellSize) $ pieceSprite piece
-                       | position >= 37 && position < 41 = translate ((-1) * cellSize) ((42 - (fromIntegral position)) * cellSize) $ pieceSprite piece
-                       | position >= 41 && position < 46 = translate ((40 - (fromIntegral position)) * cellSize) ((-1) * cellSize) $ pieceSprite piece
-                       | position >= 46 && position <= 48 = translate ((-6) * cellSize) ((47 - (fromIntegral position)) * cellSize) $ pieceSprite piece
+                       | position >= 1 && position < 6 = translate ((position - 6) * cellSize) (1 * cellSize) $ pieceSprite piece
+                       | position >= 6 && position < 10 = translate ((-1) * cellSize) ((position - 5) * cellSize) $ pieceSprite piece
+                       | position >= 10 && position < 13 = translate ((position - 11) * cellSize) (6 * cellSize) $ pieceSprite piece
+                       | position >= 13 && position < 17 = translate ((-1) * cellSize) ((18 - position) * cellSize) $ pieceSprite piece
+                       | position >= 17 && position < 22 = translate ((position - 16) * cellSize) (1 * cellSize) $ pieceSprite piece
+                       | position >= 22 && position < 25 = translate (6 * cellSize) ((23 - position) * cellSize) $ pieceSprite piece
+                       | position >= 25 && position < 30 = translate ((30 - position)* cellSize) ((-1) * cellSize) $ pieceSprite piece
+                       | position >= 30 && position < 34 = translate (1 * cellSize) ((29 - position) * cellSize) $ pieceSprite piece
+                       | position >= 34 && position < 37 = translate ((35 - position) * cellSize) ((-6) * cellSize) $ pieceSprite piece
+                       | position >= 37 && position < 41 = translate ((-1) * cellSize) ((42 - position) * cellSize) $ pieceSprite piece
+                       | position >= 41 && position < 46 = translate ((40 - position) * cellSize) ((-1) * cellSize) $ pieceSprite piece
+                       | position >= 46 && position <= 48 = translate ((-6) * cellSize) ((47 - position) * cellSize) $ pieceSprite piece
                        | otherwise = Blank
-    where position = (GameTypes.piecePosition piece)
+    where position = fromIntegral (GameTypes.piecePosition piece)
 
 drawPieceFinalArea::GameTypes.Piece -> Picture
 drawPieceFinalArea piece = Blank

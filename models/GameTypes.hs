@@ -29,7 +29,9 @@ data SpecialTile = SpecialTile
 
 -- Representação de uma peça
 data Piece = Piece
-  { pieceColor :: Color, -- Cor da peça
+  { 
+    pieceId :: Int, --Identificador entre 0 e 3 peças de determinado jogador
+    pieceColor :: Color, -- Cor da peça
     piecePosition :: Int, -- Posição atual da peça
     tilesWalked :: Int, -- Número de casas andadas
     inStartingArea :: Bool, -- Indica se a peça está na área de início

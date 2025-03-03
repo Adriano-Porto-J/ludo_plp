@@ -34,7 +34,10 @@ createPlayer :: (Color, Bool) -> Player
 createPlayer (color, isB) = Player {playerColor = color, isBot = isB, startingPos = startingPosByColor color}
 
 createPieces :: Color -> [Piece]
-createPieces color = replicate 4 (Piece {pieceColor = color, piecePosition = -1, tilesWalked = 0, inStartingArea = True, inFinishArea = False, finished = False})
+createPieces color = [Piece {pieceId = 0, pieceColor = color, piecePosition = -1, tilesWalked = 0, inStartingArea = True, inFinishArea = False, finished = False},
+                      Piece {pieceId = 1, pieceColor = color, piecePosition = -1, tilesWalked = 0, inStartingArea = True, inFinishArea = False, finished = False},
+                      Piece {pieceId = 2, pieceColor = color, piecePosition = -1, tilesWalked = 0, inStartingArea = True, inFinishArea = False, finished = False},
+                      Piece {pieceId = 3, pieceColor = color, piecePosition = -1, tilesWalked = 0, inStartingArea = True, inFinishArea = False, finished = False}]
 
 createSpecialTiles :: [SpecialTile]
 createSpecialTiles =
