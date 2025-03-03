@@ -3,7 +3,7 @@ module Main where
 import Interface.InterfaceDebug
 import Interface.Rendering
 
-debug = False
+debug = True
 
 main :: IO ()
 main = do
