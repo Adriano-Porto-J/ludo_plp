@@ -9,6 +9,7 @@ getAvailableMoves gameState = do
   let playerPieces = getPlayerPieces gameState
   let piecesInStartingArea = filter inStartingArea playerPieces
   let piecesOnBoard = filter (\p -> not (inStartingArea p || finished p || inFinishArea p)) playerPieces
+  let piecesInFinishArea = filter (\p -> inFinishArea p && not (finished p)) playerPieces
   let specialTilesInGame = specialTiles gameState
   let gameBlockades = blockades gameState
 
@@ -20,12 +21,26 @@ getAvailableMoves gameState = do
 
   -- Movimentos no tabuleiro
   let movesOnBoard = getMovesOnBoard piecesOnBoard diceRoll specialTilesInGame gameBlockades
-  movesFromStart ++ movesOnBoard
+  let movesInFinishArea = getMovesInFinishArea piecesInFinishArea gameBlockades diceRoll
+  movesFromStart ++ movesOnBoard ++ movesInFinishArea
+
+getMovesInFinishArea :: [Piece] -> [(Color, Int)] -> Int -> [(Int, Int)]
+getMovesInFinishArea pieces blockades diceRoll = do
+  let finishAreaMoves =
+        map
+          ( \p ->
+              if (piecePosition p + diceRoll) > getFinishAreaEnd (pieceColor p)
+                then (piecePosition p, piecePosition p)
+                else (piecePosition p, (piecePosition p) + diceRoll)
+          )
+          pieces
+  let finishAreaMovesNotBlocked = filter (not . isBlocked blockades) finishAreaMoves
+  filter (\(start, end) -> start /= end) finishAreaMovesNotBlocked
 
 getMovesOnBoard :: [Piece] -> Int -> [SpecialTile] -> [(Color, Int)] -> [(Int, Int)]
 getMovesOnBoard pieces diceRoll specialTiles blockades = do
   let piecePositions =
-        map (\piece -> (piecePosition piece, (piecePosition piece + diceRoll) `mod` 51)) pieces
+        map (\piece -> (piecePosition piece, (piecePosition piece + diceRoll) `mod` 52)) pieces
 
   let movesWithoutBlockades = filter (not . isBlocked blockades) piecePositions
   let movesWithTilesApplied = map (applySpecialTile specialTiles) movesWithoutBlockades
