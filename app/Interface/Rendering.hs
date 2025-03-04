@@ -144,7 +144,7 @@ initialGameState = (Game.CreateGame.createGameState 4 2)
 transformGameIO :: Event -> GameTypes.GameState -> IO GameTypes.GameState
 transformGameIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
     | x > xMin && x < xMax && y > yMin && y < yMax = rolarDadoIO gameState  -- Rola o dado
-    | x > boardXMin && x < boardXMax && y > boardYMin && y < boardYMax = return (selectPiece gameState (selectPosition (x / cellSize) (y / cellSize))) -- Rola o dado
+    | x > boardXMin && x < boardXMax && y > boardYMin && y < boardYMax = return (selectPiece gameState (selectPosition gameState (x / cellSize) (y / cellSize))) -- Rola o dado
     | otherwise = return gameState --(walkOneEachPiece  gameState)  -- Não faz nada se o clique não for no botão
   where
     -- Coordenadas do botão
@@ -166,10 +166,15 @@ selectPiece gameState piecePos = if GameTypes.processingMove (gameState) == True
                                         else do
                                             let newState = Game.ProcessMove.processMove gameState (piecePos,GameTypes.diceRolled (gameState))
                                             nextPlayer newState
+                                            
                                     else gameState
 
-selectPosition::Float -> Float -> Int
-selectPosition x y | x < -4.5 && x > -5.5 && y < 1.5 && y > 0.5 = 0
+selectPosition::GameTypes.GameState -> Float -> Float -> Int
+selectPosition gameState x y | basePos!!0 < x && basePos!!1 > x && basePos!!3 < y && basePos!!4 > y = -1
+                             | (basePos!!0 + 1) < x && (basePos!!1 + 1) > x && basePos!!3 < y && basePos!!4 > y = -2
+                             | basePos!!0 < x && basePos!!1 > x && (basePos!!3 - 1) < y && (basePos!!4 - 1) > y = -3
+                             | (basePos!!0 + 1) < x && (basePos!!1 + 1) > x && (basePos!!3 - 1) < y && (basePos!!4 - 1) > y = -4
+                             | x < -4.5 && x > -5.5 && y < 1.5 && y > 0.5 = 0
                              | x < -3.5 && x > -4.5 && y < 1.5 && y > 0.5 = 1
                              | x < -2.5 && x > -3.5 && y < 1.5 && y > 0.5 = 2
                              | x < -1.5 && x > -2.5 && y < 1.5 && y > 0.5 = 3
@@ -237,7 +242,14 @@ selectPosition x y | x < -4.5 && x > -5.5 && y < 1.5 && y > 0.5 = 0
                              | x < 0.5 && x > -0.5 && y < -2.5 && y > -3.5 = 68
                              | x < 0.5 && x > -0.5 && y < -3.5 && y > -4.5 = 69
                              | x < 0.5 && x > -0.5 && y < -4.5 && y > -5.5 = 70
-                             | otherwise = -2
+                             | otherwise = -5
+    where basePos = baseQuadByColorMousePos(baseQuadByColor (GameTypes.currentPlayer (gameState)))
+
+baseQuadByColorMousePos::(Int,Int) -> [Float]
+baseQuadByColorMousePos (x,y)           | (x,y) == (-5,5) = [-5.5,-4.5,4.5,5.5]
+                                        | (x,y) == (4,5) = [3.5,4.5,4.5,5.5]
+                                        | (x,y) == (-5,4) = [-5.5,-4.5,-4.5,-3.5]
+                                        | otherwise = [3.5,4.5,-5.5,-4.5]
 
 pieceSprite::GameTypes.Piece -> Picture
 pieceSprite piece = pictures [color black (rectangleSolid (side+5) (side+5)), color cor (rectangleSolid (side-1) (side-1))]
@@ -251,18 +263,17 @@ getPieceColor piece | pieceColor == GameTypes.Red = red
                | otherwise = green
     where pieceColor = GameTypes.pieceColor (piece)
 
-baseQuadByColor::GameTypes.Piece -> (Int,Int)
-baseQuadByColor piece | pieceColor == GameTypes.Red = (-5,5)
-                     | pieceColor == GameTypes.Blue = (4,-4)
-                     | pieceColor == GameTypes.Yellow = (4,5)
+baseQuadByColor::GameTypes.Color -> (Int,Int)
+baseQuadByColor color | color == GameTypes.Red = (-5,5)
+                     | color == GameTypes.Blue = (4,-4)
+                     | color == GameTypes.Yellow = (4,5)
                      | otherwise = (-5,-4)
-    where pieceColor = GameTypes.pieceColor (piece)
 
-basePos::GameTypes.Piece -> Picture
-basePos piece | id <= 1 = translate ((x + id) * cellSize) (y * cellSize) $ (pieceSprite piece)
-              | otherwise = translate ((x + (id - 2)) * cellSize) ((y - 1) * cellSize) $ (pieceSprite piece)
+basePosPiece::GameTypes.Piece -> Picture
+basePosPiece piece | id <= 2 = translate ((x + id - 1) * cellSize) (y * cellSize) $ (pieceSprite piece)
+              | otherwise = translate ((x + (id - 3)) * cellSize) ((y - 1) * cellSize) $ (pieceSprite piece)
     where id = fromIntegral (GameTypes.pieceId piece)
-          quad = baseQuadByColor piece
+          quad = baseQuadByColor (GameTypes.pieceColor piece)
           x = fromIntegral (fst quad)
           y = fromIntegral (snd quad)
 
@@ -349,7 +360,7 @@ drawAllPieces::GameTypes.GameState -> Picture
 drawAllPieces gameState = pictures (map drawPiece (GameTypes.pieces (gameState)))
 
 drawPiece::GameTypes.Piece -> Picture
-drawPiece piece | position == -1 = basePos piece 
+drawPiece piece | position < 0 = basePosPiece piece 
                 | otherwise = if GameTypes.inFinishArea (piece) == True then 
                     (drawOnFinalArea sprite position) 
                 else 

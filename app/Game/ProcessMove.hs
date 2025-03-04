@@ -10,7 +10,7 @@ processMove gameState (pieceStart, pieceEnd) = do
   let piece = getPieceByPositionAndColor (pieces gameState) currentPlayerColor pieceStart
   case piece of
     Just piece ->
-      if pieceStart == -1
+      if pieceStart < 0
     then do
       -- Mover peça para o tabuleiro
       let newPieces = movePieceToBoard (pieces gameState) piece (currentPlayer gameState)
@@ -52,6 +52,11 @@ getPieceByPositionAndColor pieces color position | filterArr == [] = Nothing
                                                  | otherwise = Just( head filterArr)
   where filterArr = filter (\piece -> piecePosition piece == position && pieceColor piece == color) pieces
 
+getPieceByIdAndColor :: GameState -> Int -> Color -> Piece
+getPieceByIdAndColor gameState id color = do 
+  let pieces = GameTypes.pieces (gameState)
+  head (filter (\piece -> pieceId piece == id && pieceColor piece == color) pieces)
+
 -- Move uma peça para o tabuleiro
 movePieceToBoard :: [Piece] -> Piece -> Color -> [Piece]
 movePieceToBoard pieces piece color = do
@@ -73,7 +78,7 @@ removePieceByColorAndPosAUX (p : ps) color pos wasRemoved
 -- Conjunto de peças, peça capturada -> conjunto de peças atualizado
 movePieceCaptured :: [Piece] -> Piece -> [Piece]
 movePieceCaptured pieces piece = do
-  let newPiece = piece {piecePosition = -1, inStartingArea = True, tilesWalked = 0}
+  let newPiece = piece {piecePosition = -1 * GameTypes.pieceId (piece), inStartingArea = True, tilesWalked = 0}
   let updatedPieces = removePieceByColorAndPos pieces (pieceColor piece) (piecePosition piece)
   newPiece : updatedPieces
 
