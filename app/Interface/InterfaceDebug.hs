@@ -121,7 +121,7 @@ playerTurn gameState = do
               if null oponnents
                 then do
                   putStrLn "Nenhum oponente disponível para voltar para a base. Continuando..."
-                  gameLoop updatedGameState
+                  gameLoop (nextPlayer updatedGameState)
                 else do
                   putStrLn "Oponentes disponíveis:"
                   mapM_ (uncurry printOponnent) (zip [1 ..] oponnents)

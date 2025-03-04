@@ -15,21 +15,6 @@ getAvailableMoves gameState = FindMoves.getAvailableMoves gameState
 getLuckyMoves :: GameState -> [Int]
 getLuckyMoves gameState = FindMoves.findLuckyMoves gameState
 
-handleSixesInRow :: GameState -> GameState
-handleSixesInRow gameState
-  | diceRoll == 6 =
-      if sixesInRow gameState == 2
-        then case getPieceWithMostTilesWalked (getPlayerPieces gameState) of
-          Just pieceWithMostTiles ->
-            let newPiece = pieceWithMostTiles {tilesWalked = 0, inStartingArea = True, piecePosition = -1}
-                newPieces = map (\piece -> if piece == pieceWithMostTiles then newPiece else piece) (pieces gameState)
-             in gameState {pieces = newPieces, sixesInRow = 0}
-          Nothing -> gameState {sixesInRow = 0} -- Nenhuma peça para remover, apenas reseta
-        else gameState {sixesInRow = sixesInRow gameState + 1}
-  | otherwise = gameState {sixesInRow = 0}
-  where
-    diceRoll = diceRolled gameState
-
 nextPlayer :: GameState -> GameState
 nextPlayer gameState =
   let colors = map playerColor (players gameState)
@@ -62,4 +47,4 @@ isCapturingOnSafeTile :: GameState -> (Int, Int) -> Bool
 isCapturingOnSafeTile gameState (from, to) =
   let piecesAtDestination = filter ((== to) . piecePosition) (pieces gameState)
       safeTiles = map tilePosition (filter ((== Safe) . tileType) (specialTiles gameState))
-  in any ((`elem` safeTiles) . piecePosition) piecesAtDestination
+   in any ((`elem` safeTiles) . piecePosition) piecesAtDestination
