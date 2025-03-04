@@ -40,4 +40,4 @@ capturesOpponent gameState to =
     opponentPieces = filter (\p -> pieceColor p /= currentColor) (pieces gameState)
 
 isSafePosition :: Int -> Bool
-isSafePosition pos = pos `elem` [1, 7, 13, 20, 25, 33, 37, 46]
+isSafePosition pos = pos `elem` [0, 7, 12, 20, 24, 28, 33, 37, 46]
