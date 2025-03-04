@@ -15,7 +15,7 @@ getAvailableMoves gameState = do
 
   -- Se há peças na base e o jogador tirou 5, ele pode sair
   let movesFromStart =
-        if diceRoll == 5 && not (null piecesInStartingArea)
+        if diceRoll == 6 && not (null piecesInStartingArea)
           then [(piecePosition p, startingPosByColor (pieceColor p)) | p <- piecesInStartingArea]
           else []
 
@@ -75,6 +75,3 @@ findLuckyMoves gameState = do
   let safeTiles = map (\tile -> tilePosition tile) (filter (\tile -> (tileType tile) == Safe) (specialTiles gameState))
   let unsafePieces = filter (\p -> not (piecePosition p `elem` safeTiles)) availablePieces
   map piecePosition unsafePieces
-
-
-
