@@ -23,7 +23,7 @@ processMove gameState (pieceStart, pieceEnd) = do
             let blockades = findBlockades newPieces
             gameState {pieces = newPieces, blockades = blockades, processingMove = False}
         else
-          if walked + (pieceEnd + piecePosition (piece)) > 46
+          if (walked + pieceEnd) > 46
             then do
               if (inFinishArea piece) == True then do
                 -- Move Peça na área final
@@ -112,10 +112,10 @@ getPieceColorInPosition pieces position = pieceColor $ head $ filter (\piece -> 
 
 movePieceToFinishArea :: Player -> [Piece] -> Piece -> Int -> Int -> [Piece]
 movePieceToFinishArea player pieces piece startPos endPos = do
-  let newPiece = piece {piecePosition = getFinishAreaStart (pieceColor (piece)), tilesWalked = endPos - (startingPos player), inFinishArea = True}
+  let newPiece = piece {piecePosition = finishAreaStart + ((piecePosition (piece)) - finishAreaStart), inFinishArea = True}
   let updatedPieces = newPiece : (removePieceByColorAndPos pieces (pieceColor piece) startPos)
   updatedPieces
-
+  where finishAreaStart = getFinishAreaStart (pieceColor (piece))
 movePieceInFinishArea :: [Piece] -> Piece -> Int -> Int -> [Piece]
 movePieceInFinishArea pieces piece startPos endPos = do
   if endPos == getFinishAreaEnd (pieceColor piece)
