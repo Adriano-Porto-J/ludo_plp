@@ -159,7 +159,8 @@ transformGameIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
 transformGameIO _ gameState = return gameState  -- Não faz nada para outros eventos
 
 selectPiece::GameTypes.GameState -> Int -> GameTypes.GameState --Seleciona a peça de acordo com a localização do tabuleiro e realiza a jogada
-selectPiece gameState piecePos = if GameTypes.processingMove (gameState) == True 
+selectPiece gameState piecePos = 
+                                if GameTypes.processingMove (gameState) == True && piecePos > -5
                                     then
                                         if GameTypes.diceRolled gameState == 6 && GameTypes.sixesInRow gameState < 3 then
                                             (Game.ProcessMove.processMove gameState (piecePos,GameTypes.diceRolled (gameState))) {GameTypes.diceRolled = -1}
@@ -170,10 +171,10 @@ selectPiece gameState piecePos = if GameTypes.processingMove (gameState) == True
                                     else gameState
 
 selectPosition::GameTypes.GameState -> Float -> Float -> Int
-selectPosition gameState x y | basePos!!0 < x && basePos!!1 > x && basePos!!3 < y && basePos!!4 > y = -1
-                             | (basePos!!0 + 1) < x && (basePos!!1 + 1) > x && basePos!!3 < y && basePos!!4 > y = -2
-                             | basePos!!0 < x && basePos!!1 > x && (basePos!!3 - 1) < y && (basePos!!4 - 1) > y = -3
-                             | (basePos!!0 + 1) < x && (basePos!!1 + 1) > x && (basePos!!3 - 1) < y && (basePos!!4 - 1) > y = -4
+selectPosition gameState x y | basePos!!0 < x && basePos!!1 > x && basePos!!2 < y && basePos!!3 > y = -1
+                             | (basePos!!0 + 1) < x && (basePos!!1 + 1) > x && basePos!!2 < y && basePos!!3 > y = -2
+                             | basePos!!0 < x && basePos!!1 > x && (basePos!!2 - 1) < y && (basePos!!3 - 1) > y = -3
+                             | (basePos!!0 + 1) < x && (basePos!!1 + 1) > x && (basePos!!2 - 1) < y && (basePos!!3 - 1) > y = -4
                              | x < -4.5 && x > -5.5 && y < 1.5 && y > 0.5 = 0
                              | x < -3.5 && x > -4.5 && y < 1.5 && y > 0.5 = 1
                              | x < -2.5 && x > -3.5 && y < 1.5 && y > 0.5 = 2
