@@ -5,7 +5,7 @@ import GameTypes
 
 createGameState :: Int -> Int -> GameState
 createGameState players bots =
-  let colors = if players == 2 then [Red, Blue] else if players == 3 then [Red, Green, Blue] else [Red, Green, Blue, Yellow]
+  let colors = if players == 2 then [Red, Blue] else if players == 3 then [Red, Yellow, Blue] else [Red, Yellow, Blue, Green]
       playerOrBot = definePlayers colors (players - bots) bots
       allPlayers = map createPlayer playerOrBot
       allPieces = concatMap createPieces colors
