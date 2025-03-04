@@ -1,7 +1,7 @@
 module Interface.Rendering where
 
 import Graphics.Gloss
-import Graphics.Gloss.Interface.Pure.Game
+import Graphics.Gloss.Interface.IO.Game
 import qualified GameTypes
 import Game.CreateGame
 import Game.ProcessMove
@@ -123,16 +123,63 @@ drawSpecialTile special = drawOnRegular (getSpecialTileSprite special) (fromInte
 
 drawButton :: Picture
 drawButton = pictures 
-    [translate  0 (-8 * cellSize) $ color black (rectangleSolid (6 * cellSize) (2 * cellSize))-- Fundo do botão
-    , translate (-1.5 * cellSize) (-8 * cellSize) $ scale 0.15 0.15 $ color white (text "Rolar Dado")  -- Texto
+    [translate  (-3.5 * cellSize) (-8 * cellSize) $ color black (rectangleSolid (6 * cellSize) (2 * cellSize))-- Fundo do botão
+    , translate (-5.5 * cellSize) (-8 * cellSize) $ scale 0.20 0.20 $ color white (text "Rolar Dado")  -- Texto
     ]
 
+-- Tamanho do dado
+diceSize :: Float
+diceSize = 2*cellSize
 
-rolarDado :: GameTypes.GameState -> GameTypes.GameState
-rolarDado gameState = do
-    let dado :: Int
-        dado = unsafePerformIO (randomRIO (1, 6))  -- Gera um número aleatório entre 1 e 6
-    trace ("Dado rolado: " ++ show dado) gameState  -- Apenas para debug (pode ser removido depois)
+-- Tamanho dos circulos do dado
+pipRadius :: Float
+pipRadius = 5
+
+-- Cor do dado
+diceColor :: Color
+diceColor = black
+
+-- Cor dos circulos do dado
+pipColor :: Color
+pipColor = white
+
+-- Desenha um ponto (pipa) na posição (x, y)
+drawPip :: Float -> Float -> Picture
+drawPip x y = translate x y $ color pipColor (circleSolid pipRadius)
+
+-- Desenha a face do dado com os pontos correspondentes ao valor
+drawDiceFace :: Int -> Picture
+drawDiceFace value = pictures [diceSquare, pips]
+  where
+    -- Quadrado do dado
+    diceSquare = color black (rectangleSolid diceSize diceSize)
+    
+    -- Pontos (pipas) dependendo do valor do dado
+    pips = case value of
+      1 -> pictures [drawPip 0 0]  -- Ponto central
+      2 -> pictures [drawPip (-offset) offset, drawPip offset (-offset)]
+      3 -> pictures [drawPip (-offset) offset, drawPip 0 0, drawPip offset (-offset)]
+      4 -> pictures [drawPip (-offset) offset, drawPip offset offset, 
+                     drawPip (-offset) (-offset), drawPip offset (-offset)]
+      5 -> pictures [drawPip (-offset) offset, drawPip offset offset, 
+                     drawPip 0 0, 
+                     drawPip (-offset) (-offset), drawPip offset (-offset)]
+      6 -> pictures [drawPip (-offset) offset, drawPip offset offset, 
+                     drawPip (-offset) 0, drawPip offset 0, 
+                     drawPip (-offset) (-offset), drawPip offset (-offset)]
+      _ -> blank  -- Caso inválido (não desenha nada)
+    
+    -- Offset para posicionar os pontos
+    offset = diceSize / 3
+
+drawDice :: GameTypes.GameState -> Picture
+drawDice gameState = translate (2 * cellSize) (-8 * cellSize) $ drawDiceFace (GameTypes.diceRolled gameState)
+
+rolarDadoIO :: GameTypes.GameState -> IO GameTypes.GameState
+rolarDadoIO gameState = do
+    dado <- randomRIO (1, 6)  -- Gera um número aleatório entre 1 e 6
+    putStrLn ("Dado rolado: " ++ show dado)  -- Apenas para debug
+    return gameState { GameTypes.diceRolled = dado } -- Atualiza o estado do jogo
 
 boostTile::Picture
 boostTile = pictures [ rotate 0.0 $ rectangleSolid side 7.0
@@ -169,16 +216,17 @@ drawGrid = color black $ pictures
 
 initialGameState = (createGameState 4 2)
 
-transformGame (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
-    | x > xMin && x < xMax && y > yMin && y < yMax = rolarDado gameState  -- Se clicar no botão, rola o dado
-    | otherwise = walkOneEachPiece gameState  -- Senão, segue a lógica normal
+transformGameIO :: Event -> GameTypes.GameState -> IO GameTypes.GameState
+transformGameIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
+    | x > xMin && x < xMax && y > yMin && y < yMax = rolarDadoIO gameState  -- Rola o dado
+    | otherwise = return gameState  -- Não faz nada se o clique não for no botão
   where
-    xMin = -8 * cellSize - (3 * cellSize) / 2
-    xMax = -8 * cellSize + (3 * cellSize) / 2
-    yMin = 0 - (2 * cellSize) / 2
-    yMax = 0 + (2 * cellSize) / 2
-
-transformGame _ gameState = gameState
+    -- Coordenadas do botão
+    xMin = -6 * cellSize
+    xMax = 0.5 * cellSize
+    yMin = -9 * cellSize
+    yMax = -7 * cellSize
+transformGameIO _ gameState = return gameState  -- Não faz nada para outros eventos
 
 pieceSprite::GameTypes.Piece -> Picture
 pieceSprite piece = pictures [color black (rectangleSolid (side+5) (side+5)), color cor (rectangleSolid (side-1) (side-1))]
@@ -207,8 +255,14 @@ basePos piece | id <= 1 = translate ((x + id) * cellSize) (y * cellSize) $ (piec
           x = fromIntegral (fst quad)
           y = fromIntegral (snd quad)
 
-drawScreen::GameTypes.GameState -> Picture
-drawScreen gameState = pictures [drawBoard, drawAllPieces gameState, drawButton]
+-- Desenha a tela do jogo
+drawScreen :: GameTypes.GameState -> IO Picture
+drawScreen gameState = return $ pictures 
+    [ drawBoard                -- Desenha o tabuleiro
+    , drawAllPieces gameState  -- Desenha todas as peças
+    , drawButton               -- Desenha o botão
+    , drawDice gameState       -- Desenha o dado com o valor atual
+    ]
 
 drawAllPieces::GameTypes.GameState -> Picture
 drawAllPieces gameState = pictures (map drawPiece (GameTypes.pieces (gameState)))
@@ -262,7 +316,7 @@ walkOneEachPiece gameState = do
     gameState {GameTypes.pieces = newPieces}
 
 render :: IO ()
-render = play window background 30 initialGameState drawScreen transformGame (const id)
+render = playIO window background 30 initialGameState drawScreen transformGameIO (const (return . id))
 -- Função principal
 
 --render = display window background drawBoard
