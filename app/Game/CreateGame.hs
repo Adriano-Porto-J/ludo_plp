@@ -5,7 +5,7 @@ import GameTypes
 
 createGameState :: Int -> Int -> GameState
 createGameState players bots =
-  let colors = if players == 2 then [Red, Blue] else [Red, Green, Blue, Yellow]
+  let colors = if players == 2 then [Red, Blue] else if players == 3 then [Red, Green, Blue] else [Red, Green, Blue, Yellow]
       playerOrBot = definePlayers colors (players - bots) bots
       allPlayers = map createPlayer playerOrBot
       allPieces = concatMap createPieces colors
@@ -35,10 +35,12 @@ createPlayer :: (Color, Bool) -> Player
 createPlayer (color, isB) = Player {playerColor = color, isBot = isB, startingPos = startingPosByColor color}
 
 createPieces :: Color -> [Piece]
-createPieces color = [Piece {pieceId = 1, pieceColor = color, piecePosition = -1, tilesWalked = 0, inStartingArea = True, inFinishArea = False, finished = False},
-                      Piece {pieceId = 2, pieceColor = color, piecePosition = -2, tilesWalked = 0, inStartingArea = True, inFinishArea = False, finished = False},
-                      Piece {pieceId = 3, pieceColor = color, piecePosition = -3, tilesWalked = 0, inStartingArea = True, inFinishArea = False, finished = False},
-                      Piece {pieceId = 4, pieceColor = color, piecePosition = -4, tilesWalked = 0, inStartingArea = True, inFinishArea = False, finished = False}]
+createPieces color =
+  [ Piece {pieceId = 1, pieceColor = color, piecePosition = -1, tilesWalked = 0, inStartingArea = True, inFinishArea = False, finished = False},
+    Piece {pieceId = 2, pieceColor = color, piecePosition = -2, tilesWalked = 0, inStartingArea = True, inFinishArea = False, finished = False},
+    Piece {pieceId = 3, pieceColor = color, piecePosition = -3, tilesWalked = 0, inStartingArea = True, inFinishArea = False, finished = False},
+    Piece {pieceId = 4, pieceColor = color, piecePosition = -4, tilesWalked = 0, inStartingArea = True, inFinishArea = False, finished = False}
+  ]
 
 createSpecialTiles :: [SpecialTile]
 createSpecialTiles =
@@ -55,4 +57,3 @@ createSpecialTiles =
     SpecialTile Death 41,
     SpecialTile Safe 46
   ]
-

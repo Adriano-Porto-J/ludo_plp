@@ -5,12 +5,12 @@ module Interface.InterfaceDebug where
 import Data.Aeson (decode, encode)
 import qualified Data.ByteString.Lazy as B
 import GHC.Generics (Generic)
+import Game.BotLogic (getBestMove)
 import Game.Index
 import GameTypes
 import qualified System.Console.ANSI as ANSI
 import System.Directory (doesFileExist)
 import System.Random (randomRIO)
-import Game.BotLogic (getBestMove)
 import Text.Read (readMaybe)
 
 initGameTerminal :: IO ()
@@ -43,28 +43,29 @@ gameLoop gameState = do
   printGameState gameState
   if checkGameOver gameState
     then putStrLn "O jogo terminou! Temos um vencedor!"
-  else if isBotTurn gameState
-    then do
-      putStrLn "Vez do bot!"
-      botTurn gameState
-    else do
-      putStrLn "Digite 'r' para rolar o dado"
-      putStrLn "Digite 's' para salvar o jogo"
-      putStrLn "Digite 'q' para sair"
-      command <- getLine
-      case command of
-        "r" -> playerTurn gameState
-        "s" -> do
-          saveGameState gameState
-          gameLoop gameState
-        "q" -> putStrLn "Jogo encerrado. Obrigado por jogar!"
-        _ -> do
-          putStrLn "Comando inválido, tente novamente."
-          gameLoop gameState
+    else
+      if isBotTurn gameState
+        then do
+          putStrLn "Vez do bot!"
+          botTurn gameState
+        else do
+          putStrLn "Digite 'r' para rolar o dado"
+          putStrLn "Digite 's' para salvar o jogo"
+          putStrLn "Digite 'q' para sair"
+          command <- getLine
+          case command of
+            "r" -> playerTurn gameState
+            "s" -> do
+              saveGameState gameState
+              gameLoop gameState
+            "q" -> putStrLn "Jogo encerrado. Obrigado por jogar!"
+            _ -> do
+              putStrLn "Comando inválido, tente novamente."
+              gameLoop gameState
 
 startNewGame :: IO ()
 startNewGame = do
-  jogadoresInt <- getValidNumber "Quantos Jogadores? (2 ou 4)" [1, 2, 4]
+  jogadoresInt <- getValidNumber "Quantos Jogadores? (2 ou 4)" [2, 3, 4]
   botsInt <- getValidNumber "Quantos Bots? (1, 2 ou 3)" [0, 1, 2, 3]
   let game = createGameState jogadoresInt botsInt
   putStrLn "\nO jogo começou! Boa sorte!"
@@ -91,13 +92,13 @@ playerTurn gameState = do
 
   -- Atualizar o número de 6 seguidos corretamente
   let newSixesInRow = if diceRoll == 6 then sixesInRow gameState + 1 else 0
-  let gameStateWithDice = gameState { diceRolled = diceRoll, sixesInRow = newSixesInRow }
+  let gameStateWithDice = gameState {diceRolled = diceRoll, sixesInRow = newSixesInRow}
 
   -- Verificar se tirou 3 seis seguidos
   if newSixesInRow >= 3
     then do
       putStrLn "Você tirou três 6 seguidos! Perde a vez."
-      gameLoop (nextPlayer gameStateWithDice {sixesInRow = 0})  -- Resetando `sixesInRow`
+      gameLoop (nextPlayer gameStateWithDice {sixesInRow = 0}) -- Resetando `sixesInRow`
     else do
       let availableMoves = filterSafeMoves gameStateWithDice (getAvailableMoves gameStateWithDice)
       if null availableMoves
@@ -130,12 +131,12 @@ playerTurn gameState = do
                   let oponent = oponnents !! oponentIndex
                   let luckyProcessedGameState = processLuckyMove updatedGameState oponent
                   if diceRoll == 6
-                    then playerTurn luckyProcessedGameState  -- Continua jogando se tirou 6
+                    then playerTurn luckyProcessedGameState -- Continua jogando se tirou 6
                     else gameLoop (nextPlayer luckyProcessedGameState)
-            else if diceRoll == 6
-              then playerTurn updatedGameState 
-              else gameLoop (nextPlayer updatedGameState)
-
+            else
+              if diceRoll == 6
+                then playerTurn updatedGameState
+                else gameLoop (nextPlayer updatedGameState)
 
 botTurn :: GameState -> IO ()
 botTurn gameState = do
@@ -150,8 +151,6 @@ botTurn gameState = do
       putStrLn "O bot tirou três 6 seguidos e perdeu a vez."
       let resetGameState = gameStateSixHandled {sixesInRow = 0}
       gameLoop (nextPlayer resetGameState)
-
-
     else do
       let availableMoves = filterSafeMoves gameStateSixHandled (getAvailableMoves gameStateSixHandled)
 
@@ -162,9 +161,9 @@ botTurn gameState = do
         else do
           let bestMove = getBestMove gameStateSixHandled availableMoves
           let (from, to) = bestMove
-      
+
           putStrLn $ "O bot moveu de " ++ show from ++ " para " ++ show to
-      
+
           let updatedGameState = processMove gameStateSixHandled bestMove
           if to `elem` map tilePosition (filter ((== Lucky) . tileType) (specialTiles gameStateSixHandled))
             then do
@@ -176,9 +175,10 @@ botTurn gameState = do
                   let oponent = head oponnents
                   let luckyProcessedGameState = processLuckyMove updatedGameState oponent
                   gameLoop (nextPlayer luckyProcessedGameState) -- Garante que o turno passa
-           else if diceRoll == 6
-             then botTurn updatedGameState 
-             else gameLoop (nextPlayer updatedGameState)
+            else
+              if diceRoll == 6
+                then botTurn updatedGameState
+                else gameLoop (nextPlayer updatedGameState)
 
 isBotTurn :: GameState -> Bool
 isBotTurn gameState =
