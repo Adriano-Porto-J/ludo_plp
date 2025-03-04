@@ -65,8 +65,8 @@ gameLoop gameState = do
 
 startNewGame :: IO ()
 startNewGame = do
-  jogadoresInt <- getValidNumber "Quantos Jogadores? (2 ou 4)" [2, 3, 4]
-  botsInt <- getValidNumber "Quantos Bots? (1, 2 ou 3)" [0, 1, 2, 3]
+  jogadoresInt <- getValidNumber "Quantos Jogadores? (2 ou 4)" [2, 4]
+  botsInt <- getValidNumber "Quantos Bots? (0, 1, 2 ou 3)" [0, 1, 2, 3]
   let game = createGameState jogadoresInt botsInt
   putStrLn "\nO jogo começou! Boa sorte!"
   gameLoop game
