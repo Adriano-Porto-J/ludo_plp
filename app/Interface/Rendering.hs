@@ -592,14 +592,14 @@ drawAllPieces::GameTypes.GameState -> Picture
 drawAllPieces gameState = pictures (map drawPiece (GameTypes.pieces (gameState)))
 
 drawPiece::GameTypes.Piece -> Picture
-drawPiece piece | position == -1 = basePosPiece piece 
+drawPiece piece | position < 0 = basePosPiece piece 
                 | otherwise = if GameTypes.inFinishArea (piece) == True then 
                     (drawOnFinalArea sprite position) 
                 else 
                     (drawOnRegular sprite position)
     where position = (fromIntegral(GameTypes.piecePosition piece))
           sprite = pieceSprite piece
-
+--
 drawOnRegular::Picture -> Float -> Picture
 drawOnRegular sprite position
                        | position >= 0 && position < 5 = translate ((position - 5) * cellSize) (1 * cellSize) $ sprite
@@ -633,7 +633,7 @@ walkOne piece = GameTypes.Piece {
     GameTypes.inFinishArea = False,
     GameTypes.finished = GameTypes.finished piece
   }
-
+--
 {-
 walkOneEachPiece::GameTypes.GameState->GameTypes.GameState
 walkOneEachPiece gameState = do
