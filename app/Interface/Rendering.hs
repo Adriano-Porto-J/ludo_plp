@@ -62,7 +62,6 @@ handleMenuInicialIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
     xMax02 = 3 * cellSize
     yMin02 = -3 * cellSize
     yMax02 = -1 * cellSize
-transformGameIO _ gameState = return gameState  -- Não faz nada para outros eventos
 
 -- Desenhar Menu players
 drawMenuSelectionPlayers :: Picture
@@ -122,7 +121,6 @@ handleMenuPlayersIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
     xMax04 = (-4 * cellSize) + (1.5 * cellSize / 2)
     yMin04 = (3 * cellSize) - (1.5 * cellSize / 2)
     yMax04 = (3 * cellSize) + (1.5 * cellSize / 2)
-transformGameIO _ gameState = return gameState  -- Não faz nada para outros eventos
 
 drawTituloSelecioneBots :: Picture
 drawTituloSelecioneBots = pictures
@@ -131,34 +129,40 @@ drawTituloSelecioneBots = pictures
     ]
 
 
-drawButtonBots :: int -> Pictures
-drawButtonBots players 
-    |players == 1 = picture01
-    |players == 2 = picture02
-    |players == 3 = picture03
-    |otherwise = return gameState
- where
-    picture01 = [translate (-4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 1 bot
-    , translate (4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 2 bots
-    , translate (-4 * cellSize) (-3 * cellSize) $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 3 bots
-    , translate (-4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "1")  -- Texto do botão 1
-    , translate (4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "2")  -- Texto do botão 2
-    , translate (-4 * cellSize) (-3 * cellSize) $ scale 0.20 0.20 $ color black (text "3")  -- Texto do botão 3
-    ]
+drawButtonBots :: Int -> Picture
+drawButtonBots players
+    | players == 1 = picture01
+    | players == 2 = picture02
+    | players == 3 = picture03
+    | otherwise = return gameState
+  where
+    -- Botões para 1 bot
+    picture01 = pictures
+        [ translate (-4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize))  -- Botão 1 bot
+        , translate (4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize))  -- Botão 2 bots
+        , translate (-4 * cellSize) (-3 * cellSize) $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize))  -- Botão 3 bots
+        , translate (-4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "1")  -- Texto do botão 1
+        , translate (4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "2")  -- Texto do botão 2
+        , translate (-4 * cellSize) (-3 * cellSize) $ scale 0.20 0.20 $ color black (text "3")  -- Texto do botão 3
+        ]
 
-    picture02 = [translate (-4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 1 bot
-    , translate (4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 2 bots
-    , translate (-4 * cellSize) (-3 * cellSize) $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 0 bots
-    , translate (-4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "1")  -- Texto do botão 1
-    , translate (4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "2")  -- Texto do botão 2
-    , translate (-4 * cellSize) (-3 * cellSize) $ scale 0.20 0.20 $ color black (text "0")  -- Texto do botão 0
-    ]
+    -- Botões para 2 bots
+    picture02 = pictures
+        [ translate (-4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize))  -- Botão 1 bot
+        , translate (4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize))  -- Botão 2 bots
+        , translate (-4 * cellSize) (-3 * cellSize) $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize))  -- Botão 0 bots
+        , translate (-4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "1")  -- Texto do botão 1
+        , translate (4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "2")  -- Texto do botão 2
+        , translate (-4 * cellSize) (-3 * cellSize) $ scale 0.20 0.20 $ color black (text "0")  -- Texto do botão 0
+        ]
 
-    picture03 = [  translate (-4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 1 bot
-    , translate (4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 0 bots
-    , translate (-4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "1")  -- Texto do botão 1
-    , translate (4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "0")  -- Texto do botão 0
-    ]
+    -- Botões para 3 bots
+    picture03 = pictures
+        [ translate (-4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize))  -- Botão 1 bot
+        , translate (4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize))  -- Botão 0 bots
+        , translate (-4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "1")  -- Texto do botão 1
+        , translate (4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "0")  -- Texto do botão 0
+        ]
 
 -- Desenhar Menu bots
 drawMenuSelectionBots :: Int -> Picture
@@ -194,8 +198,6 @@ handleMenuBotsPlayers01 (EventKey (MouseButton LeftButton) Up _ (x, y)) gameStat
     yMin03 = (-3 * cellSize) - (1.5 * cellSize / 2)
     yMax03 = (-3 * cellSize) + (1.5 * cellSize / 2)
 
-transformGameIO _ gameState = return gameState  -- Não faz nada para outros eventos
-
 handleMenuBotsPlayers02 :: Event -> GameTypes.GameState -> IO GameTypes.GameState
 handleMenuBotsPlayers02 (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
     | x >= xMin01 && x <= xMax01 && y >= yMin01 && y <= yMax01 = drawBoard
@@ -222,7 +224,6 @@ handleMenuBotsPlayers02 (EventKey (MouseButton LeftButton) Up _ (x, y)) gameStat
     yMin03 = (-3 * cellSize) - (1.5 * cellSize / 2)
     yMax03 = (-3 * cellSize) + (1.5 * cellSize / 2)
 
-transformGameIO _ gameState = return gameState  -- Não faz nada para outros eventos
 
 handleMenuBotsPlayers03 :: Event -> GameTypes.GameState -> IO GameTypes.GameState
 handleMenuPlayersIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
@@ -242,8 +243,6 @@ handleMenuPlayersIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
     xMax02 = (4 * cellSize) + (1.5 * cellSize / 2)
     yMin02 = 0 - (1.5 * cellSize / 2)
     yMax02 = 0 + (1.5 * cellSize / 2)
-
-transformGameIO _ gameState = return gameState  -- Não faz nada para outros eventos
 
 -- Tamanho das casas do caminho
 cellSize :: Float
