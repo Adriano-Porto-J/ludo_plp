@@ -118,9 +118,7 @@ playerTurn gameState = do
               if null oponnents
                 then do
                   putStrLn "Nenhum oponente disponível para voltar para a base. Continuando..."
-                  if diceRoll == 6 
-                    then playerTurn updatedGameState  -- Continua jogando se tirou 6
-                    else gameLoop (nextPlayer updatedGameState)
+
                 else do
                   putStrLn "Oponentes disponíveis:"
                   mapM_ (uncurry printOponnent) (zip [1 ..] oponnents)
@@ -167,14 +165,11 @@ botTurn gameState = do
               putStrLn "O bot caiu em uma casa de sorte e escolheu um oponente para voltar para a base."
               let oponnents = getLuckyMoves updatedGameState
               if null oponnents
-                then gameLoop updatedGameState
+                then gameLoop (nextPlayer updatedGameState) -- Garante que o turno passa
                 else do
                   let oponent = head oponnents
                   let luckyProcessedGameState = processLuckyMove updatedGameState oponent
-                 
-                  if diceRoll == 6
-                    then botTurn luckyProcessedGameState 
-                    else gameLoop (nextPlayer luckyProcessedGameState)
+                  gameLoop (nextPlayer luckyProcessedGameState) -- Garante que o turno passa
            else if diceRoll == 6
              then botTurn updatedGameState 
              else gameLoop (nextPlayer updatedGameState)
