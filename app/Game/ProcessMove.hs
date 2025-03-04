@@ -112,7 +112,7 @@ getPieceColorInPosition pieces position = pieceColor $ head $ filter (\piece -> 
 
 movePieceToFinishArea :: Player -> [Piece] -> Piece -> Int -> Int -> [Piece]
 movePieceToFinishArea player pieces piece startPos endPos = do
-  let newPiece = piece {piecePosition = endPos, tilesWalked = endPos - (startingPos player), inFinishArea = True}
+  let newPiece = piece {piecePosition = getFinishAreaStart (pieceColor (piece)), tilesWalked = endPos - (startingPos player), inFinishArea = True}
   let updatedPieces = newPiece : (removePieceByColorAndPos pieces (pieceColor piece) startPos)
   updatedPieces
 

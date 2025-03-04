@@ -455,7 +455,7 @@ drawPiece piece | position < 0 = basePosPiece piece
                     (drawOnRegular sprite position)
     where position = (fromIntegral(GameTypes.piecePosition piece))
           sprite = pieceSprite piece
-
+--
 drawOnRegular::Picture -> Float -> Picture
 drawOnRegular sprite position
                        | position >= 0 && position < 5 = translate ((position - 5) * cellSize) (1 * cellSize) $ sprite
@@ -489,7 +489,7 @@ walkOne piece = GameTypes.Piece {
     GameTypes.inFinishArea = False,
     GameTypes.finished = GameTypes.finished piece
   }
-
+--
 {-
 walkOneEachPiece::GameTypes.GameState->GameTypes.GameState
 walkOneEachPiece gameState = do
