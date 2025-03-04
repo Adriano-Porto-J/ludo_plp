@@ -133,32 +133,32 @@ drawTituloSelecioneBots = pictures
 
 drawButtonBots :: int -> Pictures
 drawButtonBots players 
-    |players == 1 = picture01
-    |players == 2 = picture02
-    |players == 3 = picture03
-    |otherwise = return gameState
- where
-    picture01 = [translate (-4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 1 bot
-    , translate (4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 2 bots
-    , translate (-4 * cellSize) (-3 * cellSize) $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 3 bots
-    , translate (-4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "1")  -- Texto do botão 1
-    , translate (4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "2")  -- Texto do botão 2
-    , translate (-4 * cellSize) (-3 * cellSize) $ scale 0.20 0.20 $ color black (text "3")  -- Texto do botão 3
-    ]
+        |players == 1 = picture01
+        |players == 2 = picture02
+        |players == 3 = picture03
+        |otherwise = return gameState
+    where
+        picture01 = pictures [translate (-4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 1 bot
+        , translate (4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 2 bots
+        , translate (-4 * cellSize) (-3 * cellSize) $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 3 bots
+        , translate (-4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "1")  -- Texto do botão 1
+        , translate (4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "2")  -- Texto do botão 2
+        , translate (-4 * cellSize) (-3 * cellSize) $ scale 0.20 0.20 $ color black (text "3")  -- Texto do botão 3
+        ]
 
-    picture02 = [translate (-4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 1 bot
-    , translate (4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 2 bots
-    , translate (-4 * cellSize) (-3 * cellSize) $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 0 bots
-    , translate (-4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "1")  -- Texto do botão 1
-    , translate (4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "2")  -- Texto do botão 2
-    , translate (-4 * cellSize) (-3 * cellSize) $ scale 0.20 0.20 $ color black (text "0")  -- Texto do botão 0
-    ]
+        picture02 = pictures [translate (-4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 1 bot
+        , translate (4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 2 bots
+        , translate (-4 * cellSize) (-3 * cellSize) $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 0 bots
+        , translate (-4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "1")  -- Texto do botão 1
+        , translate (4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "2")  -- Texto do botão 2
+        , translate (-4 * cellSize) (-3 * cellSize) $ scale 0.20 0.20 $ color black (text "0")  -- Texto do botão 0
+        ]
 
-    picture03 = [  translate (-4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 1 bot
-    , translate (4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 0 bots
-    , translate (-4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "1")  -- Texto do botão 1
-    , translate (4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "0")  -- Texto do botão 0
-    ]
+        picture03 = pictures [  translate (-4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 1 bot
+        , translate (4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 0 bots
+        , translate (-4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "1")  -- Texto do botão 1
+        , translate (4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "0")  -- Texto do botão 0
+        ]
 
 -- Desenhar Menu bots
 drawMenuSelectionBots :: Int -> Picture
