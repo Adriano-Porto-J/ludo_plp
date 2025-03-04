@@ -9,21 +9,105 @@ import Game.Index
 import System.Random (randomRIO)
 import System.IO.Unsafe (unsafePerformIO)
 import Debug.Trace (trace)
-
--- Tamanho do tabuleiro e das áreas
-boardSize :: Float
-boardSize = 455
-
-cellSize :: Float
-cellSize = 35  -- Tamanho das casas do caminho
-
--- Tamanho dos quadrados dos jogadores (3x3 células)
-squareSize :: Float
-squareSize = 140
+import Graphics.Gloss (Picture, rectanglePath)
 
 -- Janela
 window :: Display
 window = InWindow "Ludo" (800, 800) (200, 200)
+
+-- Tamanho dos estados
+boardSize :: Float
+boardSize = 455
+
+
+-- Desenhar Menu inicial 
+drawMenuStart :: Picture
+drawMenuStart = pictures
+    [color black (rectangleSolid boardSize boardSize)   -- Fundo do menu
+    , drawButtonNewGame
+    , drawButtonLoadSavedGame
+    , drawTituloLudo
+    ]
+
+drawButtonNewGame :: Picture
+drawButtonNewGame = pictures
+    [translate 0 (2 * cellSize) $ color white (rectangleSolid (6 * cellSize) (2 * cellSize)) -- Fundo do botão
+    , translate 0 (2 * cellSize) $ scale 0.20 0.20 $ color black (text "Start New Game")  -- Texto centralizado
+    ]
+
+drawButtonLoadSavedGame :: Picture
+drawButtonLoadSavedGame = pictures
+    [translate 0 (-2 * cellSize) $ color white (rectangleSolid (6 * cellSize) (2 * cellSize)) -- Fundo do botão
+    , translate 0 (-2 * cellSize) $ scale 0.20 0.20 $ color black (text "Load Saved Game")  -- Texto centralizado
+    ]
+
+drawTituloLudo :: Picture
+drawTituloLudo  = pictures
+    [translate 0 (5 * cellSize) $ scale 0.30 0.30 $ color black (text "Ludo Game")  -- Título centralizado
+    ]
+
+{-
+-- Função para verificar clique nos botões do menu inicial
+handleMenuStart :: Event -> Maybe MenuStartAction
+handleMenuStart (EventKey (MouseButton LeftButton) Down _ (x, y)) =
+    -- Verifica se o clique foi no botão "Start New Game"
+    if x >= (-3 * cellSize) && x <= (3 * cellSize) && y >= (1.5 * cellSize) && y <= (2.5 * cellSize)
+        then Just StartNewGame
+    -- Verifica se o clique foi no botão "Load Saved Game"
+    else if x >= (-3 * cellSize) && x <= (3 * cellSize) && y >= (-2.5 * cellSize) && y <= (-1.5 * cellSize)
+        then Just LoadSavedGame
+    -- Caso contrário, nenhum botão foi clicado
+    else Nothing
+handleMenuStart _ = Nothing
+-}
+
+-- Desenhar Menu players
+drawMenuSelectionPlayers :: Picture
+drawMenuSelectionPlayers = pictures
+    [color black (rectangleSolid boardSize boardSize)   -- Fundo do menu
+    , drawButtonsPlayers
+    , drawTituloSelecionePlayers
+    ]
+
+drawButtonsPlayers :: Picture
+drawButtonsPlayers = pictures
+    [translate (-4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 1
+    , translate (4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 2
+    , translate 0 (-3 * cellSize) $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 3
+    , translate (-4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "1")  -- Texto do botão 1
+    , translate (4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "2")  -- Texto do botão 2
+    , translate 0 (-3 * cellSize) $ scale 0.20 0.20 $ color black (text "3")  -- Texto do botão 3
+    ]
+
+drawTituloSelecionePlayers :: Picture
+drawTituloSelecionePlayers = pictures
+    [translate 0 (5 * cellSize) $ scale 0.20 0.20 $ color black (text "Selecione a quantidade")  -- Título 1
+    , translate 0 (4 * cellSize) $ scale 0.20 0.20 $ color black (text "de bots")  -- Título 2
+    ]
+
+-- Função para verificar clique nos botões do menu de seleção de jogadores
+handleMenuPlayers :: Event -> Maybe Int
+handleMenuPlayers (EventKey (MouseButton LeftButton) Down _ (x, y)) =
+    -- Verifica se o clique foi no botão "1"
+    if x >= (-4.75 * cellSize) && x <= (-3.25 * cellSize) && y >= (-0.75 * cellSize) && y <= (0.75 * cellSize)
+        then Just 1
+    -- Verifica se o clique foi no botão "2"
+    else if x >= (3.25 * cellSize) && x <= (4.75 * cellSize) && y >= (-0.75 * cellSize) && y <= (0.75 * cellSize)
+        then Just 2
+    -- Verifica se o clique foi no botão "3"
+    else if x >= (-0.75 * cellSize) && x <= (0.75 * cellSize) && y >= (-3.75 * cellSize) && y <= (-2.25 * cellSize)
+        then Just 3
+    -- Caso contrário, nenhum botão foi clicado
+    else Nothing
+handleMenuPlayers _ = Nothing
+
+-- Tamanho das casas do caminho
+cellSize :: Float
+cellSize = 35
+
+-- Tamanho dos quadrados dos jogadores (5x5 células)
+squareSize :: Float
+squareSize = 140
 
 -- Fundo branco
 background :: Color
@@ -31,7 +115,7 @@ background = white
 
 -- Desenhar tabuleiro
 drawBoard :: Picture
-drawBoard = pictures 
+drawBoard = pictures
     [ color (black) (rectangleSolid boardSize boardSize)  -- Fundo do tabuleiro
     , drawBaseAreas
     , drawPaths
@@ -53,7 +137,7 @@ drawPaths :: Picture
 drawPaths = pictures
     [ color white $ rectangleSolid (cellSize * 6) cellSize  -- Caminho horizontal
     , color white $ rectangleSolid cellSize (cellSize * 6)  -- Caminho vertical
-    
+
     -- Cercando caminhos com quadrados brancos
     , pictures [translate (-6 * cellSize + (i * cellSize)) cellSize $ color white (rectangleSolid cellSize cellSize) | i <- [0..6]]
     , pictures [translate (-6 * cellSize + (i * cellSize)) (-cellSize) $ color white (rectangleSolid cellSize cellSize) | i <- [0..6]]
@@ -64,19 +148,19 @@ drawPaths = pictures
     , pictures [translate cellSize (6 * cellSize - (i * cellSize)) $ color white (rectangleSolid cellSize cellSize) | i <- [0..6]]
     , pictures [translate (-cellSize) (6 * cellSize - (i * cellSize)) $ color white (rectangleSolid cellSize cellSize) | i <- [0..6]]
     -- Caminhos coloridos das peças
-    , translate (-2 * cellSize) 0 $ color red (rectangleSolid cellSize cellSize)  
-    , translate (2 * cellSize) 0 $ color blue (rectangleSolid cellSize cellSize)  
-    , translate 0 (-2 * cellSize) $ color green (rectangleSolid cellSize cellSize)  
-    , translate 0 (2 * cellSize) $ color yellow (rectangleSolid cellSize cellSize)  
-    
+    , translate (-2 * cellSize) 0 $ color red (rectangleSolid cellSize cellSize)
+    , translate (2 * cellSize) 0 $ color blue (rectangleSolid cellSize cellSize)
+    , translate 0 (-2 * cellSize) $ color green (rectangleSolid cellSize cellSize)
+    , translate 0 (2 * cellSize) $ color yellow (rectangleSolid cellSize cellSize)
+
     -- Caminhos coloridos até o centro
     , pictures [translate (-5 * cellSize + (i * cellSize)) 0 $ color red (rectangleSolid cellSize cellSize) | i <- [0..4]]
     , pictures [translate (5 * cellSize - (i * cellSize)) 0 $ color blue (rectangleSolid cellSize cellSize) | i <- [0..4]]
     , pictures [translate 0 (-5 * cellSize + (i * cellSize)) $ color green (rectangleSolid cellSize cellSize) | i <- [0..4]]
     , pictures [translate 0 (5 * cellSize - (i * cellSize)) $ color yellow (rectangleSolid cellSize cellSize) | i <- [0..4]]
-    
+
     , color black $ rectangleSolid cellSize cellSize  -- Centro
-    
+
 
     -- Quadrados brancos nas pontas dos caminhos coloridos
     , translate (-6 * cellSize) 0 $ color white (rectangleSolid cellSize cellSize)
@@ -102,7 +186,7 @@ getSpecialTileSprite special | GameTypes.tileType (special) == GameTypes.Safe = 
                              | GameTypes.tileType (special) == GameTypes.Death = deathTile
                              | GameTypes.tileType (special) == GameTypes.Lucky = luckyTile
                              | otherwise = Blank
-
+--
 drawSpecialTile::GameTypes.SpecialTile->Picture
 drawSpecialTile special = drawOnRegular (getSpecialTileSprite special) (fromIntegral(GameTypes.tilePosition special))
 
@@ -119,13 +203,13 @@ safeTile::Picture
 safeTile = thickCircle radius 6.0
     where radius = min cellSize cellSize * 0.3
 
-deathTile::Picture 
+deathTile::Picture
 deathTile = pictures [ rotate 45.0 $ rectangleSolid side 7.0
                     , rotate (-45.0) $ rectangleSolid side 7.0]
     where side = min cellSize cellSize * 0.75
 
 luckyTile::Picture
-luckyTile = pictures 
+luckyTile = pictures
     [ translate (0.125 * cellSize) 0 $ rotate (-60.0) $ rectangleSolid side 5.0
     , translate 0 (0.3 * cellSize) $ rectangleSolid side 5.0
     , translate 0.4 0 $ scale 0.8 0.8 $ rectangleSolid side 5]
@@ -133,8 +217,8 @@ luckyTile = pictures
 
 -- Desenhar a grade do tabuleiro
 drawGrid :: Picture
-drawGrid = color black $ pictures 
-    [line [(x, -boardSize/2), (x, boardSize/2)] | x <- [-boardSize/2, -boardSize/2 + cellSize .. boardSize/2]]
+drawGrid = color black $ pictures
+    [line [(x,-boardSize/2), (x, boardSize/2)] | x <- [-boardSize/2, -boardSize/2 + cellSize .. boardSize/2]]
     <> pictures [line [(-boardSize/2, y), (boardSize/2, y)] | y <- [-boardSize/2, -boardSize/2 + cellSize .. boardSize/2]]
 
 -- Lógica
@@ -154,22 +238,25 @@ transformGameIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
     yMax = -7 * cellSize
     boardXMin = -6.5 * cellSize
     boardXMax =  6.5 * cellSize
-    boardYMin =  -6.5 * cellSize
+    boardYMin = -6.5 * cellSize
     boardYMax =  6.5 * cellSize
 transformGameIO _ gameState = return gameState  -- Não faz nada para outros eventos
 
 selectPiece::GameTypes.GameState -> Int -> GameTypes.GameState --Seleciona a peça de acordo com a localização do tabuleiro e realiza a jogada
-selectPiece gameState piecePos = 
-                                if GameTypes.processingMove (gameState) == True && piecePos > -5
-                                    then
-                                        if GameTypes.diceRolled gameState == 6 && GameTypes.sixesInRow gameState < 3 then
-                                            (Game.ProcessMove.processMove gameState (piecePos,GameTypes.diceRolled (gameState))) {GameTypes.diceRolled = -1}
-                                        else do
-                                            let newState = Game.ProcessMove.processMove gameState (piecePos,GameTypes.diceRolled (gameState))
-                                            nextPlayer newState
-                                            
-                                    else gameState
-
+selectPiece gameState piecePos = case piece of
+                                    Nothing -> gameState
+                                    Just piece -> 
+                                        if GameTypes.processingMove (gameState) == True && piecePos > -5
+                                            then
+                                            if GameTypes.diceRolled gameState == 6 && GameTypes.sixesInRow gameState < 3 then
+                                                (Game.ProcessMove.processMove gameState (piecePos,GameTypes.diceRolled (gameState))) {GameTypes.diceRolled = -1}
+                                            else do
+                                                let newState = Game.ProcessMove.processMove gameState (piecePos,GameTypes.diceRolled (gameState))
+                                                nextPlayer newState
+                                        else gameState
+                                
+    where piece = getPieceByPositionAndColor (GameTypes.pieces gameState) (GameTypes.currentPlayer gameState) piecePos 
+--
 selectPosition::GameTypes.GameState -> Float -> Float -> Int
 selectPosition gameState x y | basePos!!0 < x && basePos!!1 > x && basePos!!2 < y && basePos!!3 > y = -1
                              | (basePos!!0 + 1) < x && (basePos!!1 + 1) > x && basePos!!2 < y && basePos!!3 > y = -2
@@ -247,10 +334,10 @@ selectPosition gameState x y | basePos!!0 < x && basePos!!1 > x && basePos!!2 < 
     where basePos = baseQuadByColorMousePos(baseQuadByColor (GameTypes.currentPlayer (gameState)))
 
 baseQuadByColorMousePos::(Int,Int) -> [Float]
-baseQuadByColorMousePos (x,y)           | (x,y) == (-5,5) = [-5.5,-4.5,4.5,5.5]
-                                        | (x,y) == (4,5) = [3.5,4.5,4.5,5.5]
-                                        | (x,y) == (-5,4) = [-5.5,-4.5,-4.5,-3.5]
-                                        | otherwise = [3.5,4.5,-5.5,-4.5]
+baseQuadByColorMousePos (x,y)           | (x,y) == (-5,5) = [-5.5,-4.5,4.5,5.5] --vermelho
+                                        | (x,y) == (4,5) = [3.5,4.5,4.5,5.5] --amarelo
+                                        | (x,y) == (-5,-4) = [-5.5,-4.5,-4.5,-3.5] --verde
+                                        | otherwise = [3.5,4.5,-4.5,-3.5] --azul
 
 pieceSprite::GameTypes.Piece -> Picture
 pieceSprite piece = pictures [color black (rectangleSolid (side+5) (side+5)), color cor (rectangleSolid (side-1) (side-1))]
@@ -286,7 +373,7 @@ drawPlayerText gameState | currentPlayer == GameTypes.Red = translate (-3 * cell
     where currentPlayer = GameTypes.currentPlayer gameState
 
 drawButton :: Picture
-drawButton = pictures 
+drawButton = pictures
     [translate  (-3.5 * cellSize) (-8 * cellSize) $ color black (rectangleSolid (6 * cellSize) (2 * cellSize))-- Fundo do botão
     , translate (-5.5 * cellSize) (-8 * cellSize) $ scale 0.20 0.20 $ color white (text "Rolar Dado")  -- Texto
     ]
@@ -317,22 +404,22 @@ drawDiceFace value = pictures [diceSquare, pips]
   where
     -- Quadrado do dado
     diceSquare = color black (rectangleSolid diceSize diceSize)
-    
+
     -- Pontos (pipas) dependendo do valor do dado
     pips = case value of
       1 -> pictures [drawPip 0 0]  -- Ponto central
       2 -> pictures [drawPip (-offset) offset, drawPip offset (-offset)]
       3 -> pictures [drawPip (-offset) offset, drawPip 0 0, drawPip offset (-offset)]
-      4 -> pictures [drawPip (-offset) offset, drawPip offset offset, 
+      4 -> pictures [drawPip (-offset) offset, drawPip offset offset,
                      drawPip (-offset) (-offset), drawPip offset (-offset)]
-      5 -> pictures [drawPip (-offset) offset, drawPip offset offset, 
-                     drawPip 0 0, 
+      5 -> pictures [drawPip (-offset) offset, drawPip offset offset,
+                     drawPip 0 0,
                      drawPip (-offset) (-offset), drawPip offset (-offset)]
-      6 -> pictures [drawPip (-offset) offset, drawPip offset offset, 
-                     drawPip (-offset) 0, drawPip offset 0, 
+      6 -> pictures [drawPip (-offset) offset, drawPip offset offset,
+                     drawPip (-offset) 0, drawPip offset 0,
                      drawPip (-offset) (-offset), drawPip offset (-offset)]
       _ -> blank  -- Caso inválido (não desenha nada)
-    
+
     -- Offset para posicionar os pontos
     offset = diceSize / 3
 
@@ -341,7 +428,7 @@ drawDice gameState = translate (2 * cellSize) (-8 * cellSize) $ drawDiceFace (Ga
 
 rolarDadoIO :: GameTypes.GameState -> IO GameTypes.GameState
 rolarDadoIO gameState = do
-    if ((GameTypes.diceRolled gameState) == -1 || ((GameTypes.diceRolled gameState) == 6 && GameTypes.sixesInRow gameState < 3))then do 
+    if ((GameTypes.diceRolled gameState) == -1 || ((GameTypes.diceRolled gameState) == -6 && GameTypes.sixesInRow gameState < 3))then do 
         dado <- randomRIO (1, 6)  -- Gera um número aleatório entre 1 e 6
         putStrLn ("Dado rolado: " ++ show dado)  -- Apenas para debug
         return gameState { GameTypes.diceRolled = dado, GameTypes.processingMove = True} -- Atualiza o estado do jogo
@@ -349,7 +436,7 @@ rolarDadoIO gameState = do
 
 -- Desenha a tela do jogo
 drawScreen :: GameTypes.GameState -> IO Picture
-drawScreen gameState = return $ pictures 
+drawScreen gameState = return $ pictures
     [ drawBoard                -- Desenha o tabuleiro
     , drawAllPieces gameState  -- Desenha todas as peças
     , drawButton               -- Desenha o botão
@@ -368,7 +455,7 @@ drawPiece piece | position < 0 = basePosPiece piece
                     (drawOnRegular sprite position)
     where position = (fromIntegral(GameTypes.piecePosition piece))
           sprite = pieceSprite piece
-
+--
 drawOnRegular::Picture -> Float -> Picture
 drawOnRegular sprite position
                        | position >= 0 && position < 5 = translate ((position - 5) * cellSize) (1 * cellSize) $ sprite
@@ -391,23 +478,25 @@ drawOnFinalArea sprite position| position >= 48 && position < 53 = translate ((p
                          | position >= 60 && position < 65 = translate ((65 - position) * cellSize) (0 * cellSize) $ sprite
                          | position >= 66 && position < 71 = translate (0 * cellSize) ((position - 71) * cellSize) $ sprite
                          | otherwise = Blank
-{-
+
 walkOne::GameTypes.Piece->GameTypes.Piece
-walkOne piece = GameTypes.Piece { 
-    GameTypes.pieceId = GameTypes.pieceId piece, 
-    GameTypes.pieceColor = GameTypes.pieceColor piece, 
+walkOne piece = GameTypes.Piece {
+    GameTypes.pieceId = GameTypes.pieceId piece,
+    GameTypes.pieceColor = GameTypes.pieceColor piece,
     GameTypes.piecePosition = ((GameTypes.piecePosition piece) + 1),
-    GameTypes.tilesWalked = GameTypes.tilesWalked piece, 
+    GameTypes.tilesWalked = GameTypes.tilesWalked piece,
     GameTypes.inStartingArea = GameTypes.inStartingArea piece,
     GameTypes.inFinishArea = False,
     GameTypes.finished = GameTypes.finished piece
   }
-
+--
+{-
 walkOneEachPiece::GameTypes.GameState->GameTypes.GameState
-walkOneEachPiece gameState = do 
+walkOneEachPiece gameState = do
     let newPieces = map walkOne (GameTypes.pieces gameState)
     gameState {GameTypes.pieces = newPieces}
 -}
+
 render :: IO ()
 render = playIO window background 30 initialGameState drawScreen transformGameIO (const (return . id))
 -- Função principal
@@ -421,5 +510,4 @@ render = playIO window background 30 initialGameState drawScreen transformGameIO
 --gameState sendo um tipo de dado que representa o estado do jogo
 --drawBoard como sendo uma função que recebe esse tipo de dado e o transforma para Picture (gameState -> Picture)
 --inputHandling sendo a função (Event -> gameState -> gameState) que atualiza o estado do jogo de acordo c a entrada
---(const id) sendo uma função que atualiza o gameState a cada segundo que se passa,
---como não iremos necessitar de animações no nosso escopo, a função identidade (const id) não faz nada
+--(const id) sendo uma função que atualiza o gameState a cada segundo que se passa,t id) não faz nada

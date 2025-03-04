@@ -6,10 +6,9 @@ import GameTypes
 
 processMove :: GameState -> (Int, Int) -> GameState
 processMove gameState (pieceStart, pieceEnd) = do
-  let currentPlayerColor = currentPlayer gameState
-  let piece = getPieceByPositionAndColor (pieces gameState) currentPlayerColor pieceStart
   case piece of
-    Just piece ->
+    Just piece -> do
+      let walked = tilesWalked piece
       if pieceStart < 0
         then do
           -- Mover peça para o tabuleiro
@@ -21,29 +20,31 @@ processMove gameState (pieceStart, pieceEnd) = do
             then do
               -- Mover peça na casa Death
               let newPieces = movePieceCaptured (pieces gameState) piece
-
               let blockades = findBlockades newPieces
               gameState {pieces = newPieces, blockades = blockades, processingMove = False}
             else
-              if pieceEnd >= 48 && pieceStart < 48
+              if walked + (pieceEnd + piecePosition (piece)) > 46
                 then do
-                  -- Move Peça para a área final
-                  let newPieces = movePieceToFinishArea (getPlayerByColor (players gameState) currentPlayerColor) (pieces gameState) piece pieceStart pieceEnd
-                  let blockades = findBlockades newPieces
-                  gameState {pieces = newPieces, blockades = blockades, processingMove = False}
-                else
-                  if pieceStart >= 48
+                  if (inFinishArea piece) == True
                     then do
                       -- Move Peça na área final
-                      let newPieces = movePieceInFinishArea (pieces gameState) piece pieceStart pieceEnd
+                      let newPieces = movePieceInFinishArea (pieces gameState) piece pieceStart (pieceEnd + (piecePosition piece))
                       let blockades = findBlockades newPieces
                       gameState {pieces = newPieces, blockades = blockades, processingMove = False}
                     else do
-                      -- Mover Peça no tabuleiro
-                      let newPieces = movePieceInBoard (pieces gameState) piece pieceStart pieceEnd (currentPlayer gameState)
+                      -- Move Peça para a área final
+                      let newPieces = movePieceToFinishArea (getPlayerByColor (players gameState) currentPlayerColor) (pieces gameState) piece pieceStart (pieceEnd + (piecePosition piece))
                       let blockades = findBlockades newPieces
                       gameState {pieces = newPieces, blockades = blockades, processingMove = False}
+                else do
+                  -- Mover Peça no tabuleiro
+                  let newPieces = movePieceInBoard (pieces gameState) piece pieceStart (pieceEnd + (piecePosition piece)) (currentPlayer gameState)
+                  let blockades = findBlockades newPieces
+                  gameState {pieces = newPieces, blockades = blockades, processingMove = False}
     Nothing -> gameState
+  where
+    currentPlayerColor = currentPlayer gameState
+    piece = getPieceByPositionAndColor (pieces gameState) currentPlayerColor pieceStart
 
 getPieceByPositionAndColor :: [Piece] -> Color -> Int -> Maybe Piece
 getPieceByPositionAndColor pieces color position
@@ -85,7 +86,7 @@ movePieceCaptured pieces piece = do
 -- Move uma peça no tabuleiro
 movePieceInBoard :: [Piece] -> Piece -> Int -> Int -> Color -> [Piece]
 movePieceInBoard pieces piece startPos endPos color = do
-  let newPiece = piece {piecePosition = endPos, tilesWalked = tilesWalked piece + (endPos - startPos + 48) `mod` 48}
+  let newPiece = piece {piecePosition = endPos `mod` 48, tilesWalked = piecePosition (piece) - endPos}
   let updatedPieces = newPiece : (removePieceByColorAndPos pieces color startPos)
   let capturedPieces = filter (\p -> piecePosition p == endPos && pieceColor p /= color) updatedPieces
   if length capturedPieces > 0
@@ -112,7 +113,7 @@ getPieceColorInPosition pieces position = pieceColor $ head $ filter (\piece -> 
 
 movePieceToFinishArea :: Player -> [Piece] -> Piece -> Int -> Int -> [Piece]
 movePieceToFinishArea player pieces piece startPos endPos = do
-  let newPiece = piece {piecePosition = endPos, tilesWalked = endPos - (startingPos player), inFinishArea = True}
+  let newPiece = piece {piecePosition = getFinishAreaStart (pieceColor (piece)), tilesWalked = endPos - (startingPos player), inFinishArea = True}
   let updatedPieces = newPiece : (removePieceByColorAndPos pieces (pieceColor piece) startPos)
   updatedPieces
 
