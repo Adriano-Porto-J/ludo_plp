@@ -129,14 +129,15 @@ drawTituloSelecioneBots = pictures
     ]
 
 
-drawButtonBots :: int -> Pictures
+drawButtonBots :: int -> Picture
 drawButtonBots players 
         |players == 1 = picture01
         |players == 2 = picture02
         |players == 3 = picture03
-        |otherwise = return gameState
+        |otherwise = blank
     where
-        picture01 = pictures [translate (-4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 1 bot
+        picture01 = pictures
+        [translate (-4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 1 bot
         , translate (4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 2 bots
         , translate (-4 * cellSize) (-3 * cellSize) $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 3 bots
         , translate (-4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "1")  -- Texto do botão 1
