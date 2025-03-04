@@ -229,7 +229,7 @@ transformGameIO :: Event -> GameTypes.GameState -> IO GameTypes.GameState
 transformGameIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
     | x > xMin && x < xMax && y > yMin && y < yMax = rolarDadoIO gameState  -- Rola o dado
     | x > boardXMin && x < boardXMax && y > boardYMin && y < boardYMax = return (selectPiece gameState (selectPosition gameState (x / cellSize) (y / cellSize))) -- Rola o dado
-    | otherwise = return (walkOneEachPiece  gameState)  -- Não faz nada se o clique não for no botão
+    | otherwise = return gameState --(walkOneEachPiece  gameState)  -- Não faz nada se o clique não for no botão
   where
     -- Coordenadas do botão
     xMin = -7 * cellSize
@@ -490,10 +490,12 @@ walkOne piece = GameTypes.Piece {
     GameTypes.finished = GameTypes.finished piece
   }
 
+{-
 walkOneEachPiece::GameTypes.GameState->GameTypes.GameState
 walkOneEachPiece gameState = do
     let newPieces = map walkOne (GameTypes.pieces gameState)
     gameState {GameTypes.pieces = newPieces}
+-}
 
 render :: IO ()
 render = playIO window background 30 initialGameState drawScreen transformGameIO (const (return . id))
