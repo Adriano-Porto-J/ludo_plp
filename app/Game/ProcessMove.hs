@@ -11,49 +11,49 @@ processMove gameState (pieceStart, pieceEnd) = do
   case piece of
     Just piece ->
       if pieceStart < 0
-    then do
-      -- Mover peça para o tabuleiro
-      let newPieces = movePieceToBoard (pieces gameState) piece (currentPlayer gameState)
-      let blockades = findBlockades newPieces
-      gameState {pieces = newPieces, blockades = blockades, processingMove = False}
-    else
-      if pieceEnd == -1
         then do
-          -- Mover peça na casa Death
-          let newPieces = movePieceCaptured (pieces gameState) piece
-
+          -- Mover peça para o tabuleiro
+          let newPieces = movePieceToBoard (pieces gameState) piece (currentPlayer gameState)
           let blockades = findBlockades newPieces
           gameState {pieces = newPieces, blockades = blockades, processingMove = False}
         else
-          if pieceEnd >= 48 && pieceStart < 48
+          if pieceEnd == -1
             then do
-              -- Move Peça para a área final
-              let newPieces = movePieceToFinishArea (getPlayerByColor (players gameState) currentPlayerColor) (pieces gameState) piece pieceStart pieceEnd
+              -- Mover peça na casa Death
+              let newPieces = movePieceCaptured (pieces gameState) piece
+
               let blockades = findBlockades newPieces
               gameState {pieces = newPieces, blockades = blockades, processingMove = False}
             else
-              if pieceStart >= 48
+              if pieceEnd >= 48 && pieceStart < 48
                 then do
-                  -- Move Peça na área final
-                  let newPieces = movePieceInFinishArea (pieces gameState) piece pieceStart pieceEnd
+                  -- Move Peça para a área final
+                  let newPieces = movePieceToFinishArea (getPlayerByColor (players gameState) currentPlayerColor) (pieces gameState) piece pieceStart pieceEnd
                   let blockades = findBlockades newPieces
                   gameState {pieces = newPieces, blockades = blockades, processingMove = False}
-                else do
-                  -- Mover Peça no tabuleiro
-                  let newPieces = movePieceInBoard (pieces gameState) piece pieceStart pieceEnd (currentPlayer gameState)
-                  let blockades = findBlockades newPieces
-                  gameState {pieces = newPieces, blockades = blockades, processingMove = False}
-    Nothing -> gameState  
-
-  
+                else
+                  if pieceStart >= 48
+                    then do
+                      -- Move Peça na área final
+                      let newPieces = movePieceInFinishArea (pieces gameState) piece pieceStart pieceEnd
+                      let blockades = findBlockades newPieces
+                      gameState {pieces = newPieces, blockades = blockades, processingMove = False}
+                    else do
+                      -- Mover Peça no tabuleiro
+                      let newPieces = movePieceInBoard (pieces gameState) piece pieceStart pieceEnd (currentPlayer gameState)
+                      let blockades = findBlockades newPieces
+                      gameState {pieces = newPieces, blockades = blockades, processingMove = False}
+    Nothing -> gameState
 
 getPieceByPositionAndColor :: [Piece] -> Color -> Int -> Maybe Piece
-getPieceByPositionAndColor pieces color position | filterArr == [] = Nothing
-                                                 | otherwise = Just( head filterArr)
-  where filterArr = filter (\piece -> piecePosition piece == position && pieceColor piece == color) pieces
+getPieceByPositionAndColor pieces color position
+  | filterArr == [] = Nothing
+  | otherwise = Just (head filterArr)
+  where
+    filterArr = filter (\piece -> piecePosition piece == position && pieceColor piece == color) pieces
 
 getPieceByIdAndColor :: GameState -> Int -> Color -> Piece
-getPieceByIdAndColor gameState id color = do 
+getPieceByIdAndColor gameState id color = do
   let pieces = GameTypes.pieces (gameState)
   head (filter (\piece -> pieceId piece == id && pieceColor piece == color) pieces)
 
@@ -100,7 +100,7 @@ findBlockades pieces = do
   let positionCounts = fromListWith (+) [(piecePosition p, 1) | p <- pieces]
 
   -- Filtra o mapa para encontrar apenas as posições que aparecem duas ou mais vezes
-  let duplicatePositions = filter (\(pos, count) -> count >= 2 && pos /= -1) (toList positionCounts)
+  let duplicatePositions = filter (\(pos, count) -> count >= 2 && pos >= 0) (toList positionCounts)
 
   -- Cria uma lista de tuplas contendo a cor e a posição das peças que estão em posições duplicadas
   map (\(pos, _) -> (getPieceColorInPosition pieces pos, pos)) duplicatePositions
@@ -132,5 +132,3 @@ processLuckyMove gameState pieceToKill = do
   let newPiece = piece {piecePosition = -1, inStartingArea = True, tilesWalked = 0}
   let updatedPieces = newPiece : (removePieceByColorAndPos (pieces gameState) (pieceColor piece) (piecePosition piece))
   gameState {pieces = updatedPieces}
-
-
