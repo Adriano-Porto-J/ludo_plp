@@ -19,7 +19,6 @@ window = InWindow "Ludo" (800, 800) (200, 200)
 boardSize :: Float
 boardSize = 455
 
-
 -- Desenhar Menu inicial 
 drawMenuStart :: Picture
 drawMenuStart = pictures
@@ -46,25 +45,29 @@ drawTituloLudo  = pictures
     [translate 0 (5 * cellSize) $ scale 0.30 0.30 $ color black (text "Ludo Game")  -- Título centralizado
     ]
 
-{-
--- Função para verificar clique nos botões do menu inicial
-handleMenuStart :: Event -> Maybe MenuStartAction
-handleMenuStart (EventKey (MouseButton LeftButton) Down _ (x, y)) =
-    -- Verifica se o clique foi no botão "Start New Game"
-    if x >= (-3 * cellSize) && x <= (3 * cellSize) && y >= (1.5 * cellSize) && y <= (2.5 * cellSize)
-        then Just StartNewGame
-    -- Verifica se o clique foi no botão "Load Saved Game"
-    else if x >= (-3 * cellSize) && x <= (3 * cellSize) && y >= (-2.5 * cellSize) && y <= (-1.5 * cellSize)
-        then Just LoadSavedGame
-    -- Caso contrário, nenhum botão foi clicado
-    else Nothing
-handleMenuStart _ = Nothing
--}
+handleMenuInicialIO :: Event -> GameTypes.GameState -> IO GameTypes.GameState
+handleMenuInicialIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
+    | x >= xMin01 && x <= xMax01 && y >= yMin01 && y <= yMax01 = drawMenuSelectionPlayers
+    | x >= xMin02 && x <= xMax02 && y >= yMin02 && y <= yMax02 = drawBoard
+    | otherwise = return gameState --(walkOneEachPiece  gameState)  -- Não faz nada se o clique não for no botão
+  where
+    --Botao start new game
+    xMin01 = -3 * cellSize
+    xMax01 =  3 * cellSize
+    yMin01 =  cellSize
+    yMax01 =  3 * cellSize
+
+    --Botao load saved game
+    xMin02 = -3 * cellSize
+    xMax02 = 3 * cellSize
+    yMin02 = -3 * cellSize
+    yMax02 = -1 * cellSize
+transformGameIO _ gameState = return gameState  -- Não faz nada para outros eventos
 
 -- Desenhar Menu players
 drawMenuSelectionPlayers :: Picture
 drawMenuSelectionPlayers = pictures
-    [color black (rectangleSolid boardSize boardSize)   -- Fundo do menu
+    [color black (rectangleSolid boardSize boardSize)   -- Fundo do menu de players
     , drawButtonsPlayers
     , drawTituloSelecionePlayers
     ]
@@ -73,33 +76,174 @@ drawButtonsPlayers :: Picture
 drawButtonsPlayers = pictures
     [translate (-4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 1
     , translate (4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 2
-    , translate 0 (-3 * cellSize) $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 3
+    , translate (-4 * cellSize) (-3 * cellSize) $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 3
+    , translate (-4 * cellSize) (3 * cellSize) $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 4
     , translate (-4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "1")  -- Texto do botão 1
     , translate (4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "2")  -- Texto do botão 2
-    , translate 0 (-3 * cellSize) $ scale 0.20 0.20 $ color black (text "3")  -- Texto do botão 3
+    , translate (-4 * cellSize) (-3 * cellSize) $ scale 0.20 0.20 $ color black (text "3")  -- Texto do botão 3
+    , translate (-4 * cellSize) (3 * cellSize) $ scale 0.20 0.20 $ color black (text "4")  -- Texto do botão 4
     ]
 
 drawTituloSelecionePlayers :: Picture
 drawTituloSelecionePlayers = pictures
     [translate 0 (5 * cellSize) $ scale 0.20 0.20 $ color black (text "Selecione a quantidade")  -- Título 1
+    , translate 0 (4 * cellSize) $ scale 0.20 0.20 $ color black (text "de players")  -- Título 2
+    ]
+
+handleMenuPlayersIO :: Event -> GameTypes.GameState -> IO GameTypes.GameState
+handleMenuPlayersIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
+    | x >= xMin01 && x <= xMax01 && y >= yMin01 && y <= yMax01 = drawMenuSelectionBots 1
+    | x >= xMin02 && x <= xMax02 && y >= yMin02 && y <= yMax02 = drawMenuSelectionBots 2
+    | x >= xMin03 && x <= xMax03 && y >= yMin03 && y <= yMax03 = drawMenuSelectionBots 3
+    | x >= xMin04 && x <= xMax04 && y >= yMin04 && y <= yMax04 = drawBoard
+    | otherwise = return gameState --(walkOneEachPiece  gameState)  -- Não faz nada se o clique não for no botão
+  where
+
+    --Botao 01
+    xMin01 = (-4 * cellSize) - (1.5 * cellSize / 2)
+    xMax01 = (-4 * cellSize) + (1.5 * cellSize / 2)
+    yMin01 = 0 - (1.5 * cellSize / 2)
+    yMax01 = 0 + (1.5 * cellSize / 2)
+
+    --Botao 02
+    xMin02 = (4 * cellSize) - (1.5 * cellSize / 2)
+    xMax02 = (4 * cellSize) + (1.5 * cellSize / 2)
+    yMin02 = 0 - (1.5 * cellSize / 2)
+    yMax02 = 0 + (1.5 * cellSize / 2)
+
+    --Botao 03
+    xMin03 = (-4 * cellSize) - (1.5 * cellSize / 2)
+    xMax03 = (-4 * cellSize) + (1.5 * cellSize / 2)
+    yMin03 = (-3 * cellSize) - (1.5 * cellSize / 2)
+    yMax03 = (-3 * cellSize) + (1.5 * cellSize / 2)
+
+    --Botao 04
+    xMin04 = (-4 * cellSize) - (1.5 * cellSize / 2)
+    xMax04 = (-4 * cellSize) + (1.5 * cellSize / 2)
+    yMin04 = (3 * cellSize) - (1.5 * cellSize / 2)
+    yMax04 = (3 * cellSize) + (1.5 * cellSize / 2)
+transformGameIO _ gameState = return gameState  -- Não faz nada para outros eventos
+
+drawTituloSelecioneBots :: Picture
+drawTituloSelecioneBots = pictures
+    [translate 0 (5 * cellSize) $ scale 0.20 0.20 $ color black (text "Selecione a quantidade")  -- Título 1
     , translate 0 (4 * cellSize) $ scale 0.20 0.20 $ color black (text "de bots")  -- Título 2
     ]
 
--- Função para verificar clique nos botões do menu de seleção de jogadores
-handleMenuPlayers :: Event -> Maybe Int
-handleMenuPlayers (EventKey (MouseButton LeftButton) Down _ (x, y)) =
-    -- Verifica se o clique foi no botão "1"
-    if x >= (-4.75 * cellSize) && x <= (-3.25 * cellSize) && y >= (-0.75 * cellSize) && y <= (0.75 * cellSize)
-        then Just 1
-    -- Verifica se o clique foi no botão "2"
-    else if x >= (3.25 * cellSize) && x <= (4.75 * cellSize) && y >= (-0.75 * cellSize) && y <= (0.75 * cellSize)
-        then Just 2
-    -- Verifica se o clique foi no botão "3"
-    else if x >= (-0.75 * cellSize) && x <= (0.75 * cellSize) && y >= (-3.75 * cellSize) && y <= (-2.25 * cellSize)
-        then Just 3
-    -- Caso contrário, nenhum botão foi clicado
-    else Nothing
-handleMenuPlayers _ = Nothing
+
+drawButtonBots :: int -> Pictures
+drawButtonBots players 
+    |players == 1 = picture01
+    |players == 2 = picture02
+    |players == 3 = picture03
+    |otherwise = return gameState
+ where
+    picture01 = [translate (-4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 1 bot
+    , translate (4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 2 bots
+    , translate (-4 * cellSize) (-3 * cellSize) $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 3 bots
+    , translate (-4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "1")  -- Texto do botão 1
+    , translate (4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "2")  -- Texto do botão 2
+    , translate (-4 * cellSize) (-3 * cellSize) $ scale 0.20 0.20 $ color black (text "3")  -- Texto do botão 3
+    ]
+
+    picture02 = [translate (-4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 1 bot
+    , translate (4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 2 bots
+    , translate (-4 * cellSize) (-3 * cellSize) $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 0 bots
+    , translate (-4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "1")  -- Texto do botão 1
+    , translate (4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "2")  -- Texto do botão 2
+    , translate (-4 * cellSize) (-3 * cellSize) $ scale 0.20 0.20 $ color black (text "0")  -- Texto do botão 0
+    ]
+
+    picture03 = [  translate (-4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 1 bot
+    , translate (4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 0 bots
+    , translate (-4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "1")  -- Texto do botão 1
+    , translate (4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "0")  -- Texto do botão 0
+    ]
+
+-- Desenhar Menu bots
+drawMenuSelectionBots :: Int -> Picture
+drawMenuSelectionBots players = pictures
+    [color black (rectangleSolid boardSize boardSize)   -- Fundo do menu de bots
+    , drawButtonsBots players
+    , drawTituloSelecioneBots
+    ]
+
+handleMenuBotsPlayers01 :: Event -> GameTypes.GameState -> IO GameTypes.GameState
+handleMenuBotsPlayers01 (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
+    | x >= xMin01 && x <= xMax01 && y >= yMin01 && y <= yMax01 = drawBoard
+    | x >= xMin02 && x <= xMax02 && y >= yMin02 && y <= yMax02 = drawBoard
+    | x >= xMin03 && x <= xMax03 && y >= yMin03 && y <= yMax03 = drawBoard
+    | otherwise = return gameState --(walkOneEachPiece  gameState)  -- Não faz nada se o clique não for no botão
+  where
+
+    --Botao 01
+    xMin01 = (-4 * cellSize) - (1.5 * cellSize / 2)
+    xMax01 = (-4 * cellSize) + (1.5 * cellSize / 2)
+    yMin01 = 0 - (1.5 * cellSize / 2)
+    yMax01 = 0 + (1.5 * cellSize / 2)
+
+    --Botao 02
+    xMin02 = (4 * cellSize) - (1.5 * cellSize / 2)
+    xMax02 = (4 * cellSize) + (1.5 * cellSize / 2)
+    yMin02 = 0 - (1.5 * cellSize / 2)
+    yMax02 = 0 + (1.5 * cellSize / 2)
+
+    --Botao 03
+    xMin03 = (-4 * cellSize) - (1.5 * cellSize / 2)
+    xMax03 = (-4 * cellSize) + (1.5 * cellSize / 2)
+    yMin03 = (-3 * cellSize) - (1.5 * cellSize / 2)
+    yMax03 = (-3 * cellSize) + (1.5 * cellSize / 2)
+
+transformGameIO _ gameState = return gameState  -- Não faz nada para outros eventos
+
+handleMenuBotsPlayers02 :: Event -> GameTypes.GameState -> IO GameTypes.GameState
+handleMenuBotsPlayers02 (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
+    | x >= xMin01 && x <= xMax01 && y >= yMin01 && y <= yMax01 = drawBoard
+    | x >= xMin02 && x <= xMax02 && y >= yMin02 && y <= yMax02 = drawBoard
+    | x >= xMin03 && x <= xMax03 && y >= yMin03 && y <= yMax03 = drawBoard
+    | otherwise = return gameState --(walkOneEachPiece  gameState)  -- Não faz nada se o clique não for no botão
+  where
+
+    --Botao 01
+    xMin01 = (-4 * cellSize) - (1.5 * cellSize / 2)
+    xMax01 = (-4 * cellSize) + (1.5 * cellSize / 2)
+    yMin01 = 0 - (1.5 * cellSize / 2)
+    yMax01 = 0 + (1.5 * cellSize / 2)
+
+    --Botao 02
+    xMin02 = (4 * cellSize) - (1.5 * cellSize / 2)
+    xMax02 = (4 * cellSize) + (1.5 * cellSize / 2)
+    yMin02 = 0 - (1.5 * cellSize / 2)
+    yMax02 = 0 + (1.5 * cellSize / 2)
+
+    --Botao 03
+    xMin03 = (-4 * cellSize) - (1.5 * cellSize / 2)
+    xMax03 = (-4 * cellSize) + (1.5 * cellSize / 2)
+    yMin03 = (-3 * cellSize) - (1.5 * cellSize / 2)
+    yMax03 = (-3 * cellSize) + (1.5 * cellSize / 2)
+
+transformGameIO _ gameState = return gameState  -- Não faz nada para outros eventos
+
+handleMenuBotsPlayers03 :: Event -> GameTypes.GameState -> IO GameTypes.GameState
+handleMenuPlayersIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
+    | x >= xMin01 && x <= xMax01 && y >= yMin01 && y <= yMax01 = drawBoard
+    | x >= xMin02 && x <= xMax02 && y >= yMin02 && y <= yMax02 = drawBoard
+    | otherwise = return gameState --(walkOneEachPiece  gameState)  -- Não faz nada se o clique não for no botão
+  where
+
+    --Botao 01
+    xMin01 = (-4 * cellSize) - (1.5 * cellSize / 2)
+    xMax01 = (-4 * cellSize) + (1.5 * cellSize / 2)
+    yMin01 = 0 - (1.5 * cellSize / 2)
+    yMax01 = 0 + (1.5 * cellSize / 2)
+
+    --Botao 02
+    xMin02 = (4 * cellSize) - (1.5 * cellSize / 2)
+    xMax02 = (4 * cellSize) + (1.5 * cellSize / 2)
+    yMin02 = 0 - (1.5 * cellSize / 2)
+    yMax02 = 0 + (1.5 * cellSize / 2)
+
+transformGameIO _ gameState = return gameState  -- Não faz nada para outros eventos
 
 -- Tamanho das casas do caminho
 cellSize :: Float
