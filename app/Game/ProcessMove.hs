@@ -27,12 +27,12 @@ processMove gameState (pieceStart, pieceEnd) = do
             then do
               if (inFinishArea piece) == True then do
                 -- Move Peça na área final
-                  let newPieces = movePieceInFinishArea (pieces gameState) piece pieceStart pieceEnd
+                  let newPieces = movePieceInFinishArea (pieces gameState) piece pieceStart (pieceEnd + (piecePosition piece))
                   let blockades = findBlockades newPieces
                   gameState {pieces = newPieces, blockades = blockades, processingMove = False}
               else do
                 -- Move Peça para a área final
-                let newPieces = movePieceToFinishArea (getPlayerByColor (players gameState) currentPlayerColor) (pieces gameState) piece pieceStart pieceEnd
+                let newPieces = movePieceToFinishArea (getPlayerByColor (players gameState) currentPlayerColor) (pieces gameState) piece pieceStart (pieceEnd + (piecePosition piece))
                 let blockades = findBlockades newPieces
                 gameState {pieces = newPieces, blockades = blockades, processingMove = False}
           else do
