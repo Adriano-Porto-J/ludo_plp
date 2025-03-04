@@ -41,7 +41,9 @@ getDiceRoll = do
 gameLoop :: GameState -> IO ()
 gameLoop gameState = do
   printGameState gameState
-  if isBotTurn gameState
+  if checkGameOver gameState
+    then putStrLn "O jogo terminou! Temos um vencedor!"
+  else if isBotTurn gameState
     then do
       putStrLn "Vez do bot!"
       botTurn gameState

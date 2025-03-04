@@ -50,3 +50,6 @@ processMove gameState jogada =
 processLuckyMove :: GameState -> Int -> GameState
 processLuckyMove gameState jogada =
   ProcessMove.processLuckyMove gameState jogada
+
+checkGameOver :: GameState -> Bool
+checkGameOver gameState = any (\player -> all finished (filter ((== player) . pieceColor) (pieces gameState))) (map playerColor (players gameState))
