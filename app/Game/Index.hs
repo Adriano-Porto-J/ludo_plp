@@ -35,7 +35,7 @@ nextPlayer gameState =
   let colors = map playerColor (players gameState)
       current = currentPlayer gameState
       next = getNextPlayer colors current
-   in gameState {currentPlayer = next, sixesInRow = 0} -- Reseta contador de seis seguidos
+   in gameState {currentPlayer = next, sixesInRow = 0, diceRolled = -1} -- Reseta contador de seis seguidos
 
 getNextPlayer :: [Color] -> Color -> Color
 getNextPlayer colors current =

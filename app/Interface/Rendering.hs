@@ -5,6 +5,7 @@ import Graphics.Gloss.Interface.IO.Game
 import qualified GameTypes
 import Game.CreateGame
 import Game.ProcessMove
+import Game.Index
 import System.Random (randomRIO)
 import System.IO.Unsafe (unsafePerformIO)
 import Debug.Trace (trace)
@@ -138,13 +139,13 @@ drawGrid = color black $ pictures
 
 -- Lógica
 
-initialGameState = (createGameState 4 2)
+initialGameState = (Game.CreateGame.createGameState 4 2)
 
 transformGameIO :: Event -> GameTypes.GameState -> IO GameTypes.GameState
 transformGameIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
     | x > xMin && x < xMax && y > yMin && y < yMax = rolarDadoIO gameState  -- Rola o dado
-    | x > boardXMin && x < boardXMax && y > boardYMin && y < boardYMax = selectPiece gameState (selectPosition (x / cellSize) (y / cellSize)) -- Rola o dado
-    | otherwise = return (walkOneEachPiece  gameState)  -- Não faz nada se o clique não for no botão
+    | x > boardXMin && x < boardXMax && y > boardYMin && y < boardYMax = return (selectPiece gameState (selectPosition (x / cellSize) (y / cellSize))) -- Rola o dado
+    | otherwise = return gameState --(walkOneEachPiece  gameState)  -- Não faz nada se o clique não for no botão
   where
     -- Coordenadas do botão
     xMin = -7 * cellSize
@@ -157,10 +158,15 @@ transformGameIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
     boardYMax =  6.5 * cellSize
 transformGameIO _ gameState = return gameState  -- Não faz nada para outros eventos
 
-selectPiece::GameTypes.GameState -> Int -> IO GameTypes.GameState
-selectPiece gameState piecePos = do 
-    putStrLn(show piecePos)
-    return gameState
+selectPiece::GameTypes.GameState -> Int -> GameTypes.GameState --Seleciona a peça de acordo com a localização do tabuleiro e realiza a jogada
+selectPiece gameState piecePos = if GameTypes.processingMove (gameState) == True 
+                                    then
+                                        if GameTypes.diceRolled gameState == 6 && GameTypes.sixesInRow gameState < 3 then
+                                            (Game.ProcessMove.processMove gameState (piecePos,GameTypes.diceRolled (gameState))) {GameTypes.diceRolled = -1}
+                                        else do
+                                            let newState = Game.ProcessMove.processMove gameState (piecePos,GameTypes.diceRolled (gameState))
+                                            nextPlayer newState
+                                    else gameState
 
 selectPosition::Float -> Float -> Int
 selectPosition x y | x < -4.5 && x > -5.5 && y < 1.5 && y > 0.5 = 0
@@ -323,7 +329,7 @@ drawDice gameState = translate (2 * cellSize) (-8 * cellSize) $ drawDiceFace (Ga
 
 rolarDadoIO :: GameTypes.GameState -> IO GameTypes.GameState
 rolarDadoIO gameState = do
-    if ((GameTypes.diceRolled gameState) == -1 || ((GameTypes.diceRolled gameState) == -6 && GameTypes.sixesInRow gameState < 3))then do 
+    if ((GameTypes.diceRolled gameState) == -1 || ((GameTypes.diceRolled gameState) == 6 && GameTypes.sixesInRow gameState < 3))then do 
         dado <- randomRIO (1, 6)  -- Gera um número aleatório entre 1 e 6
         putStrLn ("Dado rolado: " ++ show dado)  -- Apenas para debug
         return gameState { GameTypes.diceRolled = dado, GameTypes.processingMove = True} -- Atualiza o estado do jogo
@@ -373,7 +379,7 @@ drawOnFinalArea sprite position| position >= 48 && position < 53 = translate ((p
                          | position >= 60 && position < 65 = translate ((65 - position) * cellSize) (0 * cellSize) $ sprite
                          | position >= 66 && position < 71 = translate (0 * cellSize) ((position - 71) * cellSize) $ sprite
                          | otherwise = Blank
-
+{-
 walkOne::GameTypes.Piece->GameTypes.Piece
 walkOne piece = GameTypes.Piece { 
     GameTypes.pieceId = GameTypes.pieceId piece, 
@@ -389,7 +395,7 @@ walkOneEachPiece::GameTypes.GameState->GameTypes.GameState
 walkOneEachPiece gameState = do 
     let newPieces = map walkOne (GameTypes.pieces gameState)
     gameState {GameTypes.pieces = newPieces}
-
+-}
 render :: IO ()
 render = playIO window background 30 initialGameState drawScreen transformGameIO (const (return . id))
 -- Função principal
