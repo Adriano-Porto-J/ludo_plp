@@ -118,7 +118,7 @@ playerTurn gameState = do
               if null oponnents
                 then do
                   putStrLn "Nenhum oponente disponível para voltar para a base. Continuando..."
-
+                  gameLoop updatedGameState
                 else do
                   putStrLn "Oponentes disponíveis:"
                   mapM_ (uncurry printOponnent) (zip [1 ..] oponnents)
@@ -140,12 +140,16 @@ botTurn gameState = do
   diceRoll <- getDiceRoll
   putStrLn $ "O bot rolou: " ++ show diceRoll ++ "!"
   let gameStateWithDice = gameState {diceRolled = diceRoll}
-  let gameStateSixHandled = handleSixesInRow gameStateWithDice
-  
-  if sixesInRow gameStateWithDice >= 2 && diceRoll == 6
+  let updatedSixesInRow = if diceRoll == 6 then sixesInRow gameState + 1 else 0
+  let gameStateSixHandled = gameStateWithDice {sixesInRow = updatedSixesInRow}
+
+  if updatedSixesInRow >= 3
     then do
       putStrLn "O bot tirou três 6 seguidos e perdeu a vez."
-      gameLoop (nextPlayer gameStateSixHandled {sixesInRow = 0})
+      let resetGameState = gameStateSixHandled {sixesInRow = 0}
+      gameLoop (nextPlayer resetGameState)
+
+
     else do
       let availableMoves = getAvailableMoves gameStateSixHandled
 
