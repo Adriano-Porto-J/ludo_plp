@@ -448,7 +448,7 @@ drawAllPieces::GameTypes.GameState -> Picture
 drawAllPieces gameState = pictures (map drawPiece (GameTypes.pieces (gameState)))
 
 drawPiece::GameTypes.Piece -> Picture
-drawPiece piece | position == -1 = basePosPiece piece 
+drawPiece piece | position < 0 = basePosPiece piece 
                 | otherwise = if GameTypes.inFinishArea (piece) == True then 
                     (drawOnFinalArea sprite position) 
                 else 
