@@ -46,6 +46,7 @@ drawTituloLudo  = pictures
     [translate 0 (5 * cellSize) $ scale 0.30 0.30 $ color black (text "Ludo Game")  -- Título centralizado
     ]
 
+{-
 -- Função para verificar clique nos botões do menu inicial
 handleMenuStart :: Event -> Maybe MenuStartAction
 handleMenuStart (EventKey (MouseButton LeftButton) Down _ (x, y)) =
@@ -58,6 +59,7 @@ handleMenuStart (EventKey (MouseButton LeftButton) Down _ (x, y)) =
     -- Caso contrário, nenhum botão foi clicado
     else Nothing
 handleMenuStart _ = Nothing
+-}
 
 -- Desenhar Menu players
 drawMenuSelectionPlayers :: Picture
@@ -230,13 +232,13 @@ transformGameIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
     | otherwise = return (walkOneEachPiece  gameState)  -- Não faz nada se o clique não for no botão
   where
     -- Coordenadas do botão
-    xMin =-7 * cellSize
-    xMax =-1 * cellSize
-    yMin =-9 * cellSize
-    yMax =-7 * cellSize
-    boardXMin =-6.5 * cellSize
+    xMin = -7 * cellSize
+    xMax = -1 * cellSize
+    yMin = -9 * cellSize
+    yMax = -7 * cellSize
+    boardXMin = -6.5 * cellSize
     boardXMax =  6.5 * cellSize
-    boardYMin =-6.5 * cellSize
+    boardYMin = -6.5 * cellSize
     boardYMax =  6.5 * cellSize
 transformGameIO _ gameState = return gameState  -- Não faz nada para outros eventos
 
@@ -446,7 +448,7 @@ drawAllPieces::GameTypes.GameState -> Picture
 drawAllPieces gameState = pictures (map drawPiece (GameTypes.pieces (gameState)))
 
 drawPiece::GameTypes.Piece -> Picture
-drawPiece piece | position == -1 = basePos piece 
+drawPiece piece | position == -1 = basePosPiece piece 
                 | otherwise = if GameTypes.inFinishArea (piece) == True then 
                     (drawOnFinalArea sprite position) 
                 else 
