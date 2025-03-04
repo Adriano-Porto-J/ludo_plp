@@ -62,7 +62,6 @@ handleMenuInicialIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
     xMax02 = 3 * cellSize
     yMin02 = -3 * cellSize
     yMax02 = -1 * cellSize
-transformGameIO _ gameState = return gameState  -- Não faz nada para outros eventos
 
 -- Desenhar Menu players
 drawMenuSelectionPlayers :: Picture
@@ -122,7 +121,6 @@ handleMenuPlayersIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
     xMax04 = (-4 * cellSize) + (1.5 * cellSize / 2)
     yMin04 = (3 * cellSize) - (1.5 * cellSize / 2)
     yMax04 = (3 * cellSize) + (1.5 * cellSize / 2)
-transformGameIO _ gameState = return gameState  -- Não faz nada para outros eventos
 
 drawTituloSelecioneBots :: Picture
 drawTituloSelecioneBots = pictures
@@ -194,8 +192,6 @@ handleMenuBotsPlayers01 (EventKey (MouseButton LeftButton) Up _ (x, y)) gameStat
     yMin03 = (-3 * cellSize) - (1.5 * cellSize / 2)
     yMax03 = (-3 * cellSize) + (1.5 * cellSize / 2)
 
-transformGameIO _ gameState = return gameState  -- Não faz nada para outros eventos
-
 handleMenuBotsPlayers02 :: Event -> GameTypes.GameState -> IO GameTypes.GameState
 handleMenuBotsPlayers02 (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
     | x >= xMin01 && x <= xMax01 && y >= yMin01 && y <= yMax01 = drawBoard
@@ -222,8 +218,6 @@ handleMenuBotsPlayers02 (EventKey (MouseButton LeftButton) Up _ (x, y)) gameStat
     yMin03 = (-3 * cellSize) - (1.5 * cellSize / 2)
     yMax03 = (-3 * cellSize) + (1.5 * cellSize / 2)
 
-transformGameIO _ gameState = return gameState  -- Não faz nada para outros eventos
-
 handleMenuBotsPlayers03 :: Event -> GameTypes.GameState -> IO GameTypes.GameState
 handleMenuPlayersIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
     | x >= xMin01 && x <= xMax01 && y >= yMin01 && y <= yMax01 = drawBoard
@@ -242,8 +236,6 @@ handleMenuPlayersIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
     xMax02 = (4 * cellSize) + (1.5 * cellSize / 2)
     yMin02 = 0 - (1.5 * cellSize / 2)
     yMax02 = 0 + (1.5 * cellSize / 2)
-
-transformGameIO _ gameState = return gameState  -- Não faz nada para outros eventos
 
 -- Tamanho das casas do caminho
 cellSize :: Float
