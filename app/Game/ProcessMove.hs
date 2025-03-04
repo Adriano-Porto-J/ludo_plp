@@ -121,3 +121,5 @@ processLuckyMove gameState pieceToKill = do
   let newPiece = piece {piecePosition = -1, inStartingArea = True, tilesWalked = 0}
   let updatedPieces = newPiece : (removePieceByColorAndPos (pieces gameState) (pieceColor piece) (piecePosition piece))
   gameState {pieces = updatedPieces}
+
+

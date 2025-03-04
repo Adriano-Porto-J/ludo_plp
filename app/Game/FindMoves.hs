@@ -75,3 +75,6 @@ findLuckyMoves gameState = do
   let safeTiles = map (\tile -> tilePosition tile) (filter (\tile -> (tileType tile) == Safe) (specialTiles gameState))
   let unsafePieces = filter (\p -> not (piecePosition p `elem` safeTiles)) availablePieces
   map piecePosition unsafePieces
+
+
+

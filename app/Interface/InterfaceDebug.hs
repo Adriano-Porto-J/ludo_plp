@@ -41,7 +41,9 @@ getDiceRoll = do
 gameLoop :: GameState -> IO ()
 gameLoop gameState = do
   printGameState gameState
-  if isBotTurn gameState
+  if checkGameOver gameState
+    then putStrLn "O jogo terminou! Temos um vencedor!"
+  else if isBotTurn gameState
     then do
       putStrLn "Vez do bot!"
       botTurn gameState
@@ -97,7 +99,7 @@ playerTurn gameState = do
       putStrLn "Você tirou três 6 seguidos! Perde a vez."
       gameLoop (nextPlayer gameStateWithDice {sixesInRow = 0})  -- Resetando `sixesInRow`
     else do
-      let availableMoves = getAvailableMoves gameStateWithDice
+      let availableMoves = filterSafeMoves gameStateWithDice (getAvailableMoves gameStateWithDice)
       if null availableMoves
         then do
           putStrLn "Nenhum movimento disponível! Passando o turno..."
@@ -118,9 +120,7 @@ playerTurn gameState = do
               if null oponnents
                 then do
                   putStrLn "Nenhum oponente disponível para voltar para a base. Continuando..."
-                  if diceRoll == 6 
-                    then playerTurn updatedGameState  -- Continua jogando se tirou 6
-                    else gameLoop (nextPlayer updatedGameState)
+                  gameLoop updatedGameState
                 else do
                   putStrLn "Oponentes disponíveis:"
                   mapM_ (uncurry printOponnent) (zip [1 ..] oponnents)
@@ -142,14 +142,18 @@ botTurn gameState = do
   diceRoll <- getDiceRoll
   putStrLn $ "O bot rolou: " ++ show diceRoll ++ "!"
   let gameStateWithDice = gameState {diceRolled = diceRoll}
-  let gameStateSixHandled = handleSixesInRow gameStateWithDice
-  
-  if sixesInRow gameStateWithDice >= 2 && diceRoll == 6
+  let updatedSixesInRow = if diceRoll == 6 then sixesInRow gameState + 1 else 0
+  let gameStateSixHandled = gameStateWithDice {sixesInRow = updatedSixesInRow}
+
+  if updatedSixesInRow >= 3
     then do
       putStrLn "O bot tirou três 6 seguidos e perdeu a vez."
-      gameLoop (nextPlayer gameStateSixHandled {sixesInRow = 0})
+      let resetGameState = gameStateSixHandled {sixesInRow = 0}
+      gameLoop (nextPlayer resetGameState)
+
+
     else do
-      let availableMoves = getAvailableMoves gameStateSixHandled
+      let availableMoves = filterSafeMoves gameStateSixHandled (getAvailableMoves gameStateSixHandled)
 
       if null availableMoves
         then do
@@ -167,14 +171,11 @@ botTurn gameState = do
               putStrLn "O bot caiu em uma casa de sorte e escolheu um oponente para voltar para a base."
               let oponnents = getLuckyMoves updatedGameState
               if null oponnents
-                then gameLoop updatedGameState
+                then gameLoop (nextPlayer updatedGameState) -- Garante que o turno passa
                 else do
                   let oponent = head oponnents
                   let luckyProcessedGameState = processLuckyMove updatedGameState oponent
-                 
-                  if diceRoll == 6
-                    then botTurn luckyProcessedGameState 
-                    else gameLoop (nextPlayer luckyProcessedGameState)
+                  gameLoop (nextPlayer luckyProcessedGameState) -- Garante que o turno passa
            else if diceRoll == 6
              then botTurn updatedGameState 
              else gameLoop (nextPlayer updatedGameState)
