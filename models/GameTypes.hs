@@ -56,6 +56,7 @@ data GameState = GameState
     blockades :: [(Color, Int)], -- Lista de bloqueios
     currentPlayer :: Color, -- Cor do jogador atual
     diceRolled :: Int, -- Valor do último lançamento do dado
+    processingMove :: Bool, -- Indica se um dado foi lançado e espera ser aplicado a uma peça
     end :: Bool, -- Indica se o jogo acabou
     sixesInRow :: Int -- Contador de seis seguidos}
   }

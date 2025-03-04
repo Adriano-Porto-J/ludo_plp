@@ -105,6 +105,168 @@ getSpecialTileSprite special | GameTypes.tileType (special) == GameTypes.Safe = 
 drawSpecialTile::GameTypes.SpecialTile->Picture
 drawSpecialTile special = drawOnRegular (getSpecialTileSprite special) (fromIntegral(GameTypes.tilePosition special))
 
+boostTile::Picture
+boostTile = pictures [ rotate 0.0 $ rectangleSolid side 7.0
+                    , rotate (90.0) $ rectangleSolid side 7.0]
+    where side = min cellSize cellSize * 0.75
+
+declineTile::Picture
+declineTile = pictures [ rotate 0.0 $ rectangleSolid side 7.0]
+    where side = min cellSize cellSize * 0.75
+
+safeTile::Picture
+safeTile = thickCircle radius 6.0
+    where radius = min cellSize cellSize * 0.3
+
+deathTile::Picture 
+deathTile = pictures [ rotate 45.0 $ rectangleSolid side 7.0
+                    , rotate (-45.0) $ rectangleSolid side 7.0]
+    where side = min cellSize cellSize * 0.75
+
+luckyTile::Picture
+luckyTile = pictures 
+    [ translate (0.125 * cellSize) 0 $ rotate (-60.0) $ rectangleSolid side 5.0
+    , translate 0 (0.3 * cellSize) $ rectangleSolid side 5.0
+    , translate 0.4 0 $ scale 0.8 0.8 $ rectangleSolid side 5]
+    where side = min cellSize cellSize * 0.75
+
+-- Desenhar a grade do tabuleiro
+drawGrid :: Picture
+drawGrid = color black $ pictures 
+    [line [(x, -boardSize/2), (x, boardSize/2)] | x <- [-boardSize/2, -boardSize/2 + cellSize .. boardSize/2]]
+    <> pictures [line [(-boardSize/2, y), (boardSize/2, y)] | y <- [-boardSize/2, -boardSize/2 + cellSize .. boardSize/2]]
+
+-- Lógica
+
+initialGameState = (createGameState 4 2)
+
+transformGameIO :: Event -> GameTypes.GameState -> IO GameTypes.GameState
+transformGameIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
+    | x > xMin && x < xMax && y > yMin && y < yMax = rolarDadoIO gameState  -- Rola o dado
+    | x > boardXMin && x < boardXMax && y > boardYMin && y < boardYMax = selectPiece gameState (selectPosition (x / cellSize) (y / cellSize)) -- Rola o dado
+    | otherwise = return (walkOneEachPiece  gameState)  -- Não faz nada se o clique não for no botão
+  where
+    -- Coordenadas do botão
+    xMin = -7 * cellSize
+    xMax = -1 * cellSize
+    yMin = -9 * cellSize
+    yMax = -7 * cellSize
+    boardXMin = -6.5 * cellSize
+    boardXMax =  6.5 * cellSize
+    boardYMin =  -6.5 * cellSize
+    boardYMax =  6.5 * cellSize
+transformGameIO _ gameState = return gameState  -- Não faz nada para outros eventos
+
+selectPiece::GameTypes.GameState -> Int -> IO GameTypes.GameState
+selectPiece gameState piecePos = do 
+    putStrLn(show piecePos)
+    return gameState
+
+selectPosition::Float -> Float -> Int
+selectPosition x y | x < -4.5 && x > -5.5 && y < 1.5 && y > 0.5 = 0
+                             | x < -3.5 && x > -4.5 && y < 1.5 && y > 0.5 = 1
+                             | x < -2.5 && x > -3.5 && y < 1.5 && y > 0.5 = 2
+                             | x < -1.5 && x > -2.5 && y < 1.5 && y > 0.5 = 3
+                             | x < -0.5 && x > -1.5 && y < 1.5 && y > 0.5 = 4
+                             | x < -0.5 && x > -1.5 && y < 2.5 && y > 1.5 = 5
+                             | x < -0.5 && x > -1.5 && y < 3.5 && y > 2.5 = 6
+                             | x < -0.5 && x > -1.5 && y < 4.5 && y > 3.5 = 7
+                             | x < -0.5 && x > -1.5 && y < 5.5 && y > 4.5 = 8
+                             | x < -0.5 && x > -1.5 && y < 6.5 && y > 5.5 = 9
+                             | x < 0.5 && x > -0.5 && y < 6.5 && y > 5.5 = 10
+                             | x < 1.5 && x > 0.5 && y < 6.5 && y > 5.5 = 11
+                             | x < 1.5 && x > 0.5 && y < 5.5 && y > 4.5 = 12
+                             | x < 1.5 && x > 0.5 && y < 4.5 && y > 3.5 = 13
+                             | x < 1.5 && x > 0.5 && y < 3.5 && y > 2.5 = 14
+                             | x < 1.5 && x > 0.5 && y < 2.5 && y > 1.5 = 15
+                             | x < 1.5 && x > 0.5 && y < 1.5 && y > 0.5 = 16
+                             | x < 2.5 && x > 1.5 && y < 1.5 && y > 0.5 = 17
+                             | x < 3.5 && x > 2.5 && y < 1.5 && y > 0.5 = 18
+                             | x < 4.5 && x > 3.5 && y < 1.5 && y > 0.5 = 19
+                             | x < 5.5 && x > 4.5 && y < 1.5 && y > 0.5 = 20
+                             | x < 6.5 && x > 5.5 && y < 1.5 && y > 0.5 = 21
+                             | x < 6.5 && x > 5.5 && y < 0.5 && y > -0.5 = 22
+                             | x < 6.5 && x > 5.5 && y < -0.5 && y > -1.5 = 23
+                             | x < 5.5 && x > 4.5 && y < -0.5 && y > -1.5 = 24
+                             | x < 4.5 && x > 3.5 && y < -0.5 && y > -1.5 = 25
+                             | x < 3.5 && x > 2.5 && y < -0.5 && y > -1.5 = 26
+                             | x < 2.5 && x > 1.5 && y < -0.5 && y > -1.5 = 27
+                             | x < 1.5 && x > 0.5 && y < -0.5 && y > -1.5 = 28
+                             | x < 1.5 && x > 0.5 && y < -1.5 && y > -2.5 = 29
+                             | x < 1.5 && x > 0.5 && y < -2.5 && y > -3.5 = 30
+                             | x < 1.5 && x > 0.5 && y < -3.5 && y > -4.5 = 31
+                             | x < 1.5 && x > 0.5 && y < -4.5 && y > -5.5 = 32
+                             | x < 1.5 && x > 0.5 && y < -5.5 && y > -6.5 = 33
+                             | x < 0.5 && x > -0.5 && y < -5.5 && y > -6.5 = 34
+                             | x < -0.5 && x > -1.5 && y < -5.5 && y > -6.5 = 35
+                             | x < -0.5 && x > -1.5 && y < -4.5 && y > -5.5 = 36
+                             | x < -0.5 && x > -1.5 && y < -3.5 && y > -4.5 = 37
+                             | x < -0.5 && x > -1.5 && y < -2.5 && y > -3.5 = 38
+                             | x < -0.5 && x > -1.5 && y < -1.5 && y > -2.5 = 39
+                             | x < -0.5 && x > -1.5 && y < -0.5 && y > -1.5 = 40
+                             | x < -1.5 && x > -2.5 && y < -0.5 && y > -1.5 = 41
+                             | x < -2.5 && x > -3.5 && y < -0.5 && y > -1.5 = 42
+                             | x < -3.5 && x > -4.5 && y < -0.5 && y > -1.5 = 43
+                             | x < -4.5 && x > -5.5 && y < -0.5 && y > -1.5 = 44
+                             | x < -5.5 && x > -6.5 && y < -0.5 && y > -1.5 = 45
+                             | x < -5.5 && x > -6.5 && y < 0.5 && y > -0.5 = 46
+                             | x < -5.5 && x > -6.5 && y < 1.5 && y > 0.5 = 47
+                             | x < -4.5 && x > -5.5 && y < 0.5 && y > -0.5 = 48 --Zona final do vermelho
+                             | x < -3.5 && x > -4.5 && y < 0.5 && y > -0.5 = 49
+                             | x < -2.5 && x > -3.5 && y < 0.5 && y > -0.5 = 50
+                             | x < -1.5 && x > -2.5 && y < 0.5 && y > -0.5 = 51
+                             | x < -0.5 && x > -1.5 && y < 0.5 && y > -0.5 = 52
+                             | x < 0.5 && x > -0.5 && y < 5.5 && y > 4.5 = 54 --Zona final do amarelo
+                             | x < 0.5 && x > -0.5 && y < 4.5 && y > 3.5 = 55
+                             | x < 0.5 && x > -0.5 && y < 3.5 && y > 2.5 = 56
+                             | x < 0.5 && x > -0.5 && y < 2.5 && y > 1.5 = 57
+                             | x < 0.5 && x > -0.5 && y < 1.5 && y > 0.5 = 58
+                             | x < 1.5 && x > 0.5 && y < 0.5 && y > -0.5 = 60 --Zona final do azul
+                             | x < 2.5 && x > 1.5 && y < 0.5 && y > -0.5 = 61
+                             | x < 3.5 && x > 2.5 && y < 0.5 && y > -0.5 = 62
+                             | x < 4.5 && x > 3.5 && y < 0.5 && y > -0.5 = 63
+                             | x < 5.5 && x > 4.5 && y < 0.5 && y > -0.5 = 64
+                             | x < 0.5 && x > -0.5 && y < -0.5 && y > -1.5 = 66 --Zona final do Amarelo
+                             | x < 0.5 && x > -0.5 && y < -1.5 && y > -2.5 = 67
+                             | x < 0.5 && x > -0.5 && y < -2.5 && y > -3.5 = 68
+                             | x < 0.5 && x > -0.5 && y < -3.5 && y > -4.5 = 69
+                             | x < 0.5 && x > -0.5 && y < -4.5 && y > -5.5 = 70
+                             | otherwise = -2
+
+pieceSprite::GameTypes.Piece -> Picture
+pieceSprite piece = pictures [color black (rectangleSolid (side+5) (side+5)), color cor (rectangleSolid (side-1) (side-1))]
+    where cor = getPieceColor piece
+          side = min cellSize cellSize * 0.75
+
+getPieceColor::GameTypes.Piece -> Color
+getPieceColor piece | pieceColor == GameTypes.Red = red
+               | pieceColor == GameTypes.Blue = blue
+               | pieceColor == GameTypes.Yellow = yellow
+               | otherwise = green
+    where pieceColor = GameTypes.pieceColor (piece)
+
+baseQuadByColor::GameTypes.Piece -> (Int,Int)
+baseQuadByColor piece | pieceColor == GameTypes.Red = (-5,5)
+                     | pieceColor == GameTypes.Blue = (4,-4)
+                     | pieceColor == GameTypes.Yellow = (4,5)
+                     | otherwise = (-5,-4)
+    where pieceColor = GameTypes.pieceColor (piece)
+
+basePos::GameTypes.Piece -> Picture
+basePos piece | id <= 1 = translate ((x + id) * cellSize) (y * cellSize) $ (pieceSprite piece)
+              | otherwise = translate ((x + (id - 2)) * cellSize) ((y - 1) * cellSize) $ (pieceSprite piece)
+    where id = fromIntegral (GameTypes.pieceId piece)
+          quad = baseQuadByColor piece
+          x = fromIntegral (fst quad)
+          y = fromIntegral (snd quad)
+
+drawPlayerText::GameTypes.GameState -> Picture
+drawPlayerText gameState | currentPlayer == GameTypes.Red = translate (-3 * cellSize) (8 * cellSize) $ scale 0.20 0.20 $ color red (text "Jogador Vermelho")
+                         | currentPlayer == GameTypes.Yellow = translate (-3 * cellSize) (8 * cellSize) $ scale 0.20 0.20 $ color yellow (text "Jogador Amarelo")
+                         | currentPlayer == GameTypes.Green = translate (-3 * cellSize) (8 * cellSize) $ scale 0.20 0.20 $ color green (text "Jogador Verde")
+                         | otherwise = translate (-3 * cellSize) (8 * cellSize) $ scale 0.20 0.20 $ color blue (text "Jogador Azul")
+    where currentPlayer = GameTypes.currentPlayer gameState
+
 drawButton :: Picture
 drawButton = pictures 
     [translate  (-3.5 * cellSize) (-8 * cellSize) $ color black (rectangleSolid (6 * cellSize) (2 * cellSize))-- Fundo do botão
@@ -161,83 +323,11 @@ drawDice gameState = translate (2 * cellSize) (-8 * cellSize) $ drawDiceFace (Ga
 
 rolarDadoIO :: GameTypes.GameState -> IO GameTypes.GameState
 rolarDadoIO gameState = do
-    dado <- randomRIO (1, 6)  -- Gera um número aleatório entre 1 e 6
-    putStrLn ("Dado rolado: " ++ show dado)  -- Apenas para debug
-    return gameState { GameTypes.diceRolled = dado } -- Atualiza o estado do jogo
-
-boostTile::Picture
-boostTile = pictures [ rotate 0.0 $ rectangleSolid side 7.0
-                    , rotate (90.0) $ rectangleSolid side 7.0]
-    where side = min cellSize cellSize * 0.75
-
-declineTile::Picture
-declineTile = pictures [ rotate 0.0 $ rectangleSolid side 7.0]
-    where side = min cellSize cellSize * 0.75
-
-safeTile::Picture
-safeTile = thickCircle radius 6.0
-    where radius = min cellSize cellSize * 0.3
-
-deathTile::Picture 
-deathTile = pictures [ rotate 45.0 $ rectangleSolid side 7.0
-                    , rotate (-45.0) $ rectangleSolid side 7.0]
-    where side = min cellSize cellSize * 0.75
-
-luckyTile::Picture
-luckyTile = pictures 
-    [ translate (0.125 * cellSize) 0 $ rotate (-60.0) $ rectangleSolid side 5.0
-    , translate 0 (0.3 * cellSize) $ rectangleSolid side 5.0
-    , translate 0.4 0 $ scale 0.8 0.8 $ rectangleSolid side 5]
-    where side = min cellSize cellSize * 0.75
-
--- Desenhar a grade do tabuleiro
-drawGrid :: Picture
-drawGrid = color black $ pictures 
-    [line [(x, -boardSize/2), (x, boardSize/2)] | x <- [-boardSize/2, -boardSize/2 + cellSize .. boardSize/2]]
-    <> pictures [line [(-boardSize/2, y), (boardSize/2, y)] | y <- [-boardSize/2, -boardSize/2 + cellSize .. boardSize/2]]
-
--- Lógica
-
-initialGameState = (createGameState 4 2)
-
-transformGameIO :: Event -> GameTypes.GameState -> IO GameTypes.GameState
-transformGameIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
-    | x > xMin && x < xMax && y > yMin && y < yMax = rolarDadoIO gameState  -- Rola o dado
-    | otherwise = return (walkOneEachPiece  gameState)  -- Não faz nada se o clique não for no botão
-  where
-    -- Coordenadas do botão
-    xMin = -7 * cellSize
-    xMax = -1 * cellSize
-    yMin = -9 * cellSize
-    yMax = -7 * cellSize
-transformGameIO _ gameState = return gameState  -- Não faz nada para outros eventos
-
-pieceSprite::GameTypes.Piece -> Picture
-pieceSprite piece = pictures [color black (rectangleSolid (side+5) (side+5)), color cor (rectangleSolid (side-1) (side-1))]
-    where cor = getPieceColor piece
-          side = min cellSize cellSize * 0.75
-
-getPieceColor::GameTypes.Piece -> Color
-getPieceColor piece | pieceColor == GameTypes.Red = red
-               | pieceColor == GameTypes.Blue = blue
-               | pieceColor == GameTypes.Yellow = yellow
-               | otherwise = green
-    where pieceColor = GameTypes.pieceColor (piece)
-
-baseQuadByColor::GameTypes.Piece -> (Int,Int)
-baseQuadByColor piece | pieceColor == GameTypes.Red = (-5,5)
-                     | pieceColor == GameTypes.Blue = (4,-4)
-                     | pieceColor == GameTypes.Yellow = (4,5)
-                     | otherwise = (-5,-4)
-    where pieceColor = GameTypes.pieceColor (piece)
-
-basePos::GameTypes.Piece -> Picture
-basePos piece | id <= 1 = translate ((x + id) * cellSize) (y * cellSize) $ (pieceSprite piece)
-              | otherwise = translate ((x + (id - 2)) * cellSize) ((y - 1) * cellSize) $ (pieceSprite piece)
-    where id = fromIntegral (GameTypes.pieceId piece)
-          quad = baseQuadByColor piece
-          x = fromIntegral (fst quad)
-          y = fromIntegral (snd quad)
+    if ((GameTypes.diceRolled gameState) == -1 || ((GameTypes.diceRolled gameState) == -6 && GameTypes.sixesInRow gameState < 3))then do 
+        dado <- randomRIO (1, 6)  -- Gera um número aleatório entre 1 e 6
+        putStrLn ("Dado rolado: " ++ show dado)  -- Apenas para debug
+        return gameState { GameTypes.diceRolled = dado, GameTypes.processingMove = True} -- Atualiza o estado do jogo
+    else return gameState
 
 -- Desenha a tela do jogo
 drawScreen :: GameTypes.GameState -> IO Picture
@@ -246,6 +336,7 @@ drawScreen gameState = return $ pictures
     , drawAllPieces gameState  -- Desenha todas as peças
     , drawButton               -- Desenha o botão
     , drawDice gameState       -- Desenha o dado com o valor atual
+    , drawPlayerText gameState -- Desenha o texto indicando a vez do jogador  
     ]
 
 drawAllPieces::GameTypes.GameState -> Picture

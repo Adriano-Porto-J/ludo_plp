@@ -16,7 +16,8 @@ createGameState players bots =
           blockades = [],
           specialTiles = specialTiles,
           currentPlayer = Red,
-          diceRolled = 0,
+          diceRolled = -1,
+          processingMove = False,
           end = False,
           sixesInRow = 0
         }
