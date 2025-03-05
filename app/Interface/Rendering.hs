@@ -57,7 +57,7 @@ transformGameIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
         let newGameState = Game.CreateGame.createGameState 4 3
         in return newGameState { GameTypes.screenState = GameTypes.JogoEmAndamento }
     
-    -- MenuBotsUmplayer: Processa o clique baseado no número de jogadores = 2 e número de bots
+    -- MenuBotsDoisplayer: Processa o clique baseado no número de jogadores = 2 e número de bots
     | GameTypes.screenState gameState == GameTypes.MenuBotsDoisPlayer && x >= -120 && x <= -75 && y >= 55 && y <= 105 = 
         let newGameState = Game.CreateGame.createGameState 2 0
         in return newGameState { GameTypes.screenState = GameTypes.JogoEmAndamento }
@@ -68,7 +68,7 @@ transformGameIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
         let newGameState = Game.CreateGame.createGameState 4 2 
         in return newGameState { GameTypes.screenState = GameTypes.JogoEmAndamento }
 
-    -- MenuBotsUmplayer: Processa o clique baseado no número de jogadores = 3 e número de bots
+    -- MenuBotsTresplayer: Processa o clique baseado no número de jogadores = 3 e número de bots
     | GameTypes.screenState gameState == GameTypes.MenuBotsTresPlayer && x >= -120 && x <= -75 && y >= 55 && y <= 105 = 
         let newGameState = Game.CreateGame.createGameState 3 0
         in return newGameState { GameTypes.screenState = GameTypes.JogoEmAndamento }
