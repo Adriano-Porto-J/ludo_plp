@@ -320,18 +320,37 @@ transformGameIO _ gameState = return gameState  -- Não faz nada para outros eve
 
 selectPiece::GameTypes.GameState -> Int -> GameTypes.GameState --Seleciona a peça de acordo com a localização do tabuleiro e realiza a jogada
 selectPiece gameState piecePos = case piece of
-                                    Nothing -> gameState
-                                    Just piece -> 
-                                        if GameTypes.processingMove (gameState) == True && piecePos > -5
-                                            then
-                                            if GameTypes.diceRolled gameState == 6 && GameTypes.sixesInRow gameState < 3 then
-                                                (Game.ProcessMove.processMove gameState (piecePos,GameTypes.diceRolled (gameState))) {GameTypes.diceRolled = -1}
-                                            else do
-                                                let newState = Game.ProcessMove.processMove gameState (piecePos,GameTypes.diceRolled (gameState))
-                                                nextPlayer newState
-                                        else gameState
-                                
-    where piece = getPieceByPositionAndColor (GameTypes.pieces gameState) (GameTypes.currentPlayer gameState) piecePos 
+  Nothiging -> gameState
+  Just piece ->
+    if GameTypes.processingMove (gameState) == True && piecePos > -5
+      then
+        if GameTypes.diceRolled gameState == 6 && GameTypes.sixesInRow gameState < 3
+          then do
+            let availableMoves = Game.Index.getAvailableMoves gameState -- Retorna Movimentos disponíveis
+            if availableMoves /= [] -- Verifica se há movimentos disponíveis
+              then do
+                let moves = filter (\(start, _) -> start == piecePos) availableMoves -- Há movimentos com a peça selecionada
+                if moves /= []
+                  then do
+                    let move = head moves -- se houver movimentos com a peça selecionada faça o movimento
+                    (Game.Index.processMove gameState move) {GameTypes.diceRolled = -1}
+                  else gameState -- se não houver retorne para o jogador
+              else nextPlayer gameState -- se não há nenhum movimento disponível passe para o próximo
+          else do
+            let availableMoves = Game.Index.getAvailableMoves gameState
+            if availableMoves /= []
+              then do
+                let moves = filter (\(start, _) -> start == piecePos) availableMoves
+                if moves /= []
+                  then do
+                    let move = head moves
+                    let newState = Game.Index.processMove gameState move
+                    nextPlayer newState
+                  else gameState
+              else nextPlayer gameState
+      else gameState
+  where
+    piece = getPieceByPositionAndColor (GameTypes.pieces gameState) (GameTypes.currentPlayer gameState) piecePos
 
 selectPosition::GameTypes.GameState -> Float -> Float -> Int
 selectPosition gameState x y | basePos!!0 < x && basePos!!1 > x && basePos!!2 < y && basePos!!3 > y = -1
