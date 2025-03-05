@@ -68,6 +68,7 @@ data GameState = GameState
     processingMove :: Bool, -- Indica se um dado foi lançado e espera ser aplicado a uma peça
     end :: Bool, -- Indica se o jogo acabou
     sixesInRow :: Int, -- Contador de seis seguidos}
-    screenState :: ScreenState  -- Estado atual da tela
+    screenState :: ScreenState,  -- Estado atual da tela
+    wasLuckyMove :: Bool
   }
   deriving (Show, Eq, Read, Generic, ToJSON, FromJSON)

@@ -92,9 +92,26 @@ transformGameIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
         x > xMin && x < xMax && y > yMin && y < yMax = rolarDadoIO gameState  -- Rola o dado
     | GameTypes.screenState gameState == GameTypes.JogoEmAndamento &&
         x > boardXMin && x < boardXMax && y > boardYMin && y < boardYMax = do
-        let updatedGameState = handleTurn gameState (selectPosition gameState (x / cellSize) (y / cellSize)) -- Seleciona peça
-        printGameState updatedGameState
-        return (updatedGameState)
+        let selectedPos = selectPosition gameState (x / cellSize) (y / cellSize)        
+        putStrLn $ "Casa selecionada " ++ show selectedPos 
+        let updatedGameState = handleTurn gameState (selectedPos) -- Seleciona peça
+        if GameTypes.wasLuckyMove updatedGameState
+            then do
+                let validLuckyMoves = Game.Index.getLuckyMoves updatedGameState
+                if null validLuckyMoves
+                    then do
+                        printGameState updatedGameState
+                        putStrLn "Lucky Move não disponível." 
+                        return (nextPlayer (updatedGameState {GameTypes.diceRolled = -1, GameTypes.wasLuckyMove = False}))
+                    else
+                        do
+                            printGameState updatedGameState
+                            putStrLn "LuckyMove"
+                            putStrLn $ show validLuckyMoves
+                            return updatedGameState
+            else do
+                printGameState updatedGameState
+                return (updatedGameState)
     | otherwise = return gameState  -- Não faz nada para outros cliques
   where
     -- Coordenadas do botão de rolar o dado
@@ -113,9 +130,39 @@ transformGameIO _ gameState = return gameState  -- Não faz nada para outros eve
 
 handleTurn :: GameTypes.GameState -> Int ->  GameTypes.GameState
 handleTurn gameState piece = 
-    if Game.Index.isBotTurn gameState
-        then botTurn gameState 
-        else playerTurn gameState piece 
+    if GameTypes.wasLuckyMove gameState
+        then do
+            if Game.Index.isBotTurn gameState
+                then botLuckyMove gameState
+                else playerLuckyMove gameState piece
+        else do
+            if Game.Index.isBotTurn gameState
+            then botTurn gameState 
+            else playerTurn gameState piece 
+
+botLuckyMove :: GameTypes.GameState -> GameTypes.GameState
+botLuckyMove gameState = do
+        let validLuckyMoves = Game.Index.getLuckyMoves gameState
+            in if null validLuckyMoves
+                then nextPlayer (gameState {GameTypes.diceRolled = -1, GameTypes.wasLuckyMove = False})
+                else do
+                    let move = Game.BotLogic.getBotLuckyMove validLuckyMoves
+                    let newState = Game.Index.processLuckyMove gameState move
+                    newState { GameTypes.diceRolled = -1, GameTypes.wasLuckyMove = False }
+
+playerLuckyMove :: GameTypes.GameState -> Int -> GameTypes.GameState
+playerLuckyMove gameState piecePos = do
+    let validLuckyMoves = Game.Index.getLuckyMoves gameState
+    if null validLuckyMoves
+        then nextPlayer (gameState {GameTypes.diceRolled = -1, GameTypes.wasLuckyMove = False})
+        else
+            let moves = filter (\start -> start == piecePos) validLuckyMoves
+            in if moves /= []
+                then
+                    let move = head moves
+                        newState = Game.Index.processLuckyMove gameState move
+                    in nextPlayer (newState { GameTypes.diceRolled = -1, GameTypes.wasLuckyMove = False })
+                else gameState
 
 botTurn :: GameTypes.GameState -> GameTypes.GameState
 botTurn gameState = 
@@ -127,15 +174,20 @@ botTurn gameState =
             in if availableMoves /= []
               then
                 let move = Game.BotLogic.getBestMove gameState availableMoves
-                in (Game.Index.processMove gameState move) {GameTypes.diceRolled = -1}
+                    newState = Game.Index.processMove gameState move
+                in if snd move == 25
+                     then newState { GameTypes.wasLuckyMove = True }
+                     else newState { GameTypes.diceRolled = -1 }
               else nextPlayer gameState
           else
             let availableMoves = Game.Index.getAvailableMoves gameState
             in if availableMoves /= []
               then
                 let move = Game.BotLogic.getBestMove gameState availableMoves
-                in let newState = Game.Index.processMove gameState move
-                in nextPlayer newState
+                    newState = Game.Index.processMove gameState move
+                in if snd move == 25
+                     then newState { GameTypes.wasLuckyMove = True }
+                     else nextPlayer newState { GameTypes.diceRolled = -1 }
               else nextPlayer gameState
       else gameState
 
@@ -154,7 +206,10 @@ playerTurn gameState piecePos = case piece of
                 if moves /= []
                   then do
                     let move = head moves -- se houver movimentos com a peça selecionada faça o movimento
-                    (Game.Index.processMove gameState move) {GameTypes.diceRolled = -1}
+                    let newState = Game.Index.processMove gameState move
+                    if snd move == 25
+                      then newState { GameTypes.wasLuckyMove = True }
+                      else newState { GameTypes.diceRolled = -1 }
                   else gameState -- se não houver retorne para o jogador
               else nextPlayer gameState -- se não há nenhum movimento disponível passe para o próximo
           else do
@@ -166,7 +221,9 @@ playerTurn gameState piecePos = case piece of
                   then do
                     let move = head moves
                     let newState = Game.Index.processMove gameState move
-                    nextPlayer newState
+                    if snd move == 25
+                      then newState { GameTypes.wasLuckyMove = True }
+                      else nextPlayer newState { GameTypes.diceRolled = -1 }
                   else gameState
               else nextPlayer gameState
       else gameState

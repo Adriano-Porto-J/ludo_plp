@@ -20,7 +20,8 @@ createGameState players bots =
           processingMove = False,
           end = False,
           sixesInRow = 0,
-          screenState = MenuInicial  -- Inicializa o estado da tela como MenuInicial
+          screenState = MenuInicial,  -- Inicializa o estado da tela como MenuInicial
+          wasLuckyMove = False
         }
 
 definePlayers :: [Color] -> Int -> Int -> [(Color, Bool)]

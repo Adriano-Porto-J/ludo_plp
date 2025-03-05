@@ -41,3 +41,6 @@ capturesOpponent gameState to =
 
 isSafePosition :: Int -> Bool
 isSafePosition pos = pos `elem` [0, 7, 12, 20, 24, 28, 33, 37, 46]
+
+getBotLuckyMove :: [Int] -> Int
+getBotLuckyMove luckyMoves = head luckyMoves

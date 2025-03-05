@@ -51,6 +51,7 @@ printGameState gameState = do
   putStrLn $ "Valor do dado: " ++ show (diceRolled gameState)
   putStrLn $ "Jogo finalizado? " ++ show (end gameState)
   putStrLn $ "Seis seguidos: " ++ show (sixesInRow gameState)
+  putStrLn $ "Foi Jogada Lucky? " ++ show (wasLuckyMove gameState)
   putStrLn "---------------------------"
 
 printPieces :: [Piece] -> IO ()
