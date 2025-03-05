@@ -12,5 +12,5 @@ Especificação do Projeto: https://docs.google.com/document/d/1l2ZcZusR_4niFJZ7
 
 Como rodar:
 
-cabal build
-cabal run
+> cabal build
+> cabal run
