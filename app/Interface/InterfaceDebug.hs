@@ -84,7 +84,7 @@ playerTurn gameState = do
       putStrLn "Você tirou três 6 seguidos! Perde a vez."
       gameLoop (nextPlayer gameStateWithDice {sixesInRow = 0}) -- Resetando `sixesInRow`
     else do
-      let availableMoves = filterSafeMoves gameStateWithDice (getAvailableMoves gameStateWithDice)
+      let availableMoves = getAvailableMoves gameStateWithDice
       if null availableMoves
         then do
           putStrLn "Nenhum movimento disponível! Passando o turno..."
@@ -136,8 +136,7 @@ botTurn gameState = do
       let resetGameState = gameStateSixHandled {sixesInRow = 0}
       gameLoop (nextPlayer resetGameState)
     else do
-      let availableMoves = filterSafeMoves gameStateSixHandled (getAvailableMoves gameStateSixHandled)
-
+      let availableMoves = getAvailableMoves gameStateSixHandled
       if null availableMoves
         then do
           putStrLn "O bot não pode se mover. Passando o turno..."

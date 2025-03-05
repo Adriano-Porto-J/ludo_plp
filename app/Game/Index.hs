@@ -40,13 +40,3 @@ processLuckyMove gameState jogada =
 
 checkGameOver :: GameState -> Bool
 checkGameOver gameState = any (\player -> all finished (filter ((== player) . pieceColor) (pieces gameState))) (map playerColor (players gameState))
-
-filterSafeMoves :: GameState -> [(Int, Int)] -> [(Int, Int)]
-filterSafeMoves gameState moves =
-  filter (not . isCapturingOnSafeTile gameState) moves
-
-isCapturingOnSafeTile :: GameState -> (Int, Int) -> Bool
-isCapturingOnSafeTile gameState (from, to) =
-  let piecesAtDestination = filter ((== to) . piecePosition) (pieces gameState)
-      safeTiles = map tilePosition (filter ((== Safe) . tileType) (specialTiles gameState))
-   in any ((`elem` safeTiles) . piecePosition) piecesAtDestination

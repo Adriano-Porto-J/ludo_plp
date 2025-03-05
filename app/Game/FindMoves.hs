@@ -22,7 +22,7 @@ getAvailableMoves gameState = do
   -- Movimentos no tabuleiro
   let movesOnBoard = getMovesOnBoard piecesOnBoard diceRoll specialTilesInGame gameBlockades
   let movesInFinishArea = getMovesInFinishArea piecesInFinishArea gameBlockades diceRoll
-  movesFromStart ++ movesOnBoard ++ movesInFinishArea
+  filterSafeMoves gameState (movesFromStart ++ movesOnBoard ++ movesInFinishArea)
 
 getMovesInFinishArea :: [Piece] -> [(Color, Int)] -> Int -> [(Int, Int)]
 getMovesInFinishArea pieces blockades diceRoll = do
@@ -80,3 +80,13 @@ findLuckyMoves gameState = do
   let safeTiles = map (\tile -> tilePosition tile) (filter (\tile -> (tileType tile) == Safe) (specialTiles gameState))
   let unsafePieces = filter (\p -> not (piecePosition p `elem` safeTiles)) availablePieces
   map piecePosition unsafePieces
+
+filterSafeMoves :: GameState -> [(Int, Int)] -> [(Int, Int)]
+filterSafeMoves gameState moves =
+  filter (not . isCapturingOnSafeTile gameState) moves
+
+isCapturingOnSafeTile :: GameState -> (Int, Int) -> Bool
+isCapturingOnSafeTile gameState (from, to) =
+  let piecesAtDestination = filter ((== to) . piecePosition) (pieces gameState)
+      safeTiles = map tilePosition (filter ((== Safe) . tileType) (specialTiles gameState))
+   in any ((`elem` safeTiles) . piecePosition) piecesAtDestination
