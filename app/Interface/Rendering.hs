@@ -129,32 +129,37 @@ drawTituloSelecioneBots = pictures
     ]
 
 
-drawButtonBots :: int -> Picture
-drawButtonBots players 
-        |players == 1 = picture01
-        |players == 2 = picture02
-        |players == 3 = picture03
-        |otherwise = blank
-    where
-        picture01 = pictures
-        [translate (-4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 1 bot
-        , translate (4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 2 bots
-        , translate (-4 * cellSize) (-3 * cellSize) $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 3 bots
+drawButtonBots :: Int -> Picture
+drawButtonBots players
+    | players == 1 = picture01
+    | players == 2 = picture02
+    | players == 3 = picture03
+    | otherwise = return gameState
+  where
+    -- Botões para 1 bot
+    picture01 = pictures
+        [ translate (-4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize))  -- Botão 1 bot
+        , translate (4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize))  -- Botão 2 bots
+        , translate (-4 * cellSize) (-3 * cellSize) $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize))  -- Botão 3 bots
         , translate (-4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "1")  -- Texto do botão 1
         , translate (4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "2")  -- Texto do botão 2
         , translate (-4 * cellSize) (-3 * cellSize) $ scale 0.20 0.20 $ color black (text "3")  -- Texto do botão 3
         ]
 
-        picture02 = pictures [translate (-4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 1 bot
-        , translate (4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 2 bots
-        , translate (-4 * cellSize) (-3 * cellSize) $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 0 bots
+    -- Botões para 2 bots
+    picture02 = pictures
+        [ translate (-4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize))  -- Botão 1 bot
+        , translate (4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize))  -- Botão 2 bots
+        , translate (-4 * cellSize) (-3 * cellSize) $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize))  -- Botão 0 bots
         , translate (-4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "1")  -- Texto do botão 1
         , translate (4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "2")  -- Texto do botão 2
         , translate (-4 * cellSize) (-3 * cellSize) $ scale 0.20 0.20 $ color black (text "0")  -- Texto do botão 0
         ]
 
-        picture03 = pictures [  translate (-4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 1 bot
-        , translate (4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize)) -- Botão 0 bots
+    -- Botões para 3 bots
+    picture03 = pictures
+        [ translate (-4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize))  -- Botão 1 bot
+        , translate (4 * cellSize) 0 $ color white (rectangleSolid (1.5 * cellSize) (1.5 * cellSize))  -- Botão 0 bots
         , translate (-4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "1")  -- Texto do botão 1
         , translate (4 * cellSize) 0 $ scale 0.20 0.20 $ color black (text "0")  -- Texto do botão 0
         ]
@@ -218,6 +223,7 @@ handleMenuBotsPlayers02 (EventKey (MouseButton LeftButton) Up _ (x, y)) gameStat
     xMax03 = (-4 * cellSize) + (1.5 * cellSize / 2)
     yMin03 = (-3 * cellSize) - (1.5 * cellSize / 2)
     yMax03 = (-3 * cellSize) + (1.5 * cellSize / 2)
+
 
 handleMenuBotsPlayers03 :: Event -> GameTypes.GameState -> IO GameTypes.GameState
 handleMenuPlayersIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
