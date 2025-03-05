@@ -320,7 +320,7 @@ transformGameIO _ gameState = return gameState  -- Não faz nada para outros eve
 
 selectPiece::GameTypes.GameState -> Int -> GameTypes.GameState --Seleciona a peça de acordo com a localização do tabuleiro e realiza a jogada
 selectPiece gameState piecePos = case piece of
-  Nothiging -> gameState
+  Nothing -> gameState
   Just piece ->
     if GameTypes.processingMove (gameState) == True && piecePos > -5
       then
