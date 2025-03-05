@@ -19,6 +19,36 @@ window = InWindow "Ludo" (800, 800) (200, 200)
 boardSize :: Float
 boardSize = 455
 
+<<<<<<< HEAD
+=======
+-- Desenhar Menu inicial 
+drawMenuStart :: Picture
+drawMenuStart = pictures
+    [color black (rectangleSolid boardSize boardSize)   -- Fundo do menu
+    , drawButtonNewGame
+    , drawButtonLoadSavedGame
+    , drawTituloLudo
+    ]
+
+drawButtonNewGame :: Picture
+drawButtonNewGame = pictures
+    [translate 0 (2 * cellSize) $ color white (rectangleSolid (6 * cellSize) (2 * cellSize)) -- Fundo do botão
+    , translate 0 (2 * cellSize) $ scale 0.20 0.20 $ color black (text "Start New Game")  -- Texto centralizado
+    ]
+
+drawButtonLoadSavedGame :: Picture
+drawButtonLoadSavedGame = pictures
+    [translate 0 (-2 * cellSize) $ color white (rectangleSolid (6 * cellSize) (2 * cellSize)) -- Fundo do botão
+    , translate 0 (-2 * cellSize) $ scale 0.20 0.20 $ color black (text "Load Saved Game")  -- Texto centralizado
+    ]
+
+drawTituloLudo :: Picture
+drawTituloLudo  = pictures
+    [translate 0 (5 * cellSize) $ scale 0.30 0.30 $ color black (text "Ludo Game")  -- Título centralizado
+    ]
+
+--
+>>>>>>> ea6f3b21a93664b0f4439543419db72ee9be3c4a
 -- Tamanho das casas do caminho
 cellSize :: Float
 cellSize = 35
@@ -273,7 +303,7 @@ selectPiece gameState piecePos = case piece of
                                         else gameState
                                 
     where piece = getPieceByPositionAndColor (GameTypes.pieces gameState) (GameTypes.currentPlayer gameState) piecePos 
---
+
 selectPosition::GameTypes.GameState -> Float -> Float -> Int
 selectPosition gameState x y | basePos!!0 < x && basePos!!1 > x && basePos!!2 < y && basePos!!3 > y = -1
                              | (basePos!!0 + 1) < x && (basePos!!1 + 1) > x && basePos!!2 < y && basePos!!3 > y = -2
@@ -337,16 +367,16 @@ selectPosition gameState x y | basePos!!0 < x && basePos!!1 > x && basePos!!2 < 
                              | x < 0.5 && x > -0.5 && y < 3.5 && y > 2.5 = 56
                              | x < 0.5 && x > -0.5 && y < 2.5 && y > 1.5 = 57
                              | x < 0.5 && x > -0.5 && y < 1.5 && y > 0.5 = 58
-                             | x < 1.5 && x > 0.5 && y < 0.5 && y > -0.5 = 60 --Zona final do azul
-                             | x < 2.5 && x > 1.5 && y < 0.5 && y > -0.5 = 61
+                             | x < 1.5 && x > 0.5 && y < 0.5 && y > -0.5 = 64 --Zona final do azul
+                             | x < 2.5 && x > 1.5 && y < 0.5 && y > -0.5 = 63
                              | x < 3.5 && x > 2.5 && y < 0.5 && y > -0.5 = 62
-                             | x < 4.5 && x > 3.5 && y < 0.5 && y > -0.5 = 63
-                             | x < 5.5 && x > 4.5 && y < 0.5 && y > -0.5 = 64
-                             | x < 0.5 && x > -0.5 && y < -0.5 && y > -1.5 = 66 --Zona final do Amarelo
-                             | x < 0.5 && x > -0.5 && y < -1.5 && y > -2.5 = 67
+                             | x < 4.5 && x > 3.5 && y < 0.5 && y > -0.5 = 61
+                             | x < 5.5 && x > 4.5 && y < 0.5 && y > -0.5 = 60
+                             | x < 0.5 && x > -0.5 && y < -0.5 && y > -1.5 = 70 --Zona final do azul
+                             | x < 0.5 && x > -0.5 && y < -1.5 && y > -2.5 = 69
                              | x < 0.5 && x > -0.5 && y < -2.5 && y > -3.5 = 68
-                             | x < 0.5 && x > -0.5 && y < -3.5 && y > -4.5 = 69
-                             | x < 0.5 && x > -0.5 && y < -4.5 && y > -5.5 = 70
+                             | x < 0.5 && x > -0.5 && y < -3.5 && y > -4.5 = 67
+                             | x < 0.5 && x > -0.5 && y < -4.5 && y > -5.5 = 66
                              | otherwise = -5
     where basePos = baseQuadByColorMousePos(baseQuadByColor (GameTypes.currentPlayer (gameState)))
 
@@ -381,7 +411,7 @@ basePosPiece piece | id <= 2 = translate ((x + id - 1) * cellSize) (y * cellSize
           quad = baseQuadByColor (GameTypes.pieceColor piece)
           x = fromIntegral (fst quad)
           y = fromIntegral (snd quad)
-
+--
 drawPlayerText::GameTypes.GameState -> Picture
 drawPlayerText gameState | currentPlayer == GameTypes.Red = translate (-3 * cellSize) (8 * cellSize) $ scale 0.20 0.20 $ color red (text "Jogador Vermelho")
                          | currentPlayer == GameTypes.Yellow = translate (-3 * cellSize) (8 * cellSize) $ scale 0.20 0.20 $ color yellow (text "Jogador Amarelo")
@@ -506,7 +536,7 @@ walkOne piece = GameTypes.Piece {
     GameTypes.inFinishArea = False,
     GameTypes.finished = GameTypes.finished piece
   }
---
+
 {-
 walkOneEachPiece::GameTypes.GameState->GameTypes.GameState
 walkOneEachPiece gameState = do
