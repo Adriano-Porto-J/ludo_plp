@@ -201,7 +201,7 @@ selectPiece gameState piecePos = case piece of
                                         else gameState
                                 
     where piece = getPieceByPositionAndColor (GameTypes.pieces gameState) (GameTypes.currentPlayer gameState) piecePos 
---
+
 selectPosition::GameTypes.GameState -> Float -> Float -> Int
 selectPosition gameState x y | basePos!!0 < x && basePos!!1 > x && basePos!!2 < y && basePos!!3 > y = -1
                              | (basePos!!0 + 1) < x && (basePos!!1 + 1) > x && basePos!!2 < y && basePos!!3 > y = -2
@@ -265,16 +265,16 @@ selectPosition gameState x y | basePos!!0 < x && basePos!!1 > x && basePos!!2 < 
                              | x < 0.5 && x > -0.5 && y < 3.5 && y > 2.5 = 56
                              | x < 0.5 && x > -0.5 && y < 2.5 && y > 1.5 = 57
                              | x < 0.5 && x > -0.5 && y < 1.5 && y > 0.5 = 58
-                             | x < 1.5 && x > 0.5 && y < 0.5 && y > -0.5 = 60 --Zona final do azul
-                             | x < 2.5 && x > 1.5 && y < 0.5 && y > -0.5 = 61
+                             | x < 1.5 && x > 0.5 && y < 0.5 && y > -0.5 = 64 --Zona final do azul
+                             | x < 2.5 && x > 1.5 && y < 0.5 && y > -0.5 = 63
                              | x < 3.5 && x > 2.5 && y < 0.5 && y > -0.5 = 62
-                             | x < 4.5 && x > 3.5 && y < 0.5 && y > -0.5 = 63
-                             | x < 5.5 && x > 4.5 && y < 0.5 && y > -0.5 = 64
-                             | x < 0.5 && x > -0.5 && y < -0.5 && y > -1.5 = 66 --Zona final do Amarelo
-                             | x < 0.5 && x > -0.5 && y < -1.5 && y > -2.5 = 67
+                             | x < 4.5 && x > 3.5 && y < 0.5 && y > -0.5 = 61
+                             | x < 5.5 && x > 4.5 && y < 0.5 && y > -0.5 = 60
+                             | x < 0.5 && x > -0.5 && y < -0.5 && y > -1.5 = 70 --Zona final do azul
+                             | x < 0.5 && x > -0.5 && y < -1.5 && y > -2.5 = 69
                              | x < 0.5 && x > -0.5 && y < -2.5 && y > -3.5 = 68
-                             | x < 0.5 && x > -0.5 && y < -3.5 && y > -4.5 = 69
-                             | x < 0.5 && x > -0.5 && y < -4.5 && y > -5.5 = 70
+                             | x < 0.5 && x > -0.5 && y < -3.5 && y > -4.5 = 67
+                             | x < 0.5 && x > -0.5 && y < -4.5 && y > -5.5 = 66
                              | otherwise = -5
     where basePos = baseQuadByColorMousePos(baseQuadByColor (GameTypes.currentPlayer (gameState)))
 
@@ -434,7 +434,7 @@ walkOne piece = GameTypes.Piece {
     GameTypes.inFinishArea = False,
     GameTypes.finished = GameTypes.finished piece
   }
---
+
 {-
 walkOneEachPiece::GameTypes.GameState->GameTypes.GameState
 walkOneEachPiece gameState = do
