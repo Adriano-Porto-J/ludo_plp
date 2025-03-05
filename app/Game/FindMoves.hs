@@ -56,7 +56,12 @@ handleMovesToFinishArea (start, end) dice pieces = do
 
 isBlocked :: [(Color, Int)] -> (Int, Int) -> Bool
 isBlocked blockades (startPos, endPos) =
-  any (\(_, blockade) -> (startPos < blockade && endPos > blockade) || (startPos > blockade && endPos < blockade)) blockades
+  any (\(_, blockade) -> isBetween startPos endPos blockade) blockades
+  where
+    isBetween start end blockade
+      | start < end = blockade > start && blockade < end || blockade == end
+      | start > end = blockade > start || blockade < end || blockade == end
+      | otherwise = blockade == end
 
 applySpecialTile :: [SpecialTile] -> (Int, Int) -> (Int, Int)
 applySpecialTile specialTiles (start, end) =
