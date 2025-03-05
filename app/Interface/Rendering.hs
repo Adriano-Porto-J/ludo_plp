@@ -309,7 +309,7 @@ basePosPiece piece | id <= 2 = translate ((x + id - 1) * cellSize) (y * cellSize
           quad = baseQuadByColor (GameTypes.pieceColor piece)
           x = fromIntegral (fst quad)
           y = fromIntegral (snd quad)
-
+--
 drawPlayerText::GameTypes.GameState -> Picture
 drawPlayerText gameState | currentPlayer == GameTypes.Red = translate (-3 * cellSize) (8 * cellSize) $ scale 0.20 0.20 $ color red (text "Jogador Vermelho")
                          | currentPlayer == GameTypes.Yellow = translate (-3 * cellSize) (8 * cellSize) $ scale 0.20 0.20 $ color yellow (text "Jogador Amarelo")
