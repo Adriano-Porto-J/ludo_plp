@@ -27,6 +27,8 @@ executable ludo-plp-haskell
         Interface.DrawOnBoard,
         Interface.Index,
         Interface.RenderBoard,
+        Interface.InterfaceDebug,
+        Game.LoadSaveState,
         Game.CreateGame,
         Game.FindMoves,
         Game.ProcessMove,

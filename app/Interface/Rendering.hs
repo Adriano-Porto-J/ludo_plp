@@ -14,11 +14,9 @@ import Interface.DrawGameUI
 import System.Random (randomRIO)
 import System.IO.Unsafe (unsafePerformIO)
 import Debug.Trace (trace)
-import Graphics.Gloss (Picture, rectanglePath)
 
 -- Lógica
-
-initialGameState :: GameTypes.GameState
+initialGameState :: GameTypes.GameState -- Estado Inicial do Jogo
 initialGameState = (Game.CreateGame.createGameState 4 2) { GameTypes.screenState = GameTypes.MenuInicial }
 
 transformGameIO :: Event -> GameTypes.GameState -> IO GameTypes.GameState
@@ -29,7 +27,7 @@ transformGameIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
 
      -- Menu Inicial: Se o clique for no botão "Carregar Jogo Salvo"
     | GameTypes.screenState gameState == GameTypes.MenuInicial && x >= -150 && x <= 150 && y >= -75 && y <= -25 =
-        return gameState { GameTypes.screenState = GameTypes.JogoEmAndamento }  -- Muda para o estado de menuBotsUmPlayer
+        return gameState { GameTypes.screenState = GameTypes.JogoEmAndamento }  -- Muda para o estado de JogoEmAndamento
 
     -- Menu de Jogadores: Se o clique for na seleção de quantidade de jogadores 1
     | GameTypes.screenState gameState == GameTypes.MenuPlayers && x >= -125 && x <= -75 && y >= 55  && y <= 105 =

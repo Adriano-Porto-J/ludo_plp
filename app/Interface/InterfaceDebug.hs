@@ -2,14 +2,12 @@
 
 module Interface.InterfaceDebug where
 
-import Data.Aeson (decode, encode)
-import qualified Data.ByteString.Lazy as B
+import Game.LoadSaveState
 import GHC.Generics (Generic)
 import Game.BotLogic (getBestMove)
 import Game.Index
 import GameTypes
 import qualified System.Console.ANSI as ANSI
-import System.Directory (doesFileExist)
 import System.Random (randomRIO)
 import Text.Read (readMaybe)
 
@@ -70,20 +68,6 @@ startNewGame = do
   let game = createGameState jogadoresInt botsInt
   putStrLn "\nO jogo começou! Boa sorte!"
   gameLoop game
-
-saveGameState :: GameState -> IO ()
-saveGameState gameState = do
-  B.writeFile "saved_game.json" (encode gameState)
-  putStrLn "Jogo salvo com sucesso!"
-
-loadGameState :: IO (Maybe GameState)
-loadGameState = do
-  exists <- doesFileExist "saved_game.json"
-  if exists
-    then do
-      contents <- B.readFile "saved_game.json"
-      return (decode contents)
-    else return Nothing
 
 playerTurn :: GameState -> IO ()
 playerTurn gameState = do
