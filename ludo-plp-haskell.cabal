@@ -22,6 +22,17 @@ executable ludo-plp-haskell
     main-is:          Main.hs
     other-modules: 
         Interface.Rendering,
+        Interface.DrawGameUI,
+        Interface.DrawMenu,
+        Interface.DrawOnBoard,
+        Interface.Index,
+        Interface.RenderBoard,
+        Game.CreateGame,
+        Game.FindMoves,
+        Game.ProcessMove,
+        Game.Index,
+        Game.Auxiliary,
+        Game.BotLogic,
         GameTypes
 
     -- other-extensions:
