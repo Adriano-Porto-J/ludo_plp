@@ -19,36 +19,6 @@ window = InWindow "Ludo" (800, 800) (200, 200)
 boardSize :: Float
 boardSize = 455
 
-<<<<<<< HEAD
-=======
--- Desenhar Menu inicial 
-drawMenuStart :: Picture
-drawMenuStart = pictures
-    [color black (rectangleSolid boardSize boardSize)   -- Fundo do menu
-    , drawButtonNewGame
-    , drawButtonLoadSavedGame
-    , drawTituloLudo
-    ]
-
-drawButtonNewGame :: Picture
-drawButtonNewGame = pictures
-    [translate 0 (2 * cellSize) $ color white (rectangleSolid (6 * cellSize) (2 * cellSize)) -- Fundo do botão
-    , translate 0 (2 * cellSize) $ scale 0.20 0.20 $ color black (text "Start New Game")  -- Texto centralizado
-    ]
-
-drawButtonLoadSavedGame :: Picture
-drawButtonLoadSavedGame = pictures
-    [translate 0 (-2 * cellSize) $ color white (rectangleSolid (6 * cellSize) (2 * cellSize)) -- Fundo do botão
-    , translate 0 (-2 * cellSize) $ scale 0.20 0.20 $ color black (text "Load Saved Game")  -- Texto centralizado
-    ]
-
-drawTituloLudo :: Picture
-drawTituloLudo  = pictures
-    [translate 0 (5 * cellSize) $ scale 0.30 0.30 $ color black (text "Ludo Game")  -- Título centralizado
-    ]
-
---
->>>>>>> ea6f3b21a93664b0f4439543419db72ee9be3c4a
 -- Tamanho das casas do caminho
 cellSize :: Float
 cellSize = 35
