@@ -5,7 +5,9 @@ import Graphics.Gloss.Interface.IO.Game
 import qualified GameTypes
 import Game.CreateGame
 import Game.ProcessMove
+import Game.BotLogic
 import Game.Index
+import Game.Auxiliary (printGameState)
 import Game.LoadSaveState 
 import Interface.RenderBoard
 import Interface.DrawOnBoard
@@ -89,8 +91,10 @@ transformGameIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
     | GameTypes.screenState gameState == GameTypes.JogoEmAndamento &&
         x > xMin && x < xMax && y > yMin && y < yMax = rolarDadoIO gameState  -- Rola o dado
     | GameTypes.screenState gameState == GameTypes.JogoEmAndamento &&
-        x > boardXMin && x < boardXMax && y > boardYMin && y < boardYMax = 
-        return (selectPiece gameState (selectPosition gameState (x / cellSize) (y / cellSize))) -- Seleciona peça
+        x > boardXMin && x < boardXMax && y > boardYMin && y < boardYMax = do
+        let updatedGameState = handleTurn gameState (selectPosition gameState (x / cellSize) (y / cellSize)) -- Seleciona peça
+        printGameState updatedGameState
+        return (updatedGameState)
     | otherwise = return gameState  -- Não faz nada para outros cliques
   where
     -- Coordenadas do botão de rolar o dado
@@ -107,9 +111,36 @@ transformGameIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
 
 transformGameIO _ gameState = return gameState  -- Não faz nada para outros eventos
 
+handleTurn :: GameTypes.GameState -> Int ->  GameTypes.GameState
+handleTurn gameState piece = 
+    if Game.Index.isBotTurn gameState
+        then botTurn gameState 
+        else playerTurn gameState piece 
 
-selectPiece::GameTypes.GameState -> Int -> GameTypes.GameState --Seleciona a peça de acordo com a localização do tabuleiro e realiza a jogada
-selectPiece gameState piecePos = case piece of
+botTurn :: GameTypes.GameState -> GameTypes.GameState
+botTurn gameState = 
+    if GameTypes.processingMove gameState == True
+      then
+        if GameTypes.diceRolled gameState == 6 && GameTypes.sixesInRow gameState < 3
+          then
+            let availableMoves = Game.Index.getAvailableMoves gameState
+            in if availableMoves /= []
+              then
+                let move = Game.BotLogic.getBestMove gameState availableMoves
+                in (Game.Index.processMove gameState move) {GameTypes.diceRolled = -1}
+              else nextPlayer gameState
+          else
+            let availableMoves = Game.Index.getAvailableMoves gameState
+            in if availableMoves /= []
+              then
+                let move = Game.BotLogic.getBestMove gameState availableMoves
+                in let newState = Game.Index.processMove gameState move
+                in nextPlayer newState
+              else nextPlayer gameState
+      else gameState
+
+playerTurn::GameTypes.GameState -> Int -> GameTypes.GameState --Seleciona a peça de acordo com a localização do tabuleiro e realiza a jogada
+playerTurn gameState piecePos = case piece of
   Nothing -> gameState
   Just piece ->
     if GameTypes.processingMove (gameState) == True && piecePos > -5
