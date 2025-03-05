@@ -163,11 +163,6 @@ botTurn gameState = do
                 then botTurn updatedGameState
                 else gameLoop (nextPlayer updatedGameState)
 
-isBotTurn :: GameState -> Bool
-isBotTurn gameState =
-  let current = currentPlayer gameState
-   in any ((== current) . playerColor) (filter isBot (players gameState))
-
 getMoveChoice :: Int -> IO Int
 getMoveChoice numChoices = do
   putStrLn "Digite o número da jogada desejada:"

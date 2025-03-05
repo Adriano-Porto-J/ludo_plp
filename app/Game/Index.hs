@@ -40,3 +40,8 @@ processLuckyMove gameState jogada =
 
 checkGameOver :: GameState -> Bool
 checkGameOver gameState = any (\player -> all finished (filter ((== player) . pieceColor) (pieces gameState))) (map playerColor (players gameState))
+
+isBotTurn :: GameState -> Bool
+isBotTurn gameState =
+  let current = currentPlayer gameState
+   in any ((== current) . playerColor) (filter isBot (players gameState))
