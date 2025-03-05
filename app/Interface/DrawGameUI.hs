@@ -18,10 +18,10 @@ drawPlayerText gameState | currentPlayer == GameTypes.Red = translate ((-3 + (bo
     where currentPlayer = GameTypes.currentPlayer gameState
 
 botText::GameState -> [Char]
-botText gameState = if (isBotTurn gameState) == True then " (Bot) \n Clique em qualquer lugar da tela para continuar" else ""
+botText gameState = if (isBotTurn gameState) == True then " (Bot) Rode o dado e clique no tabuleiro para prosseguir" else ""
 
 botX::GameState -> Float
-botX gameState = if (isBotTurn gameState) == True then -8 else 0
+botX gameState = if (isBotTurn gameState) == True then -9 else 0
 
 -- Desenha o botão para rolar o dado
 drawButton :: Picture
