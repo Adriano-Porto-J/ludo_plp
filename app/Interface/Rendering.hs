@@ -33,11 +33,11 @@ background = white
 
 -- Desenho Menu Inicial
 drawMenuInicial :: Picture
-drawMenuIncial = pictures 
+drawMenuInicial = pictures 
     [color (black) (rectangleSolid boardSize boardSize)
     , drawTituloLudo
     , drawButtonNovoJogo
-    , drawButtoCarregarJogoSalvo
+    , drawButtonCarregarJogoSalvo
     ]
 
 -- Placeholder para o título do Menu Inicial
@@ -89,21 +89,21 @@ drawMenuBotsUmPlayer :: Picture
 drawMenuBotsUmPlayer = pictures
     [color (black) (rectangleSolid boardSize boardSize)
     , drawButtonsBotsUmPlayer
-    , drawTituloMenuBots
+    , drawTituloSelecioneQuantBots
     ]
 
 drawMenuBotsDoisPlayer :: Picture
 drawMenuBotsDoisPlayer = pictures
     [color (black) (rectangleSolid boardSize boardSize)
     , drawButtonsBotsDoisPlayer
-    , drawTituloMenuBots
+    , drawTituloSelecioneQuantBots
     ]
 
 drawMenuBotsTresPlayer :: Picture
 drawMenuBotsTresPlayer = pictures
     [color (black) (rectangleSolid boardSize boardSize)
     , drawButtonsBotsTresPlayer
-    , drawTituloMenuBots
+    , drawTituloSelecioneQuantBots
     ]
 
 -- Título do Menu de Seleção de Quantidade de Bots
@@ -125,7 +125,7 @@ drawButtonsBotsDoisPlayer = pictures
     ]
 
 drawButtonsBotsTresPlayer :: Picture
-drawButtonsBotsTressPlayer = pictures 
+drawButtonsBotsTresPlayer = pictures 
     [translate (-100) 80 $ drawButtonWithText 0
      ,translate 100 80 $ drawButtonWithText 1
     ]
