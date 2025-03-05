@@ -166,6 +166,8 @@ playerLuckyMove gameState piecePos = do
 
 botTurn :: GameTypes.GameState -> GameTypes.GameState
 botTurn gameState =
+      if GameTypes.diceRolled gameState /= -1 
+        then
          if GameTypes.diceRolled gameState == 6 && GameTypes.sixesInRow gameState < 3
           then
             let availableMoves = Game.Index.getAvailableMoves gameState
@@ -187,6 +189,7 @@ botTurn gameState =
                      then newState { GameTypes.wasLuckyMove = True }
                      else nextPlayer newState { GameTypes.diceRolled = -1 }
               else nextPlayer gameState
+        else gameState  
 
 playerTurn::GameTypes.GameState -> Int -> GameTypes.GameState --Seleciona a peça de acordo com a localização do tabuleiro e realiza a jogada
 playerTurn gameState piecePos = case piece of
