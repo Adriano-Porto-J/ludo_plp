@@ -4,6 +4,8 @@ import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import Interface.Index
 import GameTypes
+import Graphics.Gloss (Picture, greyN, Color, yellow)
+import GHC.Real (RealFrac(ceiling))
 
 -- Desenha o texto que indica qual o jogador da atual rodada
 drawPlayerText::GameTypes.GameState -> Picture
@@ -52,3 +54,9 @@ drawDiceFace value = pictures [diceSquare, pips]
 
 drawDice :: GameTypes.GameState -> Picture
 drawDice gameState = translate (2 * cellSize) (-8 * cellSize) $ drawDiceFace (GameTypes.diceRolled gameState)
+
+drawButtonSaveTheGame :: Picture
+drawButtonSaveTheGame = pictures 
+  [ translate (5 * cellSize) (-8 * cellSize) $ color yellow (rectangleSolid (3 * cellSize) (2 * cellSize))-- Fundo do botão
+    , translate (4 * cellSize) (-8 * cellSize) $ scale 0.20 0.20 $ color black (text "Save")  -- Texto
+  ]

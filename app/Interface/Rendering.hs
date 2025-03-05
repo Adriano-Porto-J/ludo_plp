@@ -6,6 +6,7 @@ import qualified GameTypes
 import Game.CreateGame
 import Game.ProcessMove
 import Game.Index
+import Game.LoadSaveState 
 import Interface.RenderBoard
 import Interface.DrawOnBoard
 import Interface.Index
@@ -26,8 +27,11 @@ transformGameIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
         return gameState { GameTypes.screenState = GameTypes.MenuPlayers }
 
      -- Menu Inicial: Se o clique for no botão "Carregar Jogo Salvo"
-    | GameTypes.screenState gameState == GameTypes.MenuInicial && x >= -150 && x <= 150 && y >= -75 && y <= -25 =
-        return gameState { GameTypes.screenState = GameTypes.JogoEmAndamento }  -- Muda para o estado de JogoEmAndamento
+    | GameTypes.screenState gameState == GameTypes.MenuInicial && x >= -150 && x <= 150 && y >= -75 && y <= -25 = do
+        maybeGameState <- loadGameState
+        case maybeGameState of
+            Just savedState -> return savedState  -- Se houver um jogo salvo, carrega ele
+            Nothing -> return gameState { GameTypes.screenState = GameTypes.MenuInicial }  -- Caso contrário, apenas muda para JogoEmAndamento
 
     -- Menu de Jogadores: Se o clique for na seleção de quantidade de jogadores 1
     | GameTypes.screenState gameState == GameTypes.MenuPlayers && x >= -125 && x <= -75 && y >= 55  && y <= 105 =
@@ -78,6 +82,10 @@ transformGameIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
    
 
     -- Jogo em Andamento: Processa os cliques para rolar o dado ou mover as peças
+    | GameTypes.screenState gameState == GameTypes.JogoEmAndamento &&
+        x >= 3.5 * cellSize && x <= 6.5 * cellSize && y >= -9 * cellSize && y <= -7 * cellSize = do
+            saveGameState gameState
+            return gameState
     | GameTypes.screenState gameState == GameTypes.JogoEmAndamento &&
         x > xMin && x < xMax && y > yMin && y < yMax = rolarDadoIO gameState  -- Rola o dado
     | GameTypes.screenState gameState == GameTypes.JogoEmAndamento &&
@@ -236,8 +244,9 @@ drawScreen gameState =
     GameTypes.JogoEmAndamento  -> return $ pictures 
                           [ drawBoard                -- Desenha o tabuleiro
                           , drawAllPieces gameState  -- Desenha todas as peças
-                          , drawButton               -- Desenha o botão
+                          , drawButton               -- Desenha o botão de rolar o dado
                           , drawDice gameState       -- Desenha o dado com o valor atual
+                          , drawButtonSaveTheGame    -- Desenha o botão de salvar o estado do jogo
                           , drawPlayerText gameState -- Desenha o texto indicando a vez do jogador  
                           ]
 
