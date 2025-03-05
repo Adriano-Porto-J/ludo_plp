@@ -7,6 +7,7 @@ import Game.CreateGame
 import Game.ProcessMove
 import Game.BotLogic
 import Game.Index
+import Game.Auxiliary (printGameState)
 import Interface.RenderBoard
 import Interface.DrawOnBoard
 import Interface.Index
@@ -82,8 +83,10 @@ transformGameIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
     | GameTypes.screenState gameState == GameTypes.JogoEmAndamento &&
         x > xMin && x < xMax && y > yMin && y < yMax = rolarDadoIO gameState  -- Rola o dado
     | GameTypes.screenState gameState == GameTypes.JogoEmAndamento &&
-        x > boardXMin && x < boardXMax && y > boardYMin && y < boardYMax = 
-        return (handleTurn gameState (selectPosition gameState (x / cellSize) (y / cellSize))) -- Seleciona peça
+        x > boardXMin && x < boardXMax && y > boardYMin && y < boardYMax = do
+        let updatedGameState = handleTurn gameState (selectPosition gameState (x / cellSize) (y / cellSize)) -- Seleciona peça
+        printGameState updatedGameState
+        return (updatedGameState)
     | otherwise = return gameState  -- Não faz nada para outros cliques
   where
     -- Coordenadas do botão de rolar o dado

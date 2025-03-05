@@ -6,8 +6,8 @@ import Game.LoadSaveState
 import GHC.Generics (Generic)
 import Game.BotLogic (getBestMove)
 import Game.Index
+import Game.Auxiliary
 import GameTypes
-import qualified System.Console.ANSI as ANSI
 import System.Random (randomRIO)
 import Text.Read (readMaybe)
 
@@ -172,47 +172,7 @@ getMoveChoice numChoices = do
     _ -> do
       putStrLn "Opção inválida. Tente novamente."
       getMoveChoice numChoices
-
--- Exibe o estado do jogo com formatação aprimorada
-printGameState :: GameState -> IO ()
-printGameState gameState = do
-  putStrLn "\nEstado atual do jogo:"
-  putStrLn "---------------------------"
-  putStrLn "Jogadores:"
-  mapM_ printPlayer (players gameState)
-  putStrLn "Peças no tabuleiro:"
-  printPieces (pieces gameState)
-  putStrLn $ "Bloqueios: " ++ show (blockades gameState)
-  putStrLn $ "Casas especiais: " ++ show (specialTiles gameState)
-  putStrLn $ "Jogador atual: " ++ show (currentPlayer gameState)
-  putStrLn $ "Valor do dado: " ++ show (diceRolled gameState)
-  putStrLn $ "Jogo finalizado? " ++ show (end gameState)
-  putStrLn $ "Seis seguidos: " ++ show (sixesInRow gameState)
-  putStrLn "---------------------------"
-
-printPieces :: [Piece] -> IO ()
-printPieces pieces = mapM_ printPiece pieces
-
-printPiece :: Piece -> IO ()
-printPiece piece = do
-  ANSI.setSGR [ANSI.SetColor ANSI.Foreground ANSI.Vivid (playerColorToANSI (pieceColor piece))]
-  putStrLn $ "Peça: " ++ show piece
-  ANSI.setSGR [ANSI.Reset]
-
-printPlayer :: Player -> IO ()
-printPlayer player = do
-  ANSI.setSGR [ANSI.SetColor ANSI.Foreground ANSI.Vivid (playerColorToANSI (playerColor player))]
-  putStrLn $ "Jogador: " ++ show (playerColor player)
-  putStrLn $ "Bot: " ++ show (isBot player)
-  putStrLn $ "Posição inicial: " ++ show (startingPos player)
-  ANSI.setSGR [ANSI.Reset]
-
-printMove :: Int -> (Int, Int) -> IO ()
-printMove index (from, to) = putStrLn $ show index ++ ". De " ++ show from ++ " para " ++ show to
-
-printOponnent :: Int -> Int -> IO ()
-printOponnent index oponent = putStrLn $ show index ++ ". Oponente: " ++ show oponent
-
+      
 getValidNumber :: String -> [Int] -> IO Int
 getValidNumber prompt validValues = do
   putStrLn prompt
@@ -222,9 +182,3 @@ getValidNumber prompt validValues = do
     _ -> do
       putStrLn "entrada inválida. Tente novamente."
       getValidNumber prompt validValues
-
-playerColorToANSI :: Color -> ANSI.Color
-playerColorToANSI Red = ANSI.Red
-playerColorToANSI Blue = ANSI.Blue
-playerColorToANSI Green = ANSI.Green
-playerColorToANSI Yellow = ANSI.Yellow
