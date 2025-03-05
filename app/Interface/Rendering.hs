@@ -34,7 +34,7 @@ background = white
 -- Desenho Menu Inicial
 drawMenuInicial :: Picture
 drawMenuInicial = pictures 
-    [color (black) (rectangleSolid boardSize boardSize)
+    [color (white) (rectangleSolid boardSize boardSize)
     , drawTituloLudo
     , drawButtonNovoJogo
     , drawButtonCarregarJogoSalvo
@@ -42,26 +42,26 @@ drawMenuInicial = pictures
 
 -- Placeholder para o título do Menu Inicial
 drawTituloLudo :: Picture
-drawTituloLudo = translate (-100) 180 $ scale 0.5 0.5 (text "Ludo Game")
+drawTituloLudo = translate (-200) 180 $ scale 0.5 0.5 (text "Ludo Game")
 
 -- Placeholder para o botão de Novo Jogo
 drawButtonNovoJogo :: Picture
 drawButtonNovoJogo = pictures 
-    [translate (-120) 50 $ color blue (rectangleSolid 200 50)
-     ,translate (-30) 30 (scale 0.3 0.3 (text "Novo Jogo"))
+    [translate 0 50 $ color blue (rectangleSolid 200 50)
+     ,translate (-100) 40 (scale 0.2 0.2 (text "Novo Jogo"))
     ]
 
 -- Placeholder para o botão de Carregar Jogo Salvo
 drawButtonCarregarJogoSalvo :: Picture
 drawButtonCarregarJogoSalvo = pictures 
-    [translate (-160) (-50) $ color green (rectangleSolid 250 50)
-    , translate (-50) (-70) (scale 0.3 0.3 (text "Carregar Jogo Salvo"))
+    [translate 0 (-50) $ color green (rectangleSolid 300 50)
+    , translate (-110) (-60) (scale 0.2 0.2 (text "Carregar Jogo Salvo"))
     ]
 
 --Desenho Menu Players
 drawMenuPlayers :: Picture
 drawMenuPlayers = pictures 
-    [color (black) (rectangleSolid boardSize boardSize)
+    [color (white) (rectangleSolid boardSize boardSize)
     , drawTituloSelecioneQuantPlayers
     , drawButtonsQuantPlayers
     ]
@@ -73,62 +73,56 @@ drawTituloSelecioneQuantPlayers = translate (-160) 180 $ scale 0.3 0.3 (text "Se
 -- Botões de Seleção de Quantidade de Players (1 a 4 jogadores)
 drawButtonsQuantPlayers :: Picture
 drawButtonsQuantPlayers = pictures 
-    [translate (-100) 80 $ drawButtonWithText 1,
-     translate 100 80 $ drawButtonWithText 2,
-     translate (-100) (-40) $ drawButtonWithText 3,
-     translate 100 (-40) $ drawButtonWithText 4]
-
--- Função para desenhar um botão com texto indicando a quantidade de jogadores/bots
-drawButtonWithText :: Int -> Picture
-drawButtonWithText numPlayers = 
-    pictures [color blue (rectangleSolid 200 50), 
-              translate (-30) (-10) (scale 0.5 0.5 (text (show numPlayers)))]
+    [translate (-100) 80 $ color blue (rectangleSolid 50 50),translate (-100) 80 (scale 0.2 0.2 (text "1")),
+     translate 100 80 $ color blue (rectangleSolid 50 50),translate 100 80 (scale 0.2 0.2 (text "2")),
+     translate (-100) (-40) $ color blue (rectangleSolid 50 50),translate (-100) (-40) (scale 0.2 0.2 (text "3")),
+     translate 100 (-40) $ color blue (rectangleSolid 50 50), translate 100 (-40) (scale 0.2 0.2 (text "4"))]
 
 --Desenho Menu bots
 drawMenuBotsUmPlayer :: Picture
 drawMenuBotsUmPlayer = pictures
-    [color (black) (rectangleSolid boardSize boardSize)
+    [color (white) (rectangleSolid boardSize boardSize)
     , drawButtonsBotsUmPlayer
     , drawTituloSelecioneQuantBots
     ]
 
 drawMenuBotsDoisPlayer :: Picture
 drawMenuBotsDoisPlayer = pictures
-    [color (black) (rectangleSolid boardSize boardSize)
+    [color (white) (rectangleSolid boardSize boardSize)
     , drawButtonsBotsDoisPlayer
     , drawTituloSelecioneQuantBots
     ]
 
 drawMenuBotsTresPlayer :: Picture
 drawMenuBotsTresPlayer = pictures
-    [color (black) (rectangleSolid boardSize boardSize)
+    [color (white) (rectangleSolid boardSize boardSize)
     , drawButtonsBotsTresPlayer
     , drawTituloSelecioneQuantBots
     ]
 
 -- Título do Menu de Seleção de Quantidade de Bots
 drawTituloSelecioneQuantBots :: Picture
-drawTituloSelecioneQuantBots = translate (-160) 180 $ scale 0.3 0.3 (text "Selecione a Quantidade de Bots")
+drawTituloSelecioneQuantBots = translate (-260) 180 $ scale 0.3 0.3 (text "Selecione a Quantidade de Bots")
 
 drawButtonsBotsUmPlayer :: Picture
 drawButtonsBotsUmPlayer = pictures 
-    [translate (-100) 80 $ drawButtonWithText 1
-     ,translate 100 80 $ drawButtonWithText 2
-     ,translate (-100) (-40) $ drawButtonWithText 3
+    [translate (-100) 80 $ color blue (rectangleSolid 50 50),translate (-100) 80 (scale 0.2 0.2 (text "1"))
+     ,translate 100 80 $ color blue (rectangleSolid 50 50),translate 100 80 (scale 0.2 0.2 (text "2"))
+     ,translate (-100) (-40) $ color blue (rectangleSolid 50 50),translate (-100) (-40) (scale 0.2 0.2 (text "3"))
     ]
 
 drawButtonsBotsDoisPlayer :: Picture
 drawButtonsBotsDoisPlayer = pictures 
-    [translate (-100) 80 $ drawButtonWithText 0
-     ,translate 100 80 $ drawButtonWithText 1
-     ,translate (-100) (-40) $ drawButtonWithText 2
+    [translate (-100) 80 $ color blue (rectangleSolid 50 50),translate (-100) 80 (scale 0.2 0.2 (text "0"))
+     ,translate 100 80 $ color blue (rectangleSolid 50 50),translate 100 80 (scale 0.2 0.2 (text "1"))
+     ,translate (-100) (-40) $ color blue (rectangleSolid 50 50),translate (-100) (-40) (scale 0.2 0.2 (text "2"))
     ]
 
 drawButtonsBotsTresPlayer :: Picture
 drawButtonsBotsTresPlayer = pictures 
-    [translate (-100) 80 $ drawButtonWithText 0
-     ,translate 100 80 $ drawButtonWithText 1
-    ]
+    [translate (-100) 80 $ color blue (rectangleSolid 50 50),translate (-100) 80 (scale 0.2 0.2 (text "0"))
+     ,translate 100 80 $ color blue (rectangleSolid 50 50),translate 100 80 (scale 0.2 0.2 (text "1"))
+     ]
     
 -- Desenhar tabuleiro
 drawBoard :: Picture
@@ -240,24 +234,89 @@ drawGrid = color black $ pictures
 
 -- Lógica
 
-initialGameState = (Game.CreateGame.createGameState 4 2)
+initialGameState :: GameTypes.GameState
+initialGameState = (Game.CreateGame.createGameState 4 2) { GameTypes.screenState = GameTypes.MenuInicial }
 
 transformGameIO :: Event -> GameTypes.GameState -> IO GameTypes.GameState
 transformGameIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
-    | x > xMin && x < xMax && y > yMin && y < yMax = rolarDadoIO gameState  -- Rola o dado
-    | x > boardXMin && x < boardXMax && y > boardYMin && y < boardYMax = return (selectPiece gameState (selectPosition gameState (x / cellSize) (y / cellSize))) -- Rola o dado
-    | otherwise = return gameState --(walkOneEachPiece  gameState)  -- Não faz nada se o clique não for no botão
+    -- Menu Inicial: Se o clique for no botão "Novo Jogo"
+    | GameTypes.screenState gameState == GameTypes.MenuInicial && x >= -100 && x <= 100 && y >= 25 && y <= 75 =
+        return gameState { GameTypes.screenState = GameTypes.MenuPlayers }
+
+     -- Menu Inicial: Se o clique for no botão "Carregar Jogo Salvo"
+    | GameTypes.screenState gameState == GameTypes.MenuInicial && x >= -150 && x <= 150 && y >= -75 && y <= -25 =
+        return gameState { GameTypes.screenState = GameTypes.JogoEmAndamento }  -- Muda para o estado de menuBotsUmPlayer
+
+    -- Menu de Jogadores: Se o clique for na seleção de quantidade de jogadores 1
+    | GameTypes.screenState gameState == GameTypes.MenuPlayers && x >= -125 && x <= -75 && y >= 55  && y <= 105 =
+        return gameState { GameTypes.screenState = GameTypes.MenuBotsUmPlayer }  -- Muda para o estado de menuBotsUmPlayer
+
+    -- Menu de Jogadores: Se o clique for na seleção de quantidade de jogadores 2
+    | GameTypes.screenState gameState == GameTypes.MenuPlayers && x >= 75 && x <= 125 && y >= 55 && y <= 105 =
+        return gameState { GameTypes.screenState = GameTypes.MenuBotsDoisPlayer }  -- Muda para o estado de menuBotsDoisPlayer
+
+    -- Menu de Jogadores: Se o clique for na seleção de quantidade de jogadores 3
+    | GameTypes.screenState gameState == GameTypes.MenuPlayers && x >= -125 && x <= -75 && y >= -65 && y <= -15 =
+        return gameState { GameTypes.screenState = GameTypes.MenuBotsTresPlayer }  -- Muda para o estado de menuBotsTresPlayer
+
+    -- Menu de Jogadores: Se o clique for na seleção de quantidade de jogadores 4
+    | GameTypes.screenState gameState == GameTypes.MenuPlayers && x >= 75 && x <= 125 && y >= -65 && y <= -15 =
+        let newGameState = Game.CreateGame.createGameState 4 0
+        in return newGameState { GameTypes.screenState = GameTypes.JogoEmAndamento }  -- Muda para o estado de jogoEmAndamento
+
+    -- MenuBotsUmplayer: Processa o clique baseado no número de jogadores = 1 e número de bots
+    | GameTypes.screenState gameState == GameTypes.MenuBotsUmPlayer && x >= -125 && x <= -75 && y >= 55 && y <= 105 = 
+        let newGameState = Game.CreateGame.createGameState 2 1 
+        in return newGameState { GameTypes.screenState = GameTypes.JogoEmAndamento }
+    | GameTypes.screenState gameState == GameTypes.MenuBotsUmPlayer && x >= 75 && x <= 125 && y >= 55 && y <= 105 = 
+        let newGameState = Game.CreateGame.createGameState 3 2 --falha
+        in return newGameState { GameTypes.screenState = GameTypes.JogoEmAndamento }
+    | GameTypes.screenState gameState == GameTypes.MenuBotsUmPlayer && x >= -125 && x <= -75 && y >= -65 && y <= -15 = 
+        let newGameState = Game.CreateGame.createGameState 4 3
+        in return newGameState { GameTypes.screenState = GameTypes.JogoEmAndamento }
+    
+    -- MenuBotsUmplayer: Processa o clique baseado no número de jogadores = 2 e número de bots
+    | GameTypes.screenState gameState == GameTypes.MenuBotsDoisPlayer && x >= -120 && x <= -75 && y >= 55 && y <= 105 = 
+        let newGameState = Game.CreateGame.createGameState 2 0
+        in return newGameState { GameTypes.screenState = GameTypes.JogoEmAndamento }
+    | GameTypes.screenState gameState == GameTypes.MenuBotsDoisPlayer && x >= 75 && x <= 125 && y >= 55 && y <= 105 = 
+        let newGameState = Game.CreateGame.createGameState 3 1 
+        in return newGameState { GameTypes.screenState = GameTypes.JogoEmAndamento }
+    | GameTypes.screenState gameState == GameTypes.MenuBotsDoisPlayer && x >= -125 && x <= -75 && y >= -65 && y <= -15 = 
+        let newGameState = Game.CreateGame.createGameState 4 2 
+        in return newGameState { GameTypes.screenState = GameTypes.JogoEmAndamento }
+
+    -- MenuBotsUmplayer: Processa o clique baseado no número de jogadores = 3 e número de bots
+    | GameTypes.screenState gameState == GameTypes.MenuBotsTresPlayer && x >= -120 && x <= -75 && y >= 55 && y <= 105 = 
+        let newGameState = Game.CreateGame.createGameState 3 0
+        in return newGameState { GameTypes.screenState = GameTypes.JogoEmAndamento }
+    | GameTypes.screenState gameState == GameTypes.MenuBotsTresPlayer && x >= 75 && x <= 125 && y >= 55 && y <= 105  = 
+        let newGameState = Game.CreateGame.createGameState 4 1
+        in return newGameState { GameTypes.screenState = GameTypes.JogoEmAndamento }
+   
+
+    -- Jogo em Andamento: Processa os cliques para rolar o dado ou mover as peças
+    | GameTypes.screenState gameState == GameTypes.JogoEmAndamento &&
+        x > xMin && x < xMax && y > yMin && y < yMax = rolarDadoIO gameState  -- Rola o dado
+    | GameTypes.screenState gameState == GameTypes.JogoEmAndamento &&
+        x > boardXMin && x < boardXMax && y > boardYMin && y < boardYMax = 
+        return (selectPiece gameState (selectPosition gameState (x / cellSize) (y / cellSize))) -- Seleciona peça
+    | otherwise = return gameState  -- Não faz nada para outros cliques
   where
-    -- Coordenadas do botão
+    -- Coordenadas do botão de rolar o dado
     xMin = -7 * cellSize
     xMax = -1 * cellSize
     yMin = -9 * cellSize
     yMax = -7 * cellSize
+
+    -- Coordenadas do tabuleiro
     boardXMin = -6.5 * cellSize
     boardXMax =  6.5 * cellSize
     boardYMin = -6.5 * cellSize
     boardYMax =  6.5 * cellSize
+
 transformGameIO _ gameState = return gameState  -- Não faz nada para outros eventos
+
 
 selectPiece::GameTypes.GameState -> Int -> GameTypes.GameState --Seleciona a peça de acordo com a localização do tabuleiro e realiza a jogada
 selectPiece gameState piecePos = case piece of
@@ -453,13 +512,20 @@ rolarDadoIO gameState = do
 
 -- Desenha a tela do jogo
 drawScreen :: GameTypes.GameState -> IO Picture
-drawScreen gameState = return $ pictures
-    [ drawBoard                -- Desenha o tabuleiro
-    , drawAllPieces gameState  -- Desenha todas as peças
-    , drawButton               -- Desenha o botão
-    , drawDice gameState       -- Desenha o dado com o valor atual
-    , drawPlayerText gameState -- Desenha o texto indicando a vez do jogador  
-    ]
+drawScreen gameState =
+   case GameTypes.screenState gameState of
+    GameTypes.MenuInicial      -> return drawMenuInicial  -- Desenha o menu inicial
+    GameTypes.MenuPlayers      -> return drawMenuPlayers  -- Desenha o menu de seleção de jogadores
+    GameTypes.MenuBotsUmPlayer -> return drawMenuBotsUmPlayer   -- Menu para seleção de bots quando há um jogador
+    GameTypes.MenuBotsDoisPlayer -> return drawMenuBotsDoisPlayer -- Menu para seleção de bots quando há dois jogadores
+    GameTypes.MenuBotsTresPlayer -> return drawMenuBotsTresPlayer -- Menu para seleção de bots quando há três jogadores
+    GameTypes.JogoEmAndamento  -> return $ pictures 
+                          [ drawBoard                -- Desenha o tabuleiro
+                          , drawAllPieces gameState  -- Desenha todas as peças
+                          , drawButton               -- Desenha o botão
+                          , drawDice gameState       -- Desenha o dado com o valor atual
+                          , drawPlayerText gameState -- Desenha o texto indicando a vez do jogador  
+                          ]
 
 drawAllPieces::GameTypes.GameState -> Picture
 drawAllPieces gameState = pictures (map drawPiece (GameTypes.pieces (gameState)))

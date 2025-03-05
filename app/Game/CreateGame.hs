@@ -19,7 +19,8 @@ createGameState players bots =
           diceRolled = -1,
           processingMove = False,
           end = False,
-          sixesInRow = 0
+          sixesInRow = 0,
+          screenState = MenuInicial  -- Inicializa o estado da tela como MenuInicial
         }
 
 definePlayers :: [Color] -> Int -> Int -> [(Color, Bool)]

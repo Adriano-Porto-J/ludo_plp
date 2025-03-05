@@ -25,7 +25,7 @@ data SpecialTile = SpecialTile
   { tileType :: TileType, -- Tipo da casa
     tilePosition :: Int
   }
-  deriving (Show, Read, Generic, ToJSON, FromJSON)
+  deriving (Show, Eq, Read, Generic, ToJSON, FromJSON)
 
 -- Representação de uma peça
 data Piece = Piece
@@ -46,7 +46,16 @@ data Player = Player
     isBot :: Bool, -- Indica se o jogador é um bot
     startingPos :: Int -- Posição inicial do jogador
   }
-  deriving (Show, Read, Generic, ToJSON, FromJSON)
+  deriving (Show, Eq, Read, Generic, ToJSON, FromJSON)
+
+-- Definindo um tipo para representar os estados da tela
+data ScreenState = MenuInicial
+                 | MenuPlayers
+                 | MenuBotsUmPlayer
+                 | MenuBotsDoisPlayer
+                 | MenuBotsTresPlayer
+                 | JogoEmAndamento
+                 deriving (Show, Eq, Read, Generic, ToJSON, FromJSON)
 
 -- Estado atual do jogo
 data GameState = GameState
@@ -58,6 +67,7 @@ data GameState = GameState
     diceRolled :: Int, -- Valor do último lançamento do dado
     processingMove :: Bool, -- Indica se um dado foi lançado e espera ser aplicado a uma peça
     end :: Bool, -- Indica se o jogo acabou
-    sixesInRow :: Int -- Contador de seis seguidos}
+    sixesInRow :: Int, -- Contador de seis seguidos}
+    screenState :: ScreenState  -- Estado atual da tela
   }
-  deriving (Show, Read, Generic, ToJSON, FromJSON)
+  deriving (Show, Eq, Read, Generic, ToJSON, FromJSON)
