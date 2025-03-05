@@ -3,17 +3,25 @@ module Interface.DrawGameUI where
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import Interface.Index
+import Game.Index
 import GameTypes
 import Graphics.Gloss (Picture, greyN, Color, yellow)
 import GHC.Real (RealFrac(ceiling))
+import Data.String
 
 -- Desenha o texto que indica qual o jogador da atual rodada
 drawPlayerText::GameTypes.GameState -> Picture
-drawPlayerText gameState | currentPlayer == GameTypes.Red = translate (-3 * cellSize) (8 * cellSize) $ scale 0.20 0.20 $ color red (text "Jogador Vermelho")
-                         | currentPlayer == GameTypes.Yellow = translate (-3 * cellSize) (8 * cellSize) $ scale 0.20 0.20 $ color yellow (text "Jogador Amarelo")
-                         | currentPlayer == GameTypes.Green = translate (-3 * cellSize) (8 * cellSize) $ scale 0.20 0.20 $ color green (text "Jogador Verde")
-                         | otherwise = translate (-3 * cellSize) (8 * cellSize) $ scale 0.20 0.20 $ color blue (text "Jogador Azul")
+drawPlayerText gameState | currentPlayer == GameTypes.Red = translate ((-3 + (botX gameState)) * cellSize) (8 * cellSize) $ scale 0.20 0.20 $ color red (text ("Jogador Vermelho" ++ (botText gameState)))
+                         | currentPlayer == GameTypes.Yellow = translate ((-3 + (botX gameState)) * cellSize) (8 * cellSize) $ scale 0.20 0.20 $ color yellow (text ("Jogador Amarelo" ++ (botText gameState)))
+                         | currentPlayer == GameTypes.Green = translate ((-3 + (botX gameState)) * cellSize) (8 * cellSize) $ scale 0.20 0.20 $ color green (text ("Jogador Verde" ++ (botText gameState)))
+                         | otherwise = translate ((-3 + (botX gameState)) * cellSize) (8 * cellSize) $ scale 0.20 0.20 $ color blue (text ("Jogador Azul" ++ (botText gameState)))
     where currentPlayer = GameTypes.currentPlayer gameState
+
+botText::GameState -> [Char]
+botText gameState = if (isBotTurn gameState) == True then " (Bot) \n Clique em qualquer lugar da tela para continuar" else ""
+
+botX::GameState -> Float
+botX gameState = if (isBotTurn gameState) == True then -8 else 0
 
 -- Desenha o botão para rolar o dado
 drawButton :: Picture
