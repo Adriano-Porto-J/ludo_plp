@@ -2,6 +2,7 @@ module Interface.Index where
 
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
+import Game.LoadSaveState
 
 -- Janela
 window :: Display

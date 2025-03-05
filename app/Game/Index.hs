@@ -4,6 +4,7 @@ import Game.Auxiliary
 import qualified Game.CreateGame as CreateGame (createGameState)
 import qualified Game.FindMoves as FindMoves (findLuckyMoves, getAvailableMoves)
 import qualified Game.ProcessMove as ProcessMove (processLuckyMove, processMove)
+import Game.LoadSaveState
 import GameTypes
 
 createGameState :: Int -> Int -> GameState
@@ -20,6 +21,7 @@ nextPlayer gameState =
   let colors = map playerColor (players gameState)
       current = currentPlayer gameState
       next = getNextPlayer colors current
+      save = saveGameState gameState
    in gameState {currentPlayer = next, sixesInRow = 0, diceRolled = -1} -- Reseta contador de seis seguidos
 
 getNextPlayer :: [Color] -> Color -> Color
