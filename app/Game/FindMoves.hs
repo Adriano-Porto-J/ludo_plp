@@ -59,6 +59,7 @@ isBlocked blockades (startPos, endPos) =
   any (\(_, blockade) -> isBetween startPos endPos blockade) blockades
   where
     isBetween start end blockade
+      | start == blockade = False
       | start < end = blockade > start && blockade < end || blockade == end
       | start > end = blockade > start || blockade < end || blockade == end
       | otherwise = blockade == end

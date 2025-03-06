@@ -32,9 +32,13 @@ initGameTerminal = do
 -- getDiceRoll = randomRIO (1, 6)
 getDiceRoll :: IO Int
 getDiceRoll = do
-  putStrLn "Digite o valor do dado (1 a 6):"
+  putStrLn "Digite o valor do dado (maior que 0):"
   input <- getLine
-  return (read input)
+  case readMaybe input of
+    Just n | n > 0 -> return n
+    _ -> do
+      putStrLn "Valor inválido. Tente novamente."
+      getDiceRoll
 
 gameLoop :: GameState -> IO ()
 gameLoop gameState = do

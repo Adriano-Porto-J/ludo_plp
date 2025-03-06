@@ -1,6 +1,6 @@
 module Game.BotLogic where
 import GameTypes
-import Game.Auxiliary (getFinishAreaEnd)
+import Game.Auxiliary (getFinishAreaEnd, startingPosByColor)
 import Data.List (find, maximumBy)
 import Data.Maybe (fromMaybe)
 import System.Random (randomRIO)
@@ -13,7 +13,7 @@ getBestMove gameState availableMoves =
     Just move -> move
     Nothing -> case findCaptureMove gameState availableMoves of
       Just move -> move
-      Nothing -> case findMostAdvancedMove availableMoves of
+      Nothing -> case findMostAdvancedMove gameState availableMoves of
         Just move -> move
         Nothing -> pickRandomMove availableMoves
 
@@ -25,9 +25,11 @@ findWinningMove gameState moves =
 findCaptureMove :: GameState -> [(Int, Int)] -> Maybe (Int, Int)
 findCaptureMove gameState = find (\(_, to) -> capturesOpponent gameState to && not (isSafePosition to))
 
-findMostAdvancedMove :: [(Int, Int)] -> Maybe (Int, Int)
-findMostAdvancedMove [] = Nothing
-findMostAdvancedMove moves = Just (maximumBy (compare `on` snd) moves)
+findMostAdvancedMove :: GameState ->  [(Int, Int)] -> Maybe (Int, Int)
+findMostAdvancedMove _ [] = Nothing
+findMostAdvancedMove gameState moves =
+  let startingPos = startingPosByColor (currentPlayer gameState)
+  in Just (maximumBy (compare `on` (\(_, to) -> (to + startingPos) `mod` 48)) moves)
 
 pickRandomMove :: [(Int, Int)] -> (Int, Int)
 pickRandomMove moves = moves !! unsafePerformIO (randomRIO (0, length moves - 1))
