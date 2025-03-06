@@ -79,15 +79,12 @@ drawButtonSaveTheGame = pictures
 
 -- Desenha uma picture com o vencedor 
 drawWinnerPlayer :: GameTypes.GameState -> Picture
-drawWinnerPlayer gameState = if (GameTypes.end gameState) == True
-                                then
-                                  case winnerColor of
+drawWinnerPlayer gameState = case winnerColor of
                                     GameTypes.Red -> translate (-4 * cellSize) (10 * cellSize) $ scale 0.20 0.20 $ color black (text "Jogador Vermelho Ganhou")
                                     GameTypes.Yellow -> translate (-4 * cellSize) (10 * cellSize) $ scale 0.20 0.20 $ color black (text "Jogador Amarelo Ganhou")
                                     GameTypes.Green -> translate (-4 * cellSize) (10 * cellSize) $ scale 0.20 0.20 $ color black (text "Jogador Verde Ganhou")
                                     GameTypes.Blue -> translate (-4 * cellSize) (10 * cellSize) $ scale 0.20 0.20 $ color black (text "Jogador azul Ganhou")
                                     _ -> blank  -- Caso inválido (não desenha nada)
-                              else blank
     where winnerColor = GameTypes.winnerColor gameState
   
   
