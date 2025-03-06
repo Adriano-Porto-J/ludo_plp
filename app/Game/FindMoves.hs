@@ -3,6 +3,7 @@ module Game.FindMoves where
 import Game.Auxiliary
 import GameTypes
 
+-- Obtém os movimentos disponíveis para o jogador atual
 getAvailableMoves :: GameState -> [(Int, Int)]
 getAvailableMoves gameState = do
   let diceRoll = diceRolled gameState
@@ -13,7 +14,7 @@ getAvailableMoves gameState = do
   let specialTilesInGame = specialTiles gameState
   let gameBlockades = blockades gameState
 
-  -- Se há peças na base e o jogador tirou 5, ele pode sair
+  -- Se há peças na base e o jogador tirou 6, ele pode sair
   let movesFromStart =
         if diceRoll == 6 && not (null piecesInStartingArea)
           then [(piecePosition p, startingPosByColor (pieceColor p)) | p <- piecesInStartingArea]
@@ -22,21 +23,27 @@ getAvailableMoves gameState = do
   -- Movimentos no tabuleiro
   let movesOnBoard = getMovesOnBoard piecesOnBoard diceRoll specialTilesInGame gameBlockades
   let movesInFinishArea = getMovesInFinishArea piecesInFinishArea gameBlockades diceRoll
+  
+  -- Filtra os movimentos para evitar capturas em casas seguras
   filterSafeMoves gameState (movesFromStart ++ movesOnBoard ++ movesInFinishArea)
 
+-- Obtém os movimentos possíveis dentro da área de chegada
 getMovesInFinishArea :: [Piece] -> [(Color, Int)] -> Int -> [(Int, Int)]
 getMovesInFinishArea pieces blockades diceRoll = do
   let finishAreaMoves =
         map
           ( \p ->
               if (piecePosition p + diceRoll) > getFinishAreaEnd (pieceColor p)
-                then (piecePosition p, piecePosition p)
+                then (piecePosition p, piecePosition p) -- Peça não se move se ultrapassar o fim
                 else (piecePosition p, (piecePosition p) + diceRoll)
           )
           pieces
   let finishAreaMovesNotBlocked = filter (not . isBlocked blockades) finishAreaMoves
+  
+  -- Remove movimentos onde a peça não sai do lugar
   filter (\(start, end) -> start /= end) finishAreaMovesNotBlocked
 
+-- Obtém os movimentos possíveis no tabuleiro principal
 getMovesOnBoard :: [Piece] -> Int -> [SpecialTile] -> [(Color, Int)] -> [(Int, Int)]
 getMovesOnBoard pieces diceRoll specialTiles blockades = do
   let piecePositions =
@@ -47,6 +54,7 @@ getMovesOnBoard pieces diceRoll specialTiles blockades = do
 
   map (\(start, end) -> handleMovesToFinishArea (start, end) diceRoll pieces) movesWithTilesApplied
 
+-- Trata casos onde a peça deve entrar na área de chegada
 handleMovesToFinishArea :: (Int, Int) -> Int -> [Piece] -> (Int, Int)
 handleMovesToFinishArea (start, end) dice pieces = do
   let piece = head $ filter (\p -> piecePosition p == start) pieces
@@ -54,6 +62,7 @@ handleMovesToFinishArea (start, end) dice pieces = do
     then (start, getFinishAreaStart (pieceColor piece) + (tilesWalked piece + dice - 1) - 48)
     else (start, end)
 
+-- Verifica se um movimento é bloqueado
 isBlocked :: [(Color, Int)] -> (Int, Int) -> Bool
 isBlocked blockades (startPos, endPos) =
   any (\(_, blockade) -> isBetween startPos endPos blockade) blockades
@@ -64,6 +73,7 @@ isBlocked blockades (startPos, endPos) =
       | start > end = blockade > start || blockade < end || blockade == end
       | otherwise = blockade == end
 
+-- Aplica efeitos das casas especiais ao movimento
 applySpecialTile :: [SpecialTile] -> (Int, Int) -> (Int, Int)
 applySpecialTile specialTiles (start, end) =
   case lookup end (map (\t -> (tilePosition t, tileType t)) specialTiles) of
@@ -72,6 +82,7 @@ applySpecialTile specialTiles (start, end) =
     Just Death -> (start, -1) -- Volta para o início
     _ -> (start, end)
 
+-- Encontra peças vulneráveis a captura em jogadas de sorte
 findLuckyMoves :: GameState -> [Int]
 findLuckyMoves gameState = do
   let gamePieces = pieces gameState
@@ -82,10 +93,12 @@ findLuckyMoves gameState = do
   let unsafePieces = filter (\p -> not (piecePosition p `elem` safeTiles)) availablePieces
   map piecePosition unsafePieces
 
+-- Filtra movimentos para evitar capturas em casas seguras
 filterSafeMoves :: GameState -> [(Int, Int)] -> [(Int, Int)]
 filterSafeMoves gameState moves =
   filter (not . isCapturingOnSafeTile gameState) moves
 
+-- Verifica se um movimento captura uma peça em uma casa segura
 isCapturingOnSafeTile :: GameState -> (Int, Int) -> Bool
 isCapturingOnSafeTile gameState (from, to) =
   let piecesAtDestination = filter ((== to) . piecePosition) (pieces gameState)
