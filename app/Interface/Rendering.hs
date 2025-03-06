@@ -193,7 +193,10 @@ botTurn gameState =
 
 playerTurn::GameTypes.GameState -> Int -> GameTypes.GameState --Seleciona a peça de acordo com a localização do tabuleiro e realiza a jogada
 playerTurn gameState piecePos = case piece of
-  Nothing -> gameState
+  Nothing -> let availableMoves = Game.Index.getAvailableMoves gameState
+                in if availableMoves == []
+                    then nextPlayer gameState
+                    else gameState
   Just piece ->
     if GameTypes.processingMove (gameState) == True && piecePos > -5
       then
