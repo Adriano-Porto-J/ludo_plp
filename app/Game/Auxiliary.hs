@@ -58,6 +58,8 @@ printGameState gameState = do
   putStrLn $ "Jogo finalizado? " ++ show (end gameState)
   putStrLn $ "Seis seguidos: " ++ show (sixesInRow gameState)
   putStrLn $ "Foi Jogada Lucky? " ++ show (wasLuckyMove gameState)
+  putStrLn $ "Vencedor: " ++ show (winnerColor gameState)
+  putStrLn $ "Terminou? " ++ show (end gameState)
   putStrLn "---------------------------"
 
 -- Exibe todas as peças no tabuleiro
