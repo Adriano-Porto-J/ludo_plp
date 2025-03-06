@@ -11,10 +11,10 @@ import Data.String
 
 -- Desenha o texto que indica qual o jogador da atual rodada
 drawPlayerText::GameTypes.GameState -> Picture
-drawPlayerText gameState | currentPlayer == GameTypes.Red = translate ((-3 + (botX gameState)) * cellSize) (8 * cellSize) $ scale 0.20 0.20 $ color red (text ("Jogador Vermelho" ++ (botText gameState)))
-                         | currentPlayer == GameTypes.Yellow = translate ((-3 + (botX gameState)) * cellSize) (8 * cellSize) $ scale 0.20 0.20 $ color yellow (text ("Jogador Amarelo" ++ (botText gameState)))
-                         | currentPlayer == GameTypes.Green = translate ((-3 + (botX gameState)) * cellSize) (8 * cellSize) $ scale 0.20 0.20 $ color green (text ("Jogador Verde" ++ (botText gameState)))
-                         | otherwise = translate ((-3 + (botX gameState)) * cellSize) (8 * cellSize) $ scale 0.20 0.20 $ color blue (text ("Jogador Azul" ++ (botText gameState)))
+drawPlayerText gameState | currentPlayer == GameTypes.Red = translate ((-3 + (botX gameState)) * cellSize) (8 * cellSize) $ scale 0.20 0.20 $ color redColor (text ("Jogador Vermelho" ++ (botText gameState)))
+                         | currentPlayer == GameTypes.Yellow = translate ((-3 + (botX gameState)) * cellSize) (8 * cellSize) $ scale 0.20 0.20 $ color yellowColor (text ("Jogador Amarelo" ++ (botText gameState)))
+                         | currentPlayer == GameTypes.Green = translate ((-3 + (botX gameState)) * cellSize) (8 * cellSize) $ scale 0.20 0.20 $ color greenColor (text ("Jogador Verde" ++ (botText gameState)))
+                         | otherwise = translate ((-3 + (botX gameState)) * cellSize) (8 * cellSize) $ scale 0.20 0.20 $ color blueColor (text ("Jogador Azul" ++ (botText gameState)))
     where currentPlayer = GameTypes.currentPlayer gameState
 
 drawLuckyText::GameTypes.GameState -> Picture

@@ -21,14 +21,14 @@ drawTituloLudo = translate (-180) 180 $ scale 0.5 0.5 (text "Ludo Game")
 -- Placeholder para o botão de Novo Jogo
 drawButtonNovoJogo :: Picture
 drawButtonNovoJogo = pictures 
-    [translate 0 50 $ color blue (rectangleSolid 200 50)
+    [translate 0 50 $ color blueColor (rectangleSolid 200 50)
      ,translate (-70) 40 (scale 0.2 0.2 (text "Novo Jogo"))
     ]
 
 -- Placeholder para o botão de Carregar Jogo Salvo
 drawButtonCarregarJogoSalvo :: Picture
 drawButtonCarregarJogoSalvo = pictures 
-    [translate 0 (-50) $ color green (rectangleSolid 300 50)
+    [translate 0 (-50) $ color greenColor (rectangleSolid 300 50)
     , translate (-130) (-60) (scale 0.2 0.2 (text "Carregar Jogo Salvo"))
     ]
 
@@ -47,10 +47,10 @@ drawTituloSelecioneQuantPlayers = translate (-280) 180 $ scale 0.25 0.25 (text "
 -- Botões de Seleção de Quantidade de Players (1 a 4 jogadores)
 drawButtonsQuantPlayers :: Picture
 drawButtonsQuantPlayers = pictures 
-    [translate (-100) 80 $ color blue (rectangleSolid 50 50),translate (-110) 70 (scale 0.2 0.2 (text "1")),
-     translate 100 80 $ color blue (rectangleSolid 50 50),translate 90 70 (scale 0.2 0.2 (text "2")),
-     translate (-100) (-40) $ color blue (rectangleSolid 50 50),translate (-110) (-50) (scale 0.2 0.2 (text "3")),
-     translate 100 (-40) $ color blue (rectangleSolid 50 50), translate 90 (-50) (scale 0.2 0.2 (text "4"))]
+    [translate (-100) 80 $ color blueColor (rectangleSolid 50 50),translate (-110) 70 (scale 0.2 0.2 (text "1")),
+     translate 100 80 $ color blueColor (rectangleSolid 50 50),translate 90 70 (scale 0.2 0.2 (text "2")),
+     translate (-100) (-40) $ color blueColor (rectangleSolid 50 50),translate (-110) (-50) (scale 0.2 0.2 (text "3")),
+     translate 100 (-40) $ color blueColor (rectangleSolid 50 50), translate 90 (-50) (scale 0.2 0.2 (text "4"))]
 
 --Desenho Menu bots
 drawMenuBotsUmPlayer :: Picture
@@ -80,21 +80,21 @@ drawTituloSelecioneQuantBots = translate (-280) 180 $ scale 0.25 0.25 (text "Sel
 
 drawButtonsBotsUmPlayer :: Picture
 drawButtonsBotsUmPlayer = pictures 
-    [translate (-100) 80 $ color blue (rectangleSolid 50 50),translate (-110) 70 (scale 0.2 0.2 (text "1"))
-     ,translate 100 80 $ color blue (rectangleSolid 50 50),translate 90 70 (scale 0.2 0.2 (text "2"))
-     ,translate (-100) (-40) $ color blue (rectangleSolid 50 50),translate (-110) (-50) (scale 0.2 0.2 (text "3"))
+    [translate (-100) 80 $ color blueColor (rectangleSolid 50 50),translate (-110) 70 (scale 0.2 0.2 (text "1"))
+     ,translate 100 80 $ color blueColor (rectangleSolid 50 50),translate 90 70 (scale 0.2 0.2 (text "2"))
+     ,translate (-100) (-40) $ color blueColor (rectangleSolid 50 50),translate (-110) (-50) (scale 0.2 0.2 (text "3"))
     ]
 
 drawButtonsBotsDoisPlayer :: Picture
 drawButtonsBotsDoisPlayer = pictures 
-    [translate (-100) 80 $ color blue (rectangleSolid 50 50),translate (-110) 70 (scale 0.2 0.2 (text "0"))
-     ,translate 100 80 $ color blue (rectangleSolid 50 50),translate 90 70 (scale 0.2 0.2 (text "1"))
-     ,translate (-100) (-40) $ color blue (rectangleSolid 50 50),translate (-110) (-50) (scale 0.2 0.2 (text "2"))
+    [translate (-100) 80 $ color blueColor (rectangleSolid 50 50),translate (-110) 70 (scale 0.2 0.2 (text "0"))
+     ,translate 100 80 $ color blueColor (rectangleSolid 50 50),translate 90 70 (scale 0.2 0.2 (text "1"))
+     ,translate (-100) (-40) $ color blueColor (rectangleSolid 50 50),translate (-110) (-50) (scale 0.2 0.2 (text "2"))
     ]
 
 drawButtonsBotsTresPlayer :: Picture
 drawButtonsBotsTresPlayer = pictures 
-    [translate (-100) 80 $ color blue (rectangleSolid 50 50),translate (-110) 70 (scale 0.2 0.2 (text "0"))
-     ,translate 100 80 $ color blue (rectangleSolid 50 50),translate 90 70 (scale 0.2 0.2 (text "1"))
+    [translate (-100) 80 $ color blueColor (rectangleSolid 50 50),translate (-110) 70 (scale 0.2 0.2 (text "0"))
+     ,translate 100 80 $ color blueColor (rectangleSolid 50 50),translate 90 70 (scale 0.2 0.2 (text "1"))
      ]
     

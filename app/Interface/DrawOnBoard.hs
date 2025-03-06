@@ -46,10 +46,10 @@ pieceSprite piece = pictures [color black (rectangleSolid (side+5) (side+5)), co
           side = min cellSize cellSize * 0.75
 
 getPieceColor::GameTypes.Piece -> Color
-getPieceColor piece | pieceColor == GameTypes.Red = red
-               | pieceColor == GameTypes.Blue = blue
-               | pieceColor == GameTypes.Yellow = yellow
-               | otherwise = green
+getPieceColor piece | pieceColor == GameTypes.Red = redColor
+               | pieceColor == GameTypes.Blue = blueColor
+               | pieceColor == GameTypes.Yellow = yellowColor
+               | otherwise = greenColor
     where pieceColor = GameTypes.pieceColor (piece)
 
 baseQuadByColor::GameTypes.Color -> (Int,Int)
