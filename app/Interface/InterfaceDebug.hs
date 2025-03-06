@@ -157,7 +157,9 @@ botTurn gameState = do
               putStrLn "O bot caiu em uma casa de sorte e escolheu um oponente para voltar para a base."
               let oponnents = getLuckyMoves updatedGameState
               if null oponnents
-                then gameLoop (nextPlayer updatedGameState) -- Garante que o turno passa
+                then do 
+                  putStrLn "Nenhum oponente disponível para voltar para a base. Continuando..."
+                  gameLoop (nextPlayer updatedGameState) -- Garante que o turno passa
                 else do
                   let oponent = head oponnents
                   let luckyProcessedGameState = processLuckyMove updatedGameState oponent
