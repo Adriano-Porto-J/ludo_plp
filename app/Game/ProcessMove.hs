@@ -85,14 +85,26 @@ movePieceCaptured pieces piece = do
 -- Move uma peça no tabuleiro
 movePieceInBoard :: [Piece] -> Piece -> Int -> Int -> Color -> [Piece]
 movePieceInBoard pieces piece startPos endPos color = do
-  let newPiece = piece {piecePosition = endPos, tilesWalked = tilesWalked piece + (endPos - startPos + 48) `mod` 48}
-  let updatedPieces = newPiece : (removePieceByColorAndPos pieces color startPos)
-  let capturedPieces = filter (\p -> piecePosition p == endPos && pieceColor p /= color) updatedPieces
-  if length capturedPieces > 0
+  let positionsWalked = endPos - startPos
+  if positionsWalked == -1 || positionsWalked == -2
     then do
-      let capturedPiece = head capturedPieces
-      movePieceCaptured updatedPieces capturedPiece
-    else updatedPieces
+      let newPiece = piece {piecePosition = endPos, tilesWalked = tilesWalked piece + positionsWalked}
+      let updatedPieces = newPiece : (removePieceByColorAndPos pieces color startPos)
+      let capturedPieces = filter (\p -> piecePosition p == endPos && pieceColor p /= color) updatedPieces
+      if length capturedPieces > 0
+        then do
+          let capturedPiece = head capturedPieces
+          movePieceCaptured updatedPieces capturedPiece
+        else updatedPieces
+    else do
+      let newPiece = piece {piecePosition = endPos, tilesWalked = tilesWalked piece + (positionsWalked + 48) `mod` 48}
+      let updatedPieces = newPiece : (removePieceByColorAndPos pieces color startPos)
+      let capturedPieces = filter (\p -> piecePosition p == endPos && pieceColor p /= color) updatedPieces
+      if length capturedPieces > 0
+        then do
+          let capturedPiece = head capturedPieces
+          movePieceCaptured updatedPieces capturedPiece
+        else updatedPieces
 
 findBlockades :: [Piece] -> [(Color, Int)]
 findBlockades pieces = do
