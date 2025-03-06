@@ -28,18 +28,11 @@ findWinningMove gameState moves =
 findCaptureMove :: GameState -> [(Int, Int)] -> Maybe (Int, Int)
 findCaptureMove gameState = find (\(_, to) -> capturesOpponent gameState to && not (isSafePosition to))
 
-<<<<<<< HEAD
 findMostAdvancedMove :: GameState ->  [(Int, Int)] -> Maybe (Int, Int)
 findMostAdvancedMove _ [] = Nothing
 findMostAdvancedMove gameState moves =
   let startingPos = startingPosByColor (currentPlayer gameState)
   in Just (maximumBy (compare `on` (\(_, to) -> (to + startingPos) `mod` 48)) moves)
-=======
--- Retorna o movimento que leva a peça para a posição mais avançada no tabuleiro
-findMostAdvancedMove :: [(Int, Int)] -> Maybe (Int, Int)
-findMostAdvancedMove [] = Nothing
-findMostAdvancedMove moves = Just (maximumBy (compare `on` snd) moves)
->>>>>>> 6067844680db13f25e1a45856045777b95e2f590
 
 -- Escolhe um movimento aleatório da lista de opções
 pickRandomMove :: [(Int, Int)] -> (Int, Int)

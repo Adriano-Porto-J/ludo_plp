@@ -47,8 +47,7 @@ processLuckyMove gameState jogada =
 
 -- Verifica se o jogo acabou, ou seja, se algum jogador já moveu todas as suas peças para a área final
 checkGameOver :: GameState -> Bool
-checkGameOver gameState = any (
-  player -> all finished (filter ((== player) . pieceColor) (pieces gameState))) (map playerColor (players gameState))
+checkGameOver gameState = any (\player -> all finished (filter ((== player) . pieceColor) (pieces gameState))) (map playerColor (players gameState))
 
 -- Verifica se é a vez de um bot jogar
 isBotTurn :: GameState -> Bool
