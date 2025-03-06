@@ -216,19 +216,22 @@ playerTurn gameState piecePos = case piece of
                   else gameState -- se não houver retorne para o jogador
               else nextPlayer gameState -- se não há nenhum movimento disponível passe para o próximo
           else do
-            let availableMoves = Game.Index.getAvailableMoves gameState
-            if availableMoves /= []
-              then do
-                let moves = filter (\(start, _) -> start == piecePos) availableMoves
-                if moves /= []
-                  then do
-                    let move = head moves
-                    let newState = Game.Index.processMove gameState move
-                    if snd move == 25
-                      then newState { GameTypes.wasLuckyMove = True }
-                      else nextPlayer newState { GameTypes.diceRolled = -1 }
-                  else gameState
-              else nextPlayer gameState
+            if GameTypes.diceRolled gameState == -1
+                then gameState
+                else do
+                    let availableMoves = Game.Index.getAvailableMoves gameState
+                    if availableMoves /= []
+                    then do
+                        let moves = filter (\(start, _) -> start == piecePos) availableMoves
+                        if moves /= []
+                        then do
+                            let move = head moves
+                            let newState = Game.Index.processMove gameState move
+                            if snd move == 25
+                            then newState { GameTypes.wasLuckyMove = True }
+                            else nextPlayer newState { GameTypes.diceRolled = -1 }
+                        else gameState
+                    else nextPlayer gameState
       else gameState
   where
     piece = getPieceByPositionAndColor (GameTypes.pieces gameState) (GameTypes.currentPlayer gameState) piecePos
