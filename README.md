@@ -32,6 +32,7 @@
  $ git clone https://github.com/Adriano-Porto-J/ludo_plp_haskell.git
  $ cd ludo_plp_haskell/
  $ cabal clean
+ $ cabal update
  $ cabal build
  $ cabal run   
 ```
