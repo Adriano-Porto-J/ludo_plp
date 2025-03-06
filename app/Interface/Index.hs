@@ -1,6 +1,7 @@
 module Interface.Index where
 
 import Graphics.Gloss
+import Graphics.Gloss.Data.Color
 import Graphics.Gloss.Interface.IO.Game
 import Game.LoadSaveState
 
@@ -23,6 +24,18 @@ squareSize = 140
 -- Fundo branco
 background :: Color
 background = white
+
+redColor::Color
+redColor = red
+
+blueColor::Color
+blueColor = makeColorI 86 161 252 255
+
+yellowColor::Color
+yellowColor = yellow
+
+greenColor::Color
+greenColor = green
 
 -- Tamanho do dado
 diceSize :: Float
