@@ -19,8 +19,9 @@
 <h2 id="layout">🎨 Layout</h2>
 
 <p align="center">
-    <img src="../.github/example.png" alt="Image Example" width="400px">
-    <img src="../.github/example.png" alt="Image Example" width="400px">
+ ![screenshot1](https://github.com/user-attachments/assets/78997d98-ab87-4603-94a3-95f1b6f70a12)
+ ![screenshot2](https://github.com/user-attachments/assets/48f12673-3df8-409d-bb87-8a039d85b06d)
+ ![screenshot3](https://github.com/user-attachments/assets/2a01a7e2-3701-4959-8713-2d0306ac22ac)
 </p>
 
 <h2 id="technologies">LP</h2>
