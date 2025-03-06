@@ -26,7 +26,8 @@ nextPlayer gameState =
       current = currentPlayer gameState -- Jogador atual
       next = getNextPlayer colors current -- Determina o próximo jogador
       save = saveGameState gameState -- Salva o estado do jogo
-   in gameState {currentPlayer = next, sixesInRow = 0, diceRolled = -1} -- Reseta contador de seis seguidos e dado
+      winner = if (checkGameOver gameState == True) && (winnerColor gameState == Black) then current else (winnerColor gameState)
+   in gameState {currentPlayer = next, sixesInRow = 0, diceRolled = -1, winnerColor = winner} -- Reseta contador de seis seguidos e dado
 
 -- Obtém a cor do próximo jogador na sequência
 getNextPlayer :: [Color] -> Color -> Color

@@ -22,7 +22,8 @@ createGameState players bots =
           end = False,                -- O jogo ainda não terminou
           sixesInRow = 0,             -- Nenhum seis consecutivo ainda
           screenState = MenuInicial,  -- Inicializa o estado da tela como MenuInicial
-          wasLuckyMove = False        -- Nenhuma jogada de sorte ainda
+          wasLuckyMove = False,        -- Nenhuma jogada de sorte ainda
+          winnerColor = Black
         }
 
 -- Define quais cores são jogadores e quais são bots

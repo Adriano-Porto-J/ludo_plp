@@ -55,7 +55,7 @@ transformGameIO (EventKey (MouseButton LeftButton) Up _ (x, y)) gameState
     -- MenuBotsUmplayer: Processa o clique baseado no número de jogadores = 1 e número de bots
     | GameTypes.screenState gameState == GameTypes.MenuBotsUmPlayer && x >= -125 && x <= -75 && y >= 55 && y <= 105 = 
         let newGameState = Game.CreateGame.createGameState 2 1 
-        in return newGameState { GameTypes.screenState = GameTypes.JogoEmAndamento }
+        in return newGameState { GameTypes.screenState = GameTypes.JogoEmAndamento}
     | GameTypes.screenState gameState == GameTypes.MenuBotsUmPlayer && x >= 75 && x <= 125 && y >= 55 && y <= 105 = 
         let newGameState = Game.CreateGame.createGameState 3 2 --falha
         in return newGameState { GameTypes.screenState = GameTypes.JogoEmAndamento }
@@ -337,6 +337,7 @@ drawScreen gameState =
                           , drawButtonSaveTheGame    -- Desenha o botão de salvar o estado do jogo
                           , drawPlayerText gameState -- Desenha o texto indicando a vez do jogador  
                           , drawLuckyText gameState -- Desenha o texto indicando que o jogador deve escolher um peão adversário para capturar
+                          , drawWinnerPlayer gameState -- Desenha a tela de fim de jogo
                           ]
 
 

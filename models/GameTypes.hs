@@ -7,7 +7,7 @@ import GHC.Generics (Generic)
 import Data.Aeson (ToJSON, FromJSON)
 
 -- Representação das cores dos jogadores
-data Color = Red | Green | Blue | Yellow
+data Color = Red | Green | Blue | Yellow | Black
   deriving (Show, Eq, Read, Generic, ToJSON, FromJSON)
 
 -- Tipos de casas no tabuleiro
@@ -69,6 +69,7 @@ data GameState = GameState
     end :: Bool, -- Indica se o jogo acabou
     sixesInRow :: Int, -- Contador de seis seguidos}
     screenState :: ScreenState,  -- Estado atual da tela
-    wasLuckyMove :: Bool
+    wasLuckyMove :: Bool,
+    winnerColor :: Color
   }
   deriving (Show, Eq, Read, Generic, ToJSON, FromJSON)
