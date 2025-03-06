@@ -1,12 +1,34 @@
-# Ludo Modificado 🎲
+<h1 align="center" style="font-weight: bold;">Ludo Modificado 💻</h1>
 
-## Desenvolvedores:
+<p align="center">
+ <a href="#tech">Desenvolvedores</a> • 
+ <a href="#started">Como rodar</a> • 
+  <a href="#colab">O que é Ludo Modificado ?</a> •
+ <a href="#contribute">Especificação do projeto</a>
+</p>
+
+<p align="center">
+    <b>Bem-vindo ao Ludo Modificado!</b>
+</p>
+<h2 id="technologies">💻 Desenvolvedores</h2>
+
 - Adriano Porto
 - André Tharssys
 - Arthur Vidal
 - Leonardo Mota
+<h2 id="layout">🎨 Layout</h2>
 
-## Como rodar:
+<p align="center">
+    <img src="../.github/example.png" alt="Image Example" width="400px">
+    <img src="../.github/example.png" alt="Image Example" width="400px">
+</p>
+
+<h2 id="technologies">LP</h2>
+
+- Haskell
+
+<h2 id="started">🚀 Como rodar</h2>
+
 ```bash
  $ git clone https://github.com/Adriano-Porto-J/ludo_plp_haskell.git
  $ cd ludo_plp_haskell/
@@ -16,8 +38,16 @@
 ```
 
 
+<h3>Pré-Requisitos</h3>
 
-## O que é o Ludo Modificado?
+
+- [GHC](https://github.com/)
+- [cabal](https://github.com)
+
+
+
+<h2 id="colab">🤝 O que é Ludo Modificado ?</h2>
+
 ```bash
 Nosso Ludo Modificado conta com algumas novidades em relação ao jogo original: Existem algumas casas no tabuleiro que são especiais, ou seja, podem oferecer vantagens ou desvantagens aos jogadores!
 
@@ -41,5 +71,11 @@ O jogo contém bots (até 3). Eles foram programados para:
 Também é possível salvar e carregar o jogo.
 ```
 
-## Especificação do Projeto 
+
+
+
+<h2 id="contribute">📫 Especificação do projeto</h2>
+
 https://docs.google.com/document/d/1l2ZcZusR_4niFJZ7k7ZHK85utCCWVtktkYYqTv4uPMQ/edit?tab=t.0
+
+
