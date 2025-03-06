@@ -17,6 +17,14 @@ drawPlayerText gameState | currentPlayer == GameTypes.Red = translate ((-3 + (bo
                          | otherwise = translate ((-3 + (botX gameState)) * cellSize) (8 * cellSize) $ scale 0.20 0.20 $ color blue (text ("Jogador Azul" ++ (botText gameState)))
     where currentPlayer = GameTypes.currentPlayer gameState
 
+drawLuckyText::GameTypes.GameState -> Picture
+drawLuckyText gameState = if Game.Index.isBotTurn gameState == False 
+                            then if GameTypes.wasLuckyMove gameState == True
+                              then translate ((-9 + (botX gameState)) * cellSize) (-10 * cellSize) 
+                                   $ scale 0.20 0.20 $ color black (text "Escolha uma peca adversaria para ser capturada")
+                              else Blank
+                          else Blank
+
 botText::GameState -> [Char]
 botText gameState = if (isBotTurn gameState) == True then " (Bot) Rode o dado e clique no tabuleiro para prosseguir" else ""
 

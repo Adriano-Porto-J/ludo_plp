@@ -336,6 +336,7 @@ drawScreen gameState =
                           , drawDice gameState       -- Desenha o dado com o valor atual
                           , drawButtonSaveTheGame    -- Desenha o botão de salvar o estado do jogo
                           , drawPlayerText gameState -- Desenha o texto indicando a vez do jogador  
+                          , drawLuckyText gameState -- Desenha o texto indicando que o jogador deve escolher um peão adversário para capturar
                           ]
 
 
