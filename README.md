@@ -45,6 +45,20 @@
 - [cabal](https://github.com)
 - Gloss - Windows: para a biblioteca GLOSS executar no windows, deve-se colocar o arquivo freeglut.dll no mesmo diretório de ludo-plp-haskell.exe (criado após executar a build)
 
+  ```bash
+   build-depends:
+        base ^>=4.17.2.1,
+        ansi-terminal,
+        random >=1.2 && <1.3,
+        gloss,
+        containers >= 0.6 && <0.7,
+        aeson,
+        bytestring,
+        directory
+    hs-source-dirs:   app models
+    default-language: Haskell2010
+  ```
+
 
 <h2 id="colab">🤝 O que é Ludo Modificado ?</h2>
 
