@@ -24,40 +24,33 @@
 
 <h2 id="technologies">LP</h2>
 
-- Haskell
+- Prolog
 
-<h2 id="started">🚀 Como rodar</h2>
+## Rodar a aplicação
+
+Vá para a pasta Prolog/src:
 
 ```bash
- $ git clone https://github.com/Adriano-Porto-J/ludo_plp_haskell.git
- $ cd ludo_plp_haskell/
- $ cabal clean
- $ cabal update
- $ cabal build
- $ cabal run   
+cd src
 ```
 
+Abra o interpretador SWI-Prolog:
 
-<h3>Pré-Requisitos</h3>
+```bash
+swipl
+```
 
+Carregue os módulos na memória:
 
-- [GHC](https://github.com/)
-- [cabal](https://github.com)
-- Gloss - Windows: para a biblioteca GLOSS executar no windows, deve-se colocar o arquivo freeglut.dll no mesmo diretório de ludo-plp-haskell.exe (criado após executar a build)
+```bash
+[auxiliary, bot, creategame, findmoves, gametypes, index, main, processmove, save_and_load].
+```
 
-  ```bash
-   build-depends:
-        base ^>=4.17.2.1,
-        ansi-terminal,
-        random >=1.2 && <1.3,
-        gloss,
-        containers >= 0.6 && <0.7,
-        aeson,
-        bytestring,
-        directory
-    hs-source-dirs:   app models
-    default-language: Haskell2010
-  ```
+Execute a aplicação:
+
+```bash
+main:init.
+```
 
 
 <h2 id="colab">🤝 O que é Ludo Modificado ?</h2>
