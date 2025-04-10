@@ -39,7 +39,8 @@ player_turn(game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, 
         (
         write("\nNenhum movimento disponível. Pressione Enter para continuar..."), nl,
         read(_),
-        TempGameState = game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, D, ProcessingMove, End, SixesInRow, WasLuckyMove, WinnerColor)
+        TempGameState = game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, D, ProcessingMove, End, SixesInRow, WasLuckyMove, WinnerColor),
+        PostLuckyGameState = []
         ) 
         ;
         (
