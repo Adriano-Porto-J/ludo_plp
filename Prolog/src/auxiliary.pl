@@ -16,7 +16,8 @@
     is_blocked/2,
     is_capturing_on_safe_tile/3,
     walked_amount/2,
-    getToFromMove/2
+    get_enemies/3,
+    get_pieces_locations/2
     ]).
 
 % Retorna todas as peças do jogador atual no tabuleiro
@@ -47,6 +48,25 @@ get_piece_with_most_tiles_walked(Pieces, PieceWithMost) :-
     ( ValidPieces = [] -> PieceWithMost = none
     ; max_tiles_walked_piece(ValidPieces, PieceWithMost)
     ).
+
+
+get_enemies([],_,[]).
+get_enemies([piece(Id, Color, Position, Walked, InStart, InFinish, Finished)|Rest],PlayerColor,
+[piece(Id, Color, Position, Walked, InStart, InFinish, Finished)|Enemies]):-
+    Color == PlayerColor,
+    get_enemies(Rest,Enemies).
+get_enemies([piece(Id, Color, Position, Walked, InStart, InFinish, Finished)|Rest],PlayerColor,Enemies):-
+    Color \== PlayerColor,
+    get_enemies(Rest,Enemies).
+   
+
+get_pieces_locations([],[]).
+get_pieces_locations([piece(_, _, Position, _, _, _, _)|Rest],[Position|Locations]):-
+    Position >= 0,
+    get_pieces_locations(Rest,Locations).
+get_pieces_locations([piece(_, _, Position, _, _, _, _)|Rest],Locations):-
+    Position < 0,
+    get_pieces_locations(Rest,Locations).
 
 getToFromMove((_,To),To).
 

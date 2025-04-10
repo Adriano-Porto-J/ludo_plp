@@ -54,10 +54,13 @@ player_turn(game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, 
         ),
         auxiliary:getToFromMove(MoveToPlay,To),
         (member(special_tile(lucky,To),SpecialTiles) -> (
-            write("\nSua peça caiu na casa Lucky! Selecione a posição de uma peça inimiga para trazer de volta à base (0 - n): "),
-            read(luckyTargetPos),    
+            write("\nSua peça caiu na casa Lucky! Selecione a posição de uma peça inimiga na lista para trazer de volta à base (0 - n): "),   
+            %auxiliary:get_enemies(Pieces,CurrentPlayer,Enemies),
+            %auxiliary:get_pieces_locations(Enemies,Locations),
+            %write(Locations),
+            %read(luckyTargetPos), 
             % Eliminar peça
-            write("\n Peça inimiga retornada à base com sucesso!")
+            %write("\n Peça inimiga retornada à base com sucesso!")
             ) ; (
             write("\nEfeitos de casas especiais aplicados!")
         ))
@@ -96,7 +99,6 @@ gameCycle(game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, Di
             NewGameState = game_state(Players, SpecialTiles, NewPieces, NewBlockades, NextPlayer, D, NProcessingMove, NEnd, NSixesInRow, NWasLuckyMove, NWinnerColor)
         )
     ),
-    save_and_load:save_game("save.json",NewGameState),
     gameCycle(NewGameState).
     
 init :-
