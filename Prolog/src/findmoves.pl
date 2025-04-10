@@ -57,7 +57,6 @@ get_moves_on_board(Pieces, DiceRoll, SpecialTiles, Blockades,CurrentColor, Moves
             walked_amount(Piece, Walked),
             piece_color(Piece, Color),
             TempEnd is (Start + DiceRoll) mod 48,
-            write("linha60"),
             \+ is_blocked(Blockades, (Start, TempEnd),CurrentColor),
             apply_special_tile(SpecialTiles, (Start, TempEnd), (Start, AfterTile)),
             NewWalked is Walked + DiceRoll,
@@ -74,7 +73,7 @@ get_moves_in_finish_area([Piece | Rest], Blockades, DiceRoll,CurrentColor, Moves
     finish_area_end(Color, FinishEnd),
 
     NewPos is Start + DiceRoll,
-    get_moves_in_finish_area(Rest, Blockades, DiceRoll, OtherMoves),
+    get_moves_in_finish_area(Rest, Blockades, DiceRoll, CurrentColor, OtherMoves),
     (
         NewPos =< FinishEnd,
         \+ is_blocked(Blockades, (Start, NewPos),CurrentColor) -> !, %Mov valido

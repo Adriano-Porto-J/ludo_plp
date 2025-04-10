@@ -8,7 +8,6 @@
 process_move(game_state(Players, SpecialTiles, Pieces, _, CurrentColor, D, _, End, SixesInRow, WasLuckyMove, WinnerColor), 
              (From, To),
              NewGameState) :-
-    write("In process_move"), nl,
 
     include(has_color(CurrentColor), Pieces, PlayerPieces),
     member(Piece, PlayerPieces),
@@ -19,6 +18,7 @@ process_move(game_state(Players, SpecialTiles, Pieces, _, CurrentColor, D, _, En
     find_blockades(Pieces, Blockades),
     ( member((_, To), Blockades) ->
         % Não pode mover para uma posição bloqueada
+        write("\nlVoce moveu para uma casa com um blockade, logo voce perdeu a rodada\nl"),
         NewGameState = game_state(Players, SpecialTiles, Pieces, Blockades, CurrentColor, D, false, End, SixesInRow, WasLuckyMove, WinnerColor)
     ;
         (in_starting_area(Piece) ->
@@ -52,7 +52,8 @@ find_blockades(Pieces, Blockades) :-
     findall((Color, Pos),
         (
             member(piece(_, Color, Pos, _, _, _, _), Pieces),
-            Pos >= 0,
+            finish_area_end(Color, End),
+            Pos >= 0, Pos< End,
             findall(C, (member(piece(_, C, Pos, _, _, _, _), Pieces), C == Color), Colors),
             length(Colors, Count),
             Count >= 2
