@@ -11,7 +11,6 @@
 get_available_moves(GameState, AvailableMoves) :-
 
     GameState = game_state(_, SpecialTiles, _, Blockades, _, DiceRolled, _, _, _, _, _),
-    write("Dado que chegou no available"),write(DiceRolled), nl,
     %Pega o player da rodada
     get_player_pieces(GameState, PlayerPieces),
 
