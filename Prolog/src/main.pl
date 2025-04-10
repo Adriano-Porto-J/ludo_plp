@@ -96,7 +96,7 @@ gameCycle(game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, Di
         End, SixesInRow, WasLuckyMove, WinnerColor),game_state(Players, SpecialTiles, NewPieces, NewBlockades, CurrentPlayer, D, NProcessingMove, NEnd, NSixesInRow, NWasLuckyMove, NWinnerColor))
     ),
     auxiliary:get_next_player(Players, CurrentPlayer, NextPlayer),
-
+    
     % Verificar se última jogada resultou em um 6 e seguir fluxo previsto
     FSixInRow is NSixesInRow + 1,
     (D =:= 6 -> 
