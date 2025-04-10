@@ -96,6 +96,9 @@ gameCycle(game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, Di
         End, SixesInRow, WasLuckyMove, WinnerColor),game_state(Players, SpecialTiles, NewPieces, NewBlockades, CurrentPlayer, D, NProcessingMove, NEnd, NSixesInRow, NWasLuckyMove, NWinnerColor))
     ),
     auxiliary:get_next_player(Players, CurrentPlayer, NextPlayer),
+    % Salvar jogo após o turno
+    save_and_load:save_game("save.json",
+        game_state(Players, SpecialTiles, NewPieces, NewBlockades, NextPlayer, D, NProcessingMove, NEnd, NSixesInRow, NWasLuckyMove, NWinnerColor)),
     
     % Verificar se última jogada resultou em um 6 e seguir fluxo previsto
     FSixInRow is NSixesInRow + 1,
@@ -123,7 +126,7 @@ init :-
     % Implementar a parte de loading do save
     write("Deseja carregar um jogo salvo? (y/n) "),
     read(Load),
-    (Load == 'y' -> (save_and_load:load_game("save.json",GameState), gameCycle(GameState)) ; % Load ainda não funcional
+    (Load == 'y' -> (save_and_load:load_game('save.json',GameState), gameCycle(GameState)) ; % Load ainda não funcional
         write("Quantos Jogadores? (2 ou 4): "),
         read(NumPlayers),
         % Verificar validade da entrada
