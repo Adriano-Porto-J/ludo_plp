@@ -113,8 +113,8 @@ process_lucky_move(game_state(Players, SpecialTiles, Pieces, Blockades,CurrentPl
         NewGameState = game_state(Players, SpecialTiles, Pieces, Blockades,CurrentPlayer, DiceRolled, ProcessingMove,End, SixesInRow, WasLuckyMove, WinnerColor)
     ) ; (
         auxiliary:piece_id(Piece,ID),
-        newPos = -1 * ID,
-        update_piece_position(Piece,newPos , 0, true, false, false, Pieces, NewPieces),
+        NewPos is -1 * ID,
+        update_piece_position(Piece,NewPos , 0, true, false, false, Pieces, NewPieces),
         find_blockades(NewPieces, NewBlockades),
         NewGameState = game_state(Players, SpecialTiles, NewPieces, NewBlockades, CurrentPlayer, DiceRolled,false, false, End, SixesInRow, false, WinnerColor)
     )).

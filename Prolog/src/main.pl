@@ -90,9 +90,9 @@ player_turn(game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, 
         )
     )),
     (PostLuckyGameState == [] -> FinalGameState = TempGameState ; FinalGameState = PostLuckyGameState),
+    write(FinalGameState),
     write("Passando para o proximo turno(Digite qualquer coisa para prosseguir)"), nl,
     write("Caso queira encerrar a partida digite fim"),
-
     % Condição de parada do gameCycle temporária
     read(Fim),
     (Fim == 'fim' -> (setEndTrue(FinalGameState,NewGameState), write("FIMMM")) ;

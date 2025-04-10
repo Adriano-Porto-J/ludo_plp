@@ -4,10 +4,10 @@
   "dice_rolled":6,
   "end":false,
   "pieces": [
+    [4, "blue", -1, 0, true, false, false ],
     [1, "red", 24, 24, false, false, false ],
-    [4, "blue", 29, 5, false, false, false ],
-    [1, "blue", 26, 2, false, false, false ],
-    [2, "red", 56, 104, false, true, false ],
+    [1, "blue", 29, 5, false, false, false ],
+    [2, "red", 5, 5, false, false, false ],
     [3, "red", -3, 0, true, false, false ],
     [4, "red", -4, 0, true, false, false ],
     [2, "blue", -2, 0, true, false, false ],
