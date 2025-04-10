@@ -10,7 +10,7 @@
 % get_available_moves(+GameState, -Moves)
 get_available_moves(GameState, AvailableMoves) :-
 
-    GameState = game_state(_, SpecialTiles, _, Blockades, _, DiceRolled, _, _, _, _, _),
+    GameState = game_state(_, SpecialTiles, _, Blockades, CurrentColor, DiceRolled, _, _, _, _, _),
     %Pega o player da rodada
     get_player_pieces(GameState, PlayerPieces),
 
@@ -27,10 +27,10 @@ get_available_moves(GameState, AvailableMoves) :-
     get_moves_from_start(DiceRolled, PiecesInStartingArea, MovesFromStart),
     
     %Verifica as peças que estão no tabuleiro
-    get_moves_on_board(PiecesInBoard, DiceRolled, SpecialTiles, Blockades, MovesOnBoard),
+    get_moves_on_board(PiecesInBoard, DiceRolled, SpecialTiles, Blockades, CurrentColor,MovesOnBoard),
     
     %Verifica as pecas que estao na area final
-    get_moves_in_finish_area(PiecesInFinishArea, Blockades, DiceRolled, MovesInFinishArea),
+    get_moves_in_finish_area(PiecesInFinishArea, Blockades, DiceRolled, CurrentColor, MovesInFinishArea ),
 
     append([MovesFromStart, MovesOnBoard, MovesInFinishArea], AllMoves),
     filter_safe_moves(GameState, AllMoves, AvailableMoves).
@@ -48,8 +48,8 @@ get_moves_from_start(6, PiecesInStartingArea, MovesFromStart) :-
 get_moves_from_start(_,_,[]).
 
 % get_moves_on_board(+Pieces, +DiceRoll, +SpecialTiles, +Blockades, -Moves)
-get_moves_on_board([], _, _, _, []).
-get_moves_on_board(Pieces, DiceRoll, SpecialTiles, Blockades, Moves) :-
+get_moves_on_board([], _, _, _, _,[]).
+get_moves_on_board(Pieces, DiceRoll, SpecialTiles, Blockades,CurrentColor, Moves) :-
     findall((Start, Final),
         (
             member(Piece, Pieces),
@@ -57,7 +57,8 @@ get_moves_on_board(Pieces, DiceRoll, SpecialTiles, Blockades, Moves) :-
             walked_amount(Piece, Walked),
             piece_color(Piece, Color),
             TempEnd is (Start + DiceRoll) mod 48,
-            \+ is_blocked(Blockades, (Start, TempEnd)),
+            write("linha60"),
+            \+ is_blocked(Blockades, (Start, TempEnd),CurrentColor),
             apply_special_tile(SpecialTiles, (Start, TempEnd), (Start, AfterTile)),
             NewWalked is Walked + DiceRoll,
             handle_move_to_finish_area((Start, AfterTile), NewWalked, Color, (Start, Final))
@@ -66,8 +67,8 @@ get_moves_on_board(Pieces, DiceRoll, SpecialTiles, Blockades, Moves) :-
     ).
 
 % get_moves_in_finish_area(+Pieces, +Blockades, +DiceRoll, -Moves)
-get_moves_in_finish_area([], _, _, []).
-get_moves_in_finish_area([Piece | Rest], Blockades, DiceRoll, Moves) :-
+get_moves_in_finish_area([], _, _,_, []).
+get_moves_in_finish_area([Piece | Rest], Blockades, DiceRoll,CurrentColor, Moves) :-
     piece_position(Piece, Start),
     piece_color(Piece, Color),
     finish_area_end(Color, FinishEnd),
@@ -76,7 +77,7 @@ get_moves_in_finish_area([Piece | Rest], Blockades, DiceRoll, Moves) :-
     get_moves_in_finish_area(Rest, Blockades, DiceRoll, OtherMoves),
     (
         NewPos =< FinishEnd,
-        \+ is_blocked(Blockades, (Start, NewPos)) -> !, %Mov valido
+        \+ is_blocked(Blockades, (Start, NewPos),CurrentColor) -> !, %Mov valido
         Moves = [(Start, NewPos) | OtherMoves]
         ;Moves = OtherMoves  % Mov inválido
     ).

@@ -70,10 +70,10 @@ player_turn(game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, 
             write("\nVocê caiu numa casa Decline. Algo de ruim pode acontecer aqui...\n")
             ; Type = safe ->
             write("\nCasa segura! Nenhum jogador pode ser capturado aqui.\n")
-        ; true
-    )
-; true
-)
+            ; true
+            )
+            ; true
+        )
     )),
     write("Passando para o proximo turno(Digite qualquer coisa para prosseguir)"), nl,
     write("Caso queira encerrar a partida digite fim"),

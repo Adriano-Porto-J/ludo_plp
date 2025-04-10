@@ -37,21 +37,28 @@ process_move(game_state(Players, SpecialTiles, Pieces, _, CurrentColor, D, _, En
         ),
         handle_capture(To, CurrentColor, NewPieces, FinalPieces),
         find_blockades(FinalPieces, NewBlockades),
-        NewGameState = game_state(Players, SpecialTiles, FinalPieces, NewBlockades, CurrentColor, D, false, End, SixesInRow, WasLuckyMove, WinnerColor)
+
+        ( check_winner(FinalPieces, Winner) ->
+            write("\nO jogador de cor "), write(Winner), write(" ganhou a partida!!"),nl,
+            FinalWinnerColor = Winner
+        ; FinalWinnerColor = WinnerColor 
+        ),
+        NewGameState = game_state(Players, SpecialTiles, FinalPieces, NewBlockades, CurrentColor, D, false, End, SixesInRow, WasLuckyMove, FinalWinnerColor)
     ),
     !.
 
 
-% find_blockades(+Pieces, -Blockades)
 find_blockades(Pieces, Blockades) :-
-    findall((_, Pos),
-            (
-                member(piece(_, Color1, Pos, _, _, _, _), Pieces),
-                Pos > 0,
-                member(piece(_, Color2, Pos, _, _, _, _), Pieces),
-                Color1 \= Color2
-            ),
-            Blockades).
+    findall((Color, Pos),
+        (
+            member(piece(_, Color, Pos, _, _, _, _), Pieces),
+            Pos >= 0,
+            findall(C, (member(piece(_, C, Pos, _, _, _, _), Pieces), C == Color), Colors),
+            length(Colors, Count),
+            Count >= 2
+        ),
+    RawBlockades),
+    list_to_set(RawBlockades, Blockades).
 
 update_piece_position(piece(ID, Color, _, _, _, _, _), NewPos, NewWalked, InStart, InFinish, Finished, Pieces, [Updated | Rest]) :-
     Updated = piece(ID, Color, NewPos, NewWalked, InStart, InFinish, Finished),
@@ -123,5 +130,16 @@ process_lucky_move(game_state(Players, SpecialTiles, Pieces, _, CurrentColor, _,
          PiecesOut = PiecesIn
      ).
  
- 
  handle_capture(_, _, Pieces, Pieces).
+
+% check_winner(+Pieces, -WinnerColor)
+% Verifica se algum jogador venceu (tem 4 peças finalizadas).
+check_winner(Pieces, WinnerColor) :-
+    % Agrupa peças por cor
+    findall(Color, member(piece(_, Color, _, _, _, _, _), Pieces), ColorsDup),
+    sort(ColorsDup, Colors),
+    member(Color, Colors),
+    include(auxiliary:has_color(Color), Pieces, PlayerPieces),
+    include(auxiliary:is_piece_finished, PlayerPieces, FinishedPieces),
+    length(FinishedPieces, 4),
+    WinnerColor = Color.

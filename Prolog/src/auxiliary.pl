@@ -13,13 +13,14 @@
     in_starting_area/1,
     in_finish_area_not_finished/1,
     in_board/1,
-    is_blocked/2,
+    is_blocked/3,
     is_capturing_on_safe_tile/3,
     walked_amount/2,
     get_enemies/3,
     get_pieces_locations/2,
     getToFromMove/2,
-    write_special_tiles/1
+    write_special_tiles/1,
+    is_piece_finished/1
     ]).
 
 % Retorna todas as peças do jogador atual no tabuleiro
@@ -109,15 +110,21 @@ in_finish_area_not_finished(piece(_, _, _, _, false, true, false)).
 % Verifica se esta no tabuleiro, sem ser na area final e na area inicial.
 in_board(piece(_, _, _, _, false, false, false)).
 
+% Verdadeiro se a peça foi finalizada (chegou ao final do percurso).
+is_piece_finished(piece(_, _, _, _, _, _, true)).
+
 % Pega a pos da peça
 piece_position(piece(_, _, Pos, _, _, _, _), Pos).
 
 % Pega a cor da peça
 piece_color(piece(_, Color, _, _, _, _, _), Color).
 
-is_blocked(Blockades, (Start, End)) :-
-    member((_, BlockPos), Blockades),
-    is_between(Start, End, BlockPos).
+% Verifica se há um bloqueio entre Start e End feito por outra cor
+is_blocked(Blockades, (Start, End), CurrentColor) :-
+    member((BlockColor, BlockPos), Blockades),
+    BlockColor \= CurrentColor,
+    is_between(Start, End, BlockPos),
+    !.
 
 is_between(Start, End, Pos) :-
         ( Start < End ->
