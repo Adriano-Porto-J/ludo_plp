@@ -37,14 +37,15 @@ player_turn(game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, 
         AvailableMoves),
     (AvailableMoves == [] -> 
         (
-        write("\nNenhum movimento disponivel, digite qualquer coisa para continuar: "),
+        write("\nNenhum movimento disponível. Pressione Enter para continuar..."), nl,
         read(_),
         TempGameState = game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, D, ProcessingMove, End, SixesInRow, WasLuckyMove, WinnerColor)
         ) 
         ;
         (
+        auxiliary:write_special_tiles(SpecialTiles),
         write(AvailableMoves),
-        write("\nEscolha um Movimento (0 - n): "),
+        write("\nEscolha um Movimento: "),
         read(ChosenMove),
         nth1(ChosenMove, AvailableMoves, MoveToPlay),
         processmove:process_move(
@@ -63,7 +64,8 @@ player_turn(game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, 
         ))
         )
     ),
-    write("\nPassando para o proximo jogador..."),
+    write("Passando para o proximo turno(Digite qualquer coisa para prosseguir)"), nl,
+    write("Caso queira encerrar a partida digite fim"),
 
     % Condição de parada do gameCycle temporária
     read(A),
