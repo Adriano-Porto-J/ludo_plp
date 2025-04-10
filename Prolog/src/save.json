@@ -1,19 +1,32 @@
 {
-  "blockades": [ {"color":"red","tile":1},  {"color":"blue","tile":25} ],
-  "current_player":"blue",
-  "dice_rolled":1,
+  "blockades": [ {"color":"red","tile":0} ],
+  "current_player":"red",
+  "dice_rolled":2,
   "end":"false",
   "pieces": [
-    [1, "red", 1, 1, "false", "false", "false" ],
-    [1, "blue", 25, 1, "false", "false", "false" ],
-    [3, "red", 1, 1, "false", "false", "false" ],
-    [2, "blue", 25, 1, "false", "false", "false" ],
-    [2, "red", -2, 0, "true", "false", "false" ],
+    [4, "yellow", 13, 1, "false", "false", "false" ],
+    [1, "yellow", 12, 0, "false", "false", "false" ],
+    [2, "red", 0, 0, "false", "false", "false" ],
+    [1, "red", 0, 0, "false", "false", "false" ],
+    [3, "red", -3, 0, "true", "false", "false" ],
     [4, "red", -4, 0, "true", "false", "false" ],
+    [2, "yellow", -2, 0, "true", "false", "false" ],
+    [3, "yellow", -3, 0, "true", "false", "false" ],
+    [1, "blue", -1, 0, "true", "false", "false" ],
+    [2, "blue", -2, 0, "true", "false", "false" ],
     [3, "blue", -3, 0, "true", "false", "false" ],
-    [4, "blue", -4, 0, "true", "false", "false" ]
+    [4, "blue", -4, 0, "true", "false", "false" ],
+    [1, "green", -1, 0, "true", "false", "false" ],
+    [2, "green", -2, 0, "true", "false", "false" ],
+    [3, "green", -3, 0, "true", "false", "false" ],
+    [4, "green", -4, 0, "true", "false", "false" ]
   ],
-  "players": [ ["red", "false", 0 ],  ["blue", "false", 24 ] ],
+  "players": [
+    ["red", "false", 0 ],
+    ["yellow", "false", 12 ],
+    ["blue", "false", 24 ],
+    ["green", "false", 36 ]
+  ],
   "processing_move":"false",
   "sixes_in_row":2,
   "special_tiles": [
