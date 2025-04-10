@@ -65,9 +65,9 @@ player_turn(game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, 
                 read(LuckyTargetIndex),
                 nth1(LuckyTargetIndex,Locations,EnemyPos),
                 processmove:process_lucky_move(TempGameState,EnemyPos,PostLuckyGameState),
-                write("\nPeça inimiga na posição "),
+                write("\nPeca inimiga na posicao "),
                 write(EnemyPos),
-                write(" retornada à base com sucesso!")
+                write(" retornada a base com sucesso!\n")
             ))
             ; Type = boost ->
             write("\nBoost ativado! Sua peça andará 3 casas a mais automaticamente.\n"),

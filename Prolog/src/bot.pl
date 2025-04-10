@@ -41,9 +41,9 @@ choose_best_move(game_state(A,B,C,D,Color,E,F,G,H,I,J), Moves, BestMove) :-
 prioritize_captures(GameState, Moves, Captures) :-
     include(captures_enemy(GameState), Moves, Captures).
 
-captures_enemy(game_state(_, _, Pieces, _, _, _, _, _, _, _, _), (_, To)) :-
+captures_enemy(game_state(_, SpecialTiles, Pieces, _, _, _, _, _, _, _, _), (_, To)) :-
      member(piece(_, PieceColor, To, _, _, _, false), Pieces),
-     \+ safe_tile(To),  
+     \+ member(special_tile(safe, To), SpecialTiles),  
      PieceColor \= none.  
 
 % prioritize_finish(+Color, +Moves, +GameState, -FinishMoves)
