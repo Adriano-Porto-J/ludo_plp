@@ -51,10 +51,19 @@ player_turn(game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, 
             game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, D, ProcessingMove, End, SixesInRow, WasLuckyMove, WinnerColor),
             MoveToPlay,
             TempGameState
-        )
+        ),
+        auxiliary:getToFromMove(MoveToPlay,To),
+        (member(special_tile(lucky,To),SpecialTiles) -> (
+            write("\nSua peça caiu na casa Lucky! Selecione a posição de uma peça inimiga para trazer de volta à base (0 - n): "),
+            read(luckyTargetPos),    
+            % Eliminar peça
+            write("\n Peça inimiga retornada à base com sucesso!")
+            ) ; (
+            write("\nEfeitos de casas especiais aplicados!")
+        ))
         )
     ),
-    write("Passando para o proximo jogador..."),
+    write("\nPassando para o proximo jogador..."),
 
     % Condição de parada do gameCycle temporária
     read(A),
@@ -79,14 +88,16 @@ gameCycle(game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, Di
     FSixInRow is NSixesInRow + 1,
     (D =:= 6 -> 
         (NSixesInRow =:= 2 -> (
-            gameCycle(game_state(Players, SpecialTiles, NewPieces, NewBlockades, NextPlayer, D, NProcessingMove, NEnd, 0, NWasLuckyMove, NWinnerColor))
+            NewGameState = game_state(Players, SpecialTiles, NewPieces, NewBlockades, NextPlayer, D, NProcessingMove, NEnd, 0, NWasLuckyMove, NWinnerColor)
             ) ; (
-                gameCycle(game_state(Players, SpecialTiles, NewPieces, NewBlockades, CurrentPlayer, D, NProcessingMove, NEnd, FSixInRow, NWasLuckyMove, NWinnerColor))
+                NewGameState = game_state(Players, SpecialTiles, NewPieces, NewBlockades, CurrentPlayer, D, NProcessingMove, NEnd, FSixInRow, NWasLuckyMove, NWinnerColor)
             )
         ) ; (
-            gameCycle(game_state(Players, SpecialTiles, NewPieces, NewBlockades, NextPlayer, D, NProcessingMove, NEnd, NSixesInRow, NWasLuckyMove, NWinnerColor))
+            NewGameState = game_state(Players, SpecialTiles, NewPieces, NewBlockades, NextPlayer, D, NProcessingMove, NEnd, NSixesInRow, NWasLuckyMove, NWinnerColor)
         )
-    ).
+    ),
+    save_and_load:save_game("save.json",NewGameState),
+    gameCycle(NewGameState).
     
 init :-
     use_module(gametypes),
@@ -100,7 +111,7 @@ init :-
     % Implementar a parte de loading do save
     write("Deseja carregar um jogo salvo? (y/n) "),
     read(Load),
-    (Load == 'y' -> (save_and_load:load_game(File,GameState), gameCycle(GameState)) ; % Load ainda não funcional
+    (Load == 'y' -> (save_and_load:load_game("save.json",GameState), gameCycle(GameState)) ; % Load ainda não funcional
         write("Quantos Jogadores? (2 ou 4): "),
         read(NumPlayers),
         % Verificar validade da entrada

@@ -15,7 +15,8 @@
     in_board/1,
     is_blocked/2,
     is_capturing_on_safe_tile/3,
-    walked_amount/2
+    walked_amount/2,
+    getToFromMove/2
     ]).
 
 % Retorna todas as peças do jogador atual no tabuleiro
@@ -46,6 +47,8 @@ get_piece_with_most_tiles_walked(Pieces, PieceWithMost) :-
     ( ValidPieces = [] -> PieceWithMost = none
     ; max_tiles_walked_piece(ValidPieces, PieceWithMost)
     ).
+
+getToFromMove((_,To),To).
 
 can_move(piece(_, _, _, _, _, false, false)).
 
