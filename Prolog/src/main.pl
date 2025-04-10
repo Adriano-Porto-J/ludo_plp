@@ -30,7 +30,7 @@ player_turn(game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, 
     (write("\nJogador Atual: "),
      write(CurrentPlayer),
      maplist(infoPiece, Pieces),
-     rollDiceDebug(D)),
+     rollDiceDice(D)),
     % Interacao Jogador
 
     findmoves:get_available_moves(game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, D, ProcessingMove, End, SixesInRow, WasLuckyMove, WinnerColor),
