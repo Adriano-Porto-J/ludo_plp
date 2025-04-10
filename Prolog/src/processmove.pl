@@ -1,4 +1,4 @@
-:- module(processmove, [process_move/3]).
+:- module(processmove, [process_move/3,process_lucky_move/3]).
 
 :- use_module(gametypes).
 :- use_module(auxiliary).

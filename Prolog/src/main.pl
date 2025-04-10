@@ -56,33 +56,43 @@ player_turn(game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, 
         auxiliary:getToFromMove(MoveToPlay,To),
         ( member(special_tile(Type, To), SpecialTiles) ->
             ( Type = lucky ->
-            write("\nSua peça caiu na casa Lucky! Selecione a posição de uma peça inimiga para trazer de volta à base (0 - n): "), 
             auxiliary:get_enemies(Pieces,CurrentPlayer,Enemies),
             auxiliary:get_pieces_locations(Enemies,Locations),
-            writeln(Enemies),
-            writeln(Locations),
-            read(LuckyTargetPos),
-            write("\nPeça inimiga retornada à base com sucesso!")
+            (Locations == [] -> (write("Uma pena! Nenhuma peça inimiga disponível para ser capturada!"),PostLuckyGameState = []) ; (
+                write("\nSua peca caiu na casa Lucky! Selecione a posicaoo de uma peca inimiga para trazer de volta ate a base (0 - n): "), 
+                writeln(Locations),
+                read(LuckyTargetIndex),
+                nth1(LuckyTargetIndex,Locations,EnemyPos),
+                processmove:process_lucky_move(TempGameState,EnemyPos,PostLuckyGameState),
+                write("\nPeça inimiga na posição "),
+                write(EnemyPos),
+                write(" retornada à base com sucesso!")
+            ))
             ; Type = boost ->
-            write("\nBoost ativado! Sua peça andará 3 casas a mais automaticamente.\n")
+            write("\nBoost ativado! Sua peça andará 3 casas a mais automaticamente.\n"),
+            PostLuckyGameState = []
             ; Type = death ->
-            write("\nOh não! Sua peça caiu na casa da Morte e voltará para a base.\n")
+            write("\nOh não! Sua peça caiu na casa da Morte e voltará para a base.\n"),
+            PostLuckyGameState = []
             ; Type = decline ->
-            write("\nVocê caiu numa casa Decline. Algo de ruim pode acontecer aqui...\n")
+            write("\nVocê caiu numa casa Decline. Algo de ruim pode acontecer aqui...\n"),
+            PostLuckyGameState = []
             ; Type = safe ->
-            write("\nCasa segura! Nenhum jogador pode ser capturado aqui.\n")
-        ; true
-    )
-; true
-)
+            write("\nCasa segura! Nenhum jogador pode ser capturado aqui.\n"),
+            PostLuckyGameState = []
+        ; PostLuckyGameState = []
+        )
+        ; PostLuckyGameState = []
+        )
     )),
+    (PostLuckyGameState == [] -> FinalGameState = TempGameState ; FinalGameState = PostLuckyGameState),
     write("Passando para o proximo turno(Digite qualquer coisa para prosseguir)"), nl,
     write("Caso queira encerrar a partida digite fim"),
 
     % Condição de parada do gameCycle temporária
     read(A),
     (A == "fim" -> NewGameState = [] ;
-    NewGameState = TempGameState
+    NewGameState = FinalGameState
     ).
 
 gameCycle([]) :- !.
