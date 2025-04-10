@@ -59,8 +59,9 @@ player_turn(game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, 
             write("\nSua peça caiu na casa Lucky! Selecione a posição de uma peça inimiga para trazer de volta à base (0 - n): "), 
             auxiliary:get_enemies(Pieces,CurrentPlayer,Enemies),
             auxiliary:get_pieces_locations(Enemies,Locations),
-            write(Locations),
-            read(luckyTargetPos), 
+            writeln(Enemies),
+            writeln(Locations),
+            read(LuckyTargetPos),
             write("\nPeça inimiga retornada à base com sucesso!")
             ; Type = boost ->
             write("\nBoost ativado! Sua peça andará 3 casas a mais automaticamente.\n")
