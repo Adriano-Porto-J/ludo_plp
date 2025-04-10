@@ -58,7 +58,7 @@ get_enemies([piece(Id, Color, Position, Walked, InStart, InFinish, Finished)|Res
 [piece(Id, Color, Position, Walked, InStart, InFinish, Finished)|Enemies]):-
     Color \== PlayerColor,
     get_enemies(Rest,PlayerColor,Enemies).
-get_enemies([piece(Id, Color, Position, Walked, InStart, InFinish, Finished)|Rest],PlayerColor,Enemies):-
+get_enemies([piece(_, Color, _, _, _, _, _)|Rest],PlayerColor,Enemies):-
     Color == PlayerColor,
     get_enemies(Rest,PlayerColor,Enemies).
    

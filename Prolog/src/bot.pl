@@ -8,7 +8,6 @@
 
 % Escolhe a melhor jogada possível para o bot
 bot_choose_move(GameState, NewGameState) :-
-    GameState = game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, DiceRolled, ProcessingMove, End, Sixes, WasLucky, Winner),
     findmoves: get_available_moves(GameState, AvailableMoves),
     choose_best_move(GameState, AvailableMoves, BestMove),
     (
@@ -47,7 +46,7 @@ captures_enemy(game_state(_, SpecialTiles, Pieces, _, _, _, _, _, _, _, _), (_, 
      PieceColor \= none.  
 
 % prioritize_finish(+Color, +Moves, +GameState, -FinishMoves)
-prioritize_finish(Color, Moves, GameState, FinishMoves) :-
+prioritize_finish(Color, Moves, _, FinishMoves) :-
     auxiliary: finish_area_start(Color, StartFinish),
     auxiliary: finish_area_end(Color, EndFinish),
     include(is_in_finish_range(StartFinish, EndFinish), Moves, FinishMoves).
