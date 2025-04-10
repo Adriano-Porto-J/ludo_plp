@@ -1,4 +1,4 @@
-:- module(processmove, [process_move/3]).
+:- module(processmove, [process_move/3,process_lucky_move/3]).
 
 :- use_module(gametypes).
 :- use_module(auxiliary).
@@ -109,7 +109,8 @@ process_lucky_move(game_state(Players, SpecialTiles, Pieces, _, CurrentColor, _,
     member(Piece, Pieces),
     piece_position(Piece, PieceToKillPos),
     Piece = piece(ID, _, _, _, _, _, _),
-    update_piece_position(Piece, -1 * ID, 0, true, false, false, Pieces, NewPieces),
+    newPos = -1 * ID,
+    update_piece_position(Piece,newPos , 0, true, false, false, Pieces, NewPieces),
     find_blockades(NewPieces, NewBlockades),
     NewGameState = game_state(Players, SpecialTiles, NewPieces, NewBlockades, CurrentColor, false, false, End, SixesInRow, false, WinnerColor).
 
