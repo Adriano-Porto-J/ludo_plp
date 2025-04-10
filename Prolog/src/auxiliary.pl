@@ -17,7 +17,8 @@
     is_capturing_on_safe_tile/3,
     walked_amount/2,
     get_enemies/3,
-    get_pieces_locations/2
+    get_pieces_locations/2,
+    write_special_tiles/1
     ]).
 
 % Retorna todas as peças do jogador atual no tabuleiro
@@ -131,3 +132,9 @@ is_capturing_on_safe_tile(SpecialTiles, Pieces, (From, To)) :-
     member(piece(_, Color1, From, _, _, _, _), Pieces),
     member(piece(_, Color2, To, _, _, _, _), Pieces),
     Color1 \= Color2. 
+
+write_special_tiles([]).
+write_special_tiles([special_tile(Type, Pos) | Rest]) :-
+     write("Casa especial do tipo: "), write(Type),
+     write(", na posicao: "), write(Pos), write("."), nl,
+     write_special_tiles(Rest).

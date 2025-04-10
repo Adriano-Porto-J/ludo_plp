@@ -35,8 +35,9 @@ process_move(game_state(Players, SpecialTiles, Pieces, _, CurrentColor, D, _, En
         ;
             move_piece_in_board(Piece, Pieces, From, To, CurrentColor, NewPieces)
         ),
-        find_blockades(NewPieces, NewBlockades),
-        NewGameState = game_state(Players, SpecialTiles, NewPieces, NewBlockades, CurrentColor, D, false, End, SixesInRow, WasLuckyMove, WinnerColor)
+        handle_capture(To, CurrentColor, NewPieces, FinalPieces),
+        find_blockades(FinalPieces, NewBlockades),
+        NewGameState = game_state(Players, SpecialTiles, FinalPieces, NewBlockades, CurrentColor, D, false, End, SixesInRow, WasLuckyMove, WinnerColor)
     ),
     !.
 
@@ -104,3 +105,23 @@ process_lucky_move(game_state(Players, SpecialTiles, Pieces, _, CurrentColor, _,
     update_piece_position(Piece, -1 * ID, 0, true, false, false, Pieces, NewPieces),
     find_blockades(NewPieces, NewBlockades),
     NewGameState = game_state(Players, SpecialTiles, NewPieces, NewBlockades, CurrentColor, false, false, End, SixesInRow, false, WinnerColor).
+
+% handle_capture(+To, +CurrentColor, +PiecesIn, -PiecesOut, +SpecialTiles)
+ handle_capture(Pos, CurrentColor, PiecesIn, PiecesOut) :-
+     % Tenta encontrar uma peça inimiga na posição Pos
+     (
+         member(P, PiecesIn),
+         auxiliary:piece_position(P, Pos),
+         piece_color(P, Color),
+         Color \= CurrentColor
+     ->
+         % Captura: move a peça inimiga para a base
+         write("Jogador "), write(CurrentColor), write(" capturou uma peca do jogador "), write(Color), write(" na casa "), write(Pos), nl,
+         move_piece_captured(P, PiecesIn, PiecesOut)
+     ;
+         % Sem captura: PiecesOut = PiecesIn
+         PiecesOut = PiecesIn
+     ).
+ 
+ 
+ handle_capture(_, _, Pieces, Pieces).
