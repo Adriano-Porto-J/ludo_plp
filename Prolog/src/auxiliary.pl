@@ -21,7 +21,9 @@
     getToFromMove/2,
     write_special_tiles/1,
     is_piece_finished/1,
-    getGameStateColor/2
+    getGameStateColor/2,
+    piece_id/2,
+    get_piece_by_position/3
     ]).
 
 % Retorna todas as peças do jogador atual no tabuleiro
@@ -76,6 +78,11 @@ get_pieces_locations([piece(_, _, Position, _, _, _, _)|Rest],Locations):-
 
 getToFromMove((_,To),To).
 
+get_piece_by_position([piece(Id, Color, Pos, Walked, InStart, InFinish, Finished)|_],Pos,piece(Id, Color, Pos, Walked, InStart, InFinish, Finished)) :- !.
+get_piece_by_position([_|Rest],Pos,Piece) :- 
+    get_piece_by_position(Rest,Pos,Piece).
+
+
 can_move(piece(_, _, _, _, _, false, false)).
 
 walked_amount(piece(_, _, _, Walked, _, _, _), Walked).
@@ -121,6 +128,8 @@ piece_position(piece(_, _, Pos, _, _, _, _), Pos).
 
 % Pega a cor da peça
 piece_color(piece(_, Color, _, _, _, _, _), Color).
+
+piece_id(piece(ID, _, _, _, _, _, _),ID).
 
 % Verifica se há um bloqueio entre Start e End feito por outra cor
 is_blocked(Blockades, (Start, End), CurrentColor) :-

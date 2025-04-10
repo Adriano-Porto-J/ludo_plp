@@ -108,12 +108,11 @@ piece_finish(piece(Id, Color, _, _, IsBlocked, InFinish, _), Pieces, To, NewPiec
 % process_lucky_move(+GameState, +PieceToKillPos, -NewGameState)
 process_lucky_move(game_state(Players, SpecialTiles, Pieces, Blockades,CurrentPlayer, DiceRolled, ProcessingMove,End, SixesInRow, WasLuckyMove, WinnerColor)
 , PieceToKillPos, NewGameState) :-
-    member(Piece, Pieces),
-    piece_position(Piece, PieceToKillPos),
+    get_piece_by_position(Pieces,PieceToKillPos,Piece),
     (member(special_tile(safe,PieceToKillPos),SpecialTiles) -> (
         NewGameState = game_state(Players, SpecialTiles, Pieces, Blockades,CurrentPlayer, DiceRolled, ProcessingMove,End, SixesInRow, WasLuckyMove, WinnerColor)
     ) ; (
-        Piece = piece(ID, _, _, _, _, _, _),
+        auxiliary:piece_id(Piece,ID),
         newPos = -1 * ID,
         update_piece_position(Piece,newPos , 0, true, false, false, Pieces, NewPieces),
         find_blockades(NewPieces, NewBlockades),
