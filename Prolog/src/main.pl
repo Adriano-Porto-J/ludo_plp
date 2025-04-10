@@ -26,6 +26,9 @@ infoPiece(piece(Num,Color,Pos,Walked, InStart, InFinish, Finished)):-
     "| Reta Final:",IFtxt,"| Finalizada:",Ftxt]," ",R),
     write(R).
 
+setEndTrue(game_state(Players, SpecialTiles, Pieces, Blockades,CurrentPlayer, DiceRolled, ProcessingMove,_, SixesInRow, WasLuckyMove, WinnerColor),
+game_state(Players, SpecialTiles, Pieces, Blockades,CurrentPlayer, DiceRolled, ProcessingMove,true, SixesInRow, WasLuckyMove, WinnerColor)).
+
 player_turn(game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, _, ProcessingMove, End, SixesInRow, WasLuckyMove, WinnerColor),NewGameState):-
     (write("\nJogador Atual: "),
      write(CurrentPlayer),
@@ -91,11 +94,10 @@ player_turn(game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, 
     write("Caso queira encerrar a partida digite fim"),
 
     % Condição de parada do gameCycle temporária
-    read(A),
-    (A == "fim" -> NewGameState = [] ;
+    read(Fim),
+    (Fim == 'fim' -> (setEndTrue(FinalGameState,NewGameState), write("FIMMM")) ;
     NewGameState = FinalGameState
     ).
-
 gameCycle([]) :- !.
 gameCycle(game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, DiceRolled, ProcessingMove, End, SixesInRow, WasLuckyMove, WinnerColor)) :-
     auxiliary:get_player_by_color(Players,CurrentPlayer,player(_,Bot,_)),
@@ -124,7 +126,7 @@ gameCycle(game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, Di
             NewGameState = game_state(Players, SpecialTiles, NewPieces, NewBlockades, NextPlayer, D, NProcessingMove, NEnd, NSixesInRow, NWasLuckyMove, NWinnerColor)
         )
     ),
-    gameCycle(NewGameState).
+    (NEnd == true -> gameCycle([]); gameCycle(NewGameState)).
     
 init :-
     use_module(gametypes),

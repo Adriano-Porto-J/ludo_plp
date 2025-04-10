@@ -1,21 +1,21 @@
 {
   "blockades": [],
   "current_player":"red",
-  "dice_rolled":"nwnpe",
+  "dice_rolled":2,
   "end":false,
   "pieces": [
-    [1, "blue", 65, 0, false, false, true ],
-    [2, "red", 42, 42, false, false, false ],
-    [3, "red", 53, 0, false, false, true ],
-    [2, "blue", 65, 0, false, false, true ],
-    [3, "blue", 65, 0, false, false, true ],
-    [4, "blue", 65, 0, false, false, true ],
-    [4, "red", 53, 0, false, false, true ],
-    [1, "red", -1, 0, true, false, false ]
+    [1, "red", 5, 5, false, false, false ],
+    [2, "red", -2, 0, true, false, false ],
+    [3, "red", -3, 0, true, false, false ],
+    [4, "red", -4, 0, true, false, false ],
+    [1, "blue", -1, 0, true, false, false ],
+    [2, "blue", -2, 0, true, false, false ],
+    [3, "blue", -3, 0, true, false, false ],
+    [4, "blue", -4, 0, true, false, false ]
   ],
-  "players": [ ["red", false, 0 ],  ["blue", false, 24 ] ],
+  "players": [ ["red", false, 0 ],  ["blue", true, 24 ] ],
   "processing_move":false,
-  "sixes_in_row":2,
+  "sixes_in_row":1,
   "special_tiles": [
     ["safe", 1 ],
     ["safe", 7 ],
@@ -30,5 +30,5 @@
     ["safe", 46 ]
   ],
   "was_lucky_move":false,
-  "winner_color":"blue"
+  "winner_color":"black"
 }

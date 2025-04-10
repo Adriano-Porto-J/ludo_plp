@@ -20,7 +20,8 @@
     get_pieces_locations/2,
     getToFromMove/2,
     write_special_tiles/1,
-    is_piece_finished/1
+    is_piece_finished/1,
+    getGameStateColor/2
     ]).
 
 % Retorna todas as peças do jogador atual no tabuleiro
@@ -28,6 +29,8 @@ get_player_pieces(game_state(_, _, Pieces, _, CurrentColor, _, _, _, _, _, _), P
     include(has_color(CurrentColor), Pieces, PlayerPieces).
 
 has_color(Color, piece(_, Color, _, _, _, _, _)).
+
+getGameStateColor(game_state(_, _, _, _, CurrentColor, _, _, _, _, _, _),CurrentColor).
 
 % NextColor é a cor próximo jogador pela ordem definida pela lista
 get_next_player(Players,CurrentColor,NextColor) :-

@@ -16,10 +16,10 @@ bot_choose_move(GameState, NewGameState) :-
         ;
         NewGameState = GameState  % Nenhuma jogada válida
     ),
-    
-    % Condição de parada do gameCycle temporária
-    read(A),
-    (A == "fim" -> NewGameState = [] ; write("\nPróximo Jogador...")).
+    getGameStateColor(NewGameState,BotColor),
+    write("\n Jogador (Bot) "),
+    write(BotColor),
+    write(" fez sua jogada!\n").
 
 % Escolhe a melhor jogada de acordo com prioridade:
 % 1. Capturar inimigo
