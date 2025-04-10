@@ -18,6 +18,7 @@
     walked_amount/2,
     get_enemies/3,
     get_pieces_locations/2,
+    getToFromMove/2,
     write_special_tiles/1
     ]).
 
