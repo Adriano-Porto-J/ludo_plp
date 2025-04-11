@@ -96,7 +96,7 @@ handle_move_to_finish_area((Start, End), WalkedTotal, Color, (Start, Final)) :-
 apply_special_tile(SpecialTiles, (Start, End), (Start, NewEnd)) :-
     ( member(special_tile(Type, PositionTile), SpecialTiles), PositionTile =:= End -> !,
         ( Type = boost   -> NewEnd is (End + 3) mod 48
-        ; Type = decline -> NewEnd is End - 3
+        ; Type = decline -> NewEnd is (End - 3) mod 48
         ; Type = death   -> NewEnd is -1
         ; NewEnd = End )
     ; NewEnd = End

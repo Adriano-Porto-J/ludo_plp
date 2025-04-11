@@ -1,21 +1,21 @@
 {
   "blockades": [],
-  "current_player":"red",
-  "dice_rolled":6,
+  "current_player":"blue",
+  "dice_rolled":5,
   "end":false,
   "pieces": [
-    [2, "blue", 6, 30, false, false, false ],
-    [2, "red", 42, 42, false, false, false ],
-    [3, "red", 48, 48, false, true, false ],
-    [3, "blue", 65, 0, false, false, true ],
-    [4, "blue", 64, 88, false, true, false ],
-    [4, "red", 53, 0, false, false, true ],
-    [1, "red", -1, 0, true, false, false ],
-    [1, "blue", -1, 0, true, false, false ]
+    [1, "red", 8, 8, false, false, false ],
+    [2, "red", -2, 0, true, false, false ],
+    [3, "red", -3, 0, true, false, false ],
+    [4, "red", -4, 0, true, false, false ],
+    [1, "blue", -1, 0, true, false, false ],
+    [2, "blue", -2, 0, true, false, false ],
+    [3, "blue", -3, 0, true, false, false ],
+    [4, "blue", -4, 0, true, false, false ]
   ],
   "players": [ ["red", false, 0 ],  ["blue", false, 24 ] ],
   "processing_move":false,
-  "sixes_in_row":0,
+  "sixes_in_row":2,
   "special_tiles": [
     ["safe", 1 ],
     ["safe", 7 ],
