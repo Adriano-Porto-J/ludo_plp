@@ -33,20 +33,21 @@ player_turn(game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, 
     (write("\nJogador Atual: "),
      write(CurrentPlayer),
      maplist(infoPiece, Pieces),
-     rollDice(D)),
+     rollDiceDebug(D)),
     % Interacao Jogador
 
     findmoves:get_available_moves(game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, D, ProcessingMove, End, SixesInRow, WasLuckyMove, WinnerColor),
         AvailableMoves),
     (AvailableMoves == [] -> 
         (
-        write("\nNenhum movimento disponível. Pressione Enter para continuar..."), nl,
+        write("\nNenhum movimento disponivel. Pressione qualquer coisa para continuar..."), nl,
         read(_),
         TempGameState = game_state(Players, SpecialTiles, Pieces, Blockades, CurrentPlayer, D, ProcessingMove, End, SixesInRow, WasLuckyMove, WinnerColor),
         PostLuckyGameState = []
         ) 
         ;
         (
+        nl,
         auxiliary:write_special_tiles(SpecialTiles),
         write(AvailableMoves),
         write("\nEscolha um Movimento: "),

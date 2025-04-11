@@ -70,12 +70,6 @@ Casa Death: O player terá a sua peça retornada à base
 
 O jogo pode ser jogado tanto pelo terminal quanto pela interface gráfica (basta acessar o main e trocar (debug = True) para jogar pelo terminal e (debug = False) para jogar pela interface gráfica
 
-O jogo contém bots (até 3). Eles foram programados para: 
-1- Priorizar vencer
-2- Capturar peças inimigas
-3- Andar casas 
-
-Também é possível salvar e carregar o jogo.
 ```
 
 

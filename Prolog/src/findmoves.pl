@@ -21,7 +21,8 @@ get_available_moves(GameState, AvailableMoves) :-
     include(in_board, PlayerPieces, PiecesInBoard),
 
     %Atribui a PiecesInFinishArea as peças do player que estao na area final 
-    include(in_finish_area_not_finished, PlayerPieces, PiecesInFinishArea),
+    include(in_finish_area_not_finished, PlayerPieces, RawFinishAreaPieces),
+    include(valid_finish_area_piece(DiceRolled), RawFinishAreaPieces, PiecesInFinishArea),
 
     %Verifica se o player tirou o dado 6 e se ele tem peças na area inicial, caso tenho é uma possibilidade de jogada
     get_moves_from_start(DiceRolled, PiecesInStartingArea, MovesFromStart),
@@ -76,7 +77,7 @@ get_moves_in_finish_area([Piece | Rest], Blockades, DiceRoll,CurrentColor, Moves
     get_moves_in_finish_area(Rest, Blockades, DiceRoll, CurrentColor, OtherMoves),
     (
         NewPos =< FinishEnd,
-        \+ is_blocked(Blockades, (Start, NewPos),CurrentColor) -> !, %Mov valido
+        \+ is_blocked(Blockades, (Start, NewPos),CurrentColor) ->  %Mov valido
         Moves = [(Start, NewPos) | OtherMoves]
         ;Moves = OtherMoves  % Mov inválido
     ).
@@ -84,8 +85,8 @@ get_moves_in_finish_area([Piece | Rest], Blockades, DiceRoll,CurrentColor, Moves
 
 % handle_move_to_finish_area(+StartEnd, +TotalWalked, +Color, -Result)
 handle_move_to_finish_area((Start, End), WalkedTotal, Color, (Start, Final)) :-
+    finish_area_start(Color, StartFinish),
     ( WalkedTotal > 48 ->
-        finish_area_start(Color, StartFinish),
         Offset is max(0, WalkedTotal - 49),
         Final is StartFinish + Offset
     ; Final = End
@@ -95,7 +96,7 @@ handle_move_to_finish_area((Start, End), WalkedTotal, Color, (Start, Final)) :-
 apply_special_tile(SpecialTiles, (Start, End), (Start, NewEnd)) :-
     ( member(special_tile(Type, PositionTile), SpecialTiles), PositionTile =:= End -> !,
         ( Type = boost   -> NewEnd is (End + 3) mod 48
-        ; Type = decline -> NewEnd is max(0, End - 3)
+        ; Type = decline -> NewEnd is End - 3
         ; Type = death   -> NewEnd is -1
         ; NewEnd = End )
     ; NewEnd = End
@@ -124,3 +125,11 @@ filter_safe_moves(game_state(_, SpecialTiles, Pieces, _, _, _, _, _, _, _, _), M
             \+ is_capturing_on_safe_tile(SpecialTiles, Pieces, M)
         ),
         Filtered).
+
+% valid_finish_area_piece(+DiceRoll, +Piece)
+valid_finish_area_piece(DiceRoll, Piece) :-
+    piece_position(Piece, Pos),
+    piece_color(Piece, Color),
+    finish_area_end(Color, FinishEnd),
+    NewPos is Pos + DiceRoll,
+    NewPos =< FinishEnd.
